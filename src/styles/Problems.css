@@ -1,0 +1,238 @@
+/* ===== KEYFRAME ANIMATIONS ===== */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ===== PREMIUM PROBLEMS SECTION ===== */
+.problems-section {
+  background: linear-gradient(180deg, #F8FAFC 0%, #E8F7FF 100%);
+  padding: clamp(60px, 10vw, 120px) 0;
+  position: relative;
+  overflow: hidden;
+  scroll-margin-top: 55px;
+}
+
+/* ===== CAROUSEL CONTAINER ===== */
+.problems-carousel-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  padding: 20px 0;
+}
+
+.problems-carousel-wrapper.paused .problems-carousel-track {
+  animation-play-state: paused;
+}
+
+.problems-carousel-track {
+  display: flex;
+  gap: 14px;
+  animation: marquee 25s linear infinite;
+  width: fit-content;
+  will-change: transform;
+}
+
+/* ===== PROBLEM CARDS ===== */
+.problem-card {
+  flex: 0 0 calc(18% - 5px);
+  min-width: 160px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  padding: 20px 16px;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04), 0 10px 20px rgba(0, 0, 0, 0.02);
+}
+
+.problem-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 184, 230, 0.4), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.problem-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(0, 184, 230, 0.1), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.problem-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 82, 204, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 82, 204, 0.15), 0 10px 20px rgba(0, 184, 230, 0.08);
+  transform: translateY(-12px);
+}
+
+.problem-card:hover::before {
+  opacity: 1;
+}
+
+.problem-card:hover::after {
+  opacity: 1;
+}
+
+.problem-icon {
+  font-size: clamp(2.3rem, 4.5vw, 3rem);
+  margin-bottom: 10px;
+  display: inline-block;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: float 6s ease-in-out infinite;
+}
+
+.problem-card:hover .problem-icon {
+  transform: scale(1.15) rotate(-5deg);
+  animation: none;
+}
+
+.problem-card h3 {
+  font-size: clamp(0.95rem, 1.7vw, 1.1rem);
+  margin-bottom: 8px;
+  color: var(--dark);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.problem-card p {
+  font-size: clamp(0.75rem, 1.3vw, 0.85rem);
+  color: var(--gray);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ===== GRADIENT FADE EFFECTS ===== */
+.carousel-fade-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100px;
+  background: linear-gradient(90deg, #F8FAFC 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.carousel-fade-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100px;
+  background: linear-gradient(90deg, transparent 0%, #F8FAFC 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+  .problem-card {
+    flex: 0 0 calc(18% - 5px);
+    min-width: 160px;
+    padding: 20px 14px;
+  }
+
+  .problems-carousel-track {
+    animation: marquee 21s linear infinite;
+  }
+}
+
+@media (max-width: 768px) {
+  .problem-card {
+    flex: 0 0 calc(28% - 5px);
+    min-width: 150px;
+    padding: 18px 12px;
+  }
+
+  .problem-icon {
+    font-size: clamp(1.9rem, 3.8vw, 2.4rem);
+    margin-bottom: 8px;
+  }
+
+  .carousel-fade-left,
+  .carousel-fade-right {
+    width: 50px;
+  }
+
+  .problems-carousel-track {
+    animation: marquee 19s linear infinite;
+  }
+}
+
+@media (max-width: 600px) {
+  .problem-card {
+    flex: 0 0 calc(50% - 6px);
+    min-width: 140px;
+    padding: 16px 10px;
+  }
+
+  .problem-icon {
+    font-size: clamp(1.7rem, 3.2vw, 2.1rem);
+    margin-bottom: 8px;
+  }
+
+  .problem-card h3 {
+    font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+    margin-bottom: 6px;
+  }
+
+  .problem-card p {
+    font-size: clamp(0.7rem, 1.1vw, 0.8rem);
+  }
+
+  .problems-carousel-track {
+    gap: 12px;
+    animation: marquee 17s linear infinite;
+  }
+
+  .carousel-fade-left,
+  .carousel-fade-right {
+    width: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .problem-card {
+    flex: 0 0 calc(60% - 6px);
+    min-width: 120px;
+    padding: 14px 8px;
+  }
+
+  .problem-icon {
+    font-size: clamp(1.5rem, 2.8vw, 1.8rem);
+    margin-bottom: 6px;
+  }
+
+  .problem-card h3 {
+    font-size: clamp(0.8rem, 1.3vw, 0.9rem);
+    margin-bottom: 4px;
+  }
+
+  .problems-carousel-track {
+    animation: marquee 15s linear infinite;
+  }
+}

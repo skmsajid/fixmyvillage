@@ -1,0 +1,62 @@
+/* ===== APP CONTAINER ===== */
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ===== MAIN LAYOUT ===== */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Ensure proper spacing below fixed navbar */
+main {
+  flex: 1;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.container {
+  width: 90%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section-padding {
+  padding: clamp(60px, 10vw, 120px) 0;
+}
+
+.section-padding-small {
+  padding: clamp(40px, 5vw, 80px) 0;
+}
+
+/* ===== GLOBAL ANIMATIONS ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== FOCUS STATES ===== */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px dashed var(--primary);
+  outline-offset: 4px;
+}
+
+/* ===== SMOOTH SCROLL BEHAVIOR ===== */
+html {
+  scroll-behavior: smooth;
+}
