@@ -4,9 +4,14 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 
 dotenv.config();
-connectDB();
 
 const app = express();
+
+// Connect to database
+connectDB().catch((error) => {
+  console.error("Failed to connect to database:", error.message);
+  process.exit(1);
+});
 
 app.use(cors());
 app.use(express.json());
