@@ -2,249 +2,315 @@ import { useState, useEffect } from "react";
 import "../styles/admin.css";
 import { useNavigate } from "react-router-dom";
 
+export default function AdminDashboard(){
 
+const navigate = useNavigate();
 
-export default function AdminDashboard() {
-  const navigate = useNavigate();
+const adminName = "Admin";
 
-  const logout = () => {
+const logout = ()=>{
+localStorage.clear();
+navigate("/");
+};
 
-    localStorage.clear();
+const [requests,setRequests] = useState([]);
+const [activeCategory,setActiveCategory] = useState("");
 
-    navigate("/");
+const [issues,setIssues] = useState({
+electricity:[],
+water:[],
+garbage:[],
+drainage:[]
+});
 
-  };
+/* ========================
+FETCH SIGNUP REQUESTS
+======================== */
 
-  const [activeMenu, setActiveMenu] = useState("requests");
-  const [requests, setRequests] = useState([]);
+useEffect(()=>{
 
-  // Fetch pending requests
-  useEffect(() => {
+fetch("http://localhost:5000/api/admin/requests")
+.then(res=>res.json())
+.then(data=>setRequests(data))
+.catch(err=>console.log(err));
 
-    fetch("http://localhost:5000/api/admin/requests")
-      .then(res => res.json())
-      .then(data => setRequests(data))
-      .catch(err => console.log(err));
+},[]);
 
-  }, []);
+/* ========================
+FETCH ISSUES
+======================== */
 
+useEffect(()=>{
 
-  // Approve user
-  const approveUser = async (id) => {
+fetch("http://localhost:5000/api/issues/electricity")
+.then(res=>res.json())
+.then(data=>setIssues(prev=>({...prev,electricity:data})));
 
-    try {
+fetch("http://localhost:5000/api/issues/water")
+.then(res=>res.json())
+.then(data=>setIssues(prev=>({...prev,water:data})));
 
-      await fetch(`http://localhost:5000/api/admin/approve/${id}`, {
-        method: "PUT"
-      });
+fetch("http://localhost:5000/api/issues/garbage")
+.then(res=>res.json())
+.then(data=>setIssues(prev=>({...prev,garbage:data})));
 
-      alert("User Approved");
+fetch("http://localhost:5000/api/issues/drainage")
+.then(res=>res.json())
+.then(data=>setIssues(prev=>({...prev,drainage:data})));
 
-      setRequests(requests.filter(user => user._id !== id));
+},[]);
 
-    } catch (error) {
+/* ========================
+APPROVE USER
+======================== */
 
-      console.log(error);
+const approveUser = async(id)=>{
 
-    }
+await fetch(`http://localhost:5000/api/admin/approve/${id}`,{
+method:"PUT"
+});
 
-  };
+setRequests(requests.filter(u=>u._id!==id));
 
+};
 
-  // Reject user
-  const rejectUser = async (id) => {
+/* ========================
+REJECT USER
+======================== */
 
-    try {
+const rejectUser = async(id)=>{
 
-      await fetch(`http://localhost:5000/api/admin/reject/${id}`, {
-        method: "PUT"
-      });
+await fetch(`http://localhost:5000/api/admin/reject/${id}`,{
+method:"PUT"
+});
 
-      alert("User Rejected");
+setRequests(requests.filter(u=>u._id!==id));
 
-      setRequests(requests.filter(user => user._id !== id));
+};
 
-    } catch (error) {
+/* ========================
+ISSUE LIST
+======================== */
 
-      console.log(error);
+const renderIssues = ()=>{
 
-    }
+const list = issues[activeCategory] || [];
 
-  };
+if(list.length===0){
+return <p className="no-issues">No problems reported.</p>
+}
 
+return(
 
-  const renderContent = () => {
+<div className="issue-grid">
 
-    if (activeMenu === "requests") {
+{list.map(issue=>(
 
-      return (
+<div key={issue._id} className="issue-card">
 
-        <div>
+{/* LEFT DETAILS */}
 
-          <h2 className="section-title">Registration Requests</h2>
+<div className="issue-left">
 
-          <div className="table-container">
+<h3 className="issue-title">{activeCategory.toUpperCase()} ISSUE</h3>
 
-            <table className="admin-table">
+<p><b>Raised By:</b> {issue.villagerName || "Unknown"}</p>
+<p><b>Aadhaar:</b> {issue.aadhar || "N/A"}</p>
 
-              <thead>
-                <tr>
-                  <th>Full Name</th>
-                  <th>Email</th>
-                  <th>Aadhaar</th>
-                  <th>Approve</th>
-                  <th>Reject</th>
-                </tr>
-              </thead>
+{/* GARBAGE */}
 
-              <tbody>
+{activeCategory==="garbage" && (
+<>
 
-                {requests.length === 0 ? (
+<p><b>Street:</b> {issue.street}</p>
+<p><b>Description:</b> {issue.description}</p>
+</>
+)}
 
-                  <tr>
-                    <td colSpan="5" style={{ textAlign: "center" }}>
-                      No pending requests
-                    </td>
-                  </tr>
+{/* WATER */}
 
-                ) : (
+{activeCategory==="water" && (
+<>
 
-                  requests.map((user) => (
+<p><b>Street:</b> {issue.street}</p>
+<p><b>Pipeline:</b> {issue.pipeline}</p>
+<p><b>House No:</b> {issue.houseNo}</p>
+<p><b>Description:</b> {issue.description}</p>
+</>
+)}
 
-                    <tr key={user._id}>
+{/* ELECTRICITY */}
 
-                      <td>{user.name}</td>
-                      <td>{user.email}</td>
-                      <td>{user.aadhar}</td>
+{activeCategory==="electricity" && (
+<>
 
-                      <td>
-                        <button
-                          className="approve-btn"
-                          onClick={() => approveUser(user._id)}
-                        >
-                          Approve
-                        </button>
-                      </td>
+<p><b>Street:</b> {issue.street}</p>
+<p><b>Pole:</b> {issue.pole}</p>
+<p><b>House No:</b> {issue.houseNo}</p>
+<p><b>Description:</b> {issue.description}</p>
+</>
+)}
 
-                      <td>
-                        <button
-                          className="reject-btn"
-                          onClick={() => rejectUser(user._id)}
-                        >
-                          Reject
-                        </button>
-                      </td>
+{/* DRAINAGE */}
 
-                    </tr>
+{activeCategory==="drainage" && (
+<>
 
-                  ))
+<p><b>Street:</b> {issue.street}</p>
+<p><b>House No:</b> {issue.houseNo}</p>
+<p><b>Description:</b> {issue.description}</p>
+</>
+)}
 
-                )}
+<p><b>Status:</b> {issue.status}</p>
+<p><b>Date:</b> {issue.date}</p>
+<p><b>Time:</b> {issue.time}</p>
 
-              </tbody>
+</div>
 
-            </table>
+{/* RIGHT IMAGE */}
 
-          </div>
+{issue.photoId && (
 
-        </div>
+<div className="issue-right">
 
-      );
+<img
+src={`http://localhost:5000/api/files/${issue.photoId}`}
+alt="issue"
+/>
 
-    }
+</div>
 
+)}
 
-    if (activeMenu === "issues") {
-      return <h2 className="section-title">Issue Reports</h2>;
-    }
+</div>
 
-    if (activeMenu === "assign") {
-      return <h2 className="section-title">Assign Worker</h2>;
-    }
+))}
 
-    if (activeMenu === "villagers") {
-      return <h2 className="section-title">Villagers List</h2>;
-    }
+</div>
 
-    if (activeMenu === "workers") {
-      return <h2 className="section-title">Workers List</h2>;
-    }
+)
 
-  };
+};
 
+return(
 
-  return (
+<div className="admin-container">
 
-    <div className="admin-layout">
+{/* NAVBAR */}
 
-      {/* SIDEBAR */}
+<div className="admin-navbar">
 
-      <div className="sidebar">
+<h2>Admin Dashboard</h2>
 
-        <h2 className="logo">FixMyVillage</h2>
-        <button className="logout-btn" onClick={logout}>
-  Logout
+<div className="admin-right">
+
+<span>Hi {adminName}</span>
+
+<button onClick={logout} className="logout-btn">
+Logout
 </button>
 
-        <ul>
+</div>
 
-          <li
-            className={activeMenu === "requests" ? "active" : ""}
-            onClick={() => setActiveMenu("requests")}
-          >
-            Registration Requests
-          </li>
+</div>
 
-          <li
-            className={activeMenu === "issues" ? "active" : ""}
-            onClick={() => setActiveMenu("issues")}
-          >
-            Issue Reports
-          </li>
+{/* SIGNUP REQUESTS */}
 
-          <li
-            className={activeMenu === "assign" ? "active" : ""}
-            onClick={() => setActiveMenu("assign")}
-          >
-            Assign Worker
-          </li>
+<div className="request-section">
 
-          <li
-            className={activeMenu === "villagers" ? "active" : ""}
-            onClick={() => setActiveMenu("villagers")}
-          >
-            Villagers List
-          </li>
+<h3>Villager Registration Requests</h3>
 
-          <li
-            className={activeMenu === "workers" ? "active" : ""}
-            onClick={() => setActiveMenu("workers")}
-          >
-            Workers List
-          </li>
+{requests.length===0 ?
 
-        </ul>
+<p className="no-issues">No Requests</p>
 
-      </div>
+:
 
+<table className="admin-table">
 
-      {/* MAIN CONTENT */}
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Aadhaar</th>
+<th>Approve</th>
+<th>Reject</th>
+</tr>
+</thead>
 
-      <div className="admin-content">
+<tbody>
 
-        <div className="admin-header">
-          <h1>Admin Dashboard</h1>
-        </div>
+{requests.map(user=>(
 
-        <div className="content-area">
+<tr key={user._id}>
 
-          {renderContent()}
+<td>{user.name}</td>
+<td>{user.email}</td>
+<td>{user.aadhar}</td>
 
-        </div>
+<td>
+<button
+className="approve-btn"
+onClick={()=>approveUser(user._id)}
+>
+Approve
+</button>
+</td>
 
-      </div>
+<td>
+<button
+className="reject-btn"
+onClick={()=>rejectUser(user._id)}
+>
+Reject
+</button>
+</td>
 
-    </div>
+</tr>
 
-  );
+))}
+
+</tbody>
+
+</table>
+
+}
+
+</div>
+
+{/* CATEGORY CARDS */}
+
+<div className="category-cards">
+
+<div className="category-card" onClick={()=>setActiveCategory("electricity")}>
+⚡ Electricity
+</div>
+
+<div className="category-card" onClick={()=>setActiveCategory("water")}>
+💧 Water
+</div>
+
+<div className="category-card" onClick={()=>setActiveCategory("garbage")}>
+🗑 Garbage
+</div>
+
+<div className="category-card" onClick={()=>setActiveCategory("drainage")}>
+🚰 Drainage
+</div>
+
+</div>
+
+{/* ISSUE LIST */}
+
+<div className="issue-section">
+
+{activeCategory && renderIssues()}
+
+</div>
+
+</div>
+
+)
+
 }

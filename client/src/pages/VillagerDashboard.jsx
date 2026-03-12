@@ -2,90 +2,344 @@ import { useState } from "react";
 import "../styles/villager.css";
 import { useNavigate } from "react-router-dom";
 
-
-
 export default function VillagerDashboard(){
-    const navigate = useNavigate();
 
-const logout = () => {
+const navigate = useNavigate();
 
+const userName = localStorage.getItem("userName");
+const userId = localStorage.getItem("userId");
+
+const logout = ()=>{
 localStorage.clear();
-
 navigate("/");
+};
+
+const [activeForm,setActiveForm] = useState("");
+
+const [formData,setFormData] = useState({
+street:"",
+pipeline:"",
+pole:"",
+houseNo:"",
+description:"",
+photo:null
+});
+
+const handleChange = (e)=>{
+setFormData({
+...formData,
+[e.target.name]:e.target.value
+});
+};
+
+const handlePhoto = (e)=>{
+setFormData({
+...formData,
+photo:e.target.files[0]
+});
+};
+
+const resetForm = ()=>{
+setFormData({
+street:"",
+pipeline:"",
+pole:"",
+houseNo:"",
+description:"",
+photo:null
+});
+};
+
+const submitIssue = async ()=>{
+
+if(!activeForm){
+alert("Please select issue category");
+return;
+}
+
+if(!formData.street){
+alert("Street is required");
+return;
+}
+
+if(!formData.description){
+alert("Description is required");
+return;
+}
+
+if(!formData.photo){
+alert("Please upload photo");
+return;
+}
+
+const data = new FormData();
+
+data.append("street",formData.street);
+data.append("pipeline",formData.pipeline);
+data.append("pole",formData.pole);
+data.append("houseNo",formData.houseNo);
+data.append("description",formData.description);
+data.append("photo",formData.photo);
+
+data.append("userId",userId);
+data.append("date",new Date().toLocaleDateString());
+data.append("time",new Date().toLocaleTimeString());
+
+try{
+
+const res = await fetch(`http://localhost:5000/api/issues/${activeForm}`,{
+method:"POST",
+body:data
+});
+
+const result = await res.json();
+
+if(!res.ok){
+alert(result.message || "Submission failed");
+return;
+}
+
+alert("Issue Submitted Successfully");
+
+resetForm();
+setActiveForm("");
+
+}catch(err){
+
+console.error(err);
+alert("Server error");
+
+}
 
 };
 
-  const [issues, setIssues] = useState([
-    {
-      id:1,
-      title:"Broken Street Light",
-      location:"Main Road",
-      status:"Pending"
-    },
-    {
-      id:2,
-      title:"Water Leakage",
-      location:"Village Center",
-      status:"In Progress"
-    }
-  ]);
+return(
 
-  return (
+<div className="villager-container">
 
-    <div className="villager-container">
+<h1 className="dashboard-title">Villager Dashboard</h1>
 
-      <h1 className="dashboard-title">Villager Dashboard</h1>
-      <button className="logout-btn" onClick={logout}>
-        Logout
-        </button>
+<div className="user-box">
+<h3>Welcome, {userName}</h3>
+<p>User ID: {userId}</p>
+</div>
 
-      {/* REPORT ISSUE */}
+<button className="logout-btn" onClick={logout}>Logout</button>
 
-      <div className="report-box">
+{/* ISSUE CARDS */}
 
-        <h2>Report New Issue</h2>
+<div className="issue-cards">
 
-        <input placeholder="Issue Title" />
-        <input placeholder="Location" />
-        <textarea placeholder="Describe the issue"></textarea>
+<div className="card" onClick={()=>setActiveForm("garbage")}>
+🗑 Garbage Issue
+</div>
 
-        <button className="report-btn">Submit Issue</button>
+<div className="card" onClick={()=>setActiveForm("water")}>
+💧 Water Issue
+</div>
 
-      </div>
+<div className="card" onClick={()=>setActiveForm("electricity")}>
+⚡ Electricity Issue
+</div>
+
+<div className="card" onClick={()=>setActiveForm("drainage")}>
+🚰 Drainage Issue
+</div>
+
+</div>
+
+{/* ========================
+GARBAGE FORM
+======================== */}
+
+{activeForm==="garbage" && (
+
+<div className="report-box">
+
+<h2>Report Garbage Issue</h2>
+
+<input
+placeholder="Street"
+name="street"
+value={formData.street}
+onChange={handleChange}
+/>
+
+<textarea
+placeholder="Description"
+name="description"
+value={formData.description}
+onChange={handleChange}
+/>
+
+<input
+type="file"
+accept="image/*"
+onChange={handlePhoto}
+/>
+
+<button className="report-btn" onClick={submitIssue}>
+Submit
+</button>
+
+</div>
+
+)}
 
 
-      {/* MY COMPLAINTS */}
+{/* ========================
+WATER FORM
+======================== */}
 
-      <div className="table-box">
+{activeForm==="water" && (
 
-        <h2>My Complaints</h2>
+<div className="report-box">
 
-        <table className="issue-table">
+<h2>Report Water Issue</h2>
 
-          <thead>
-            <tr>
-              <th>Issue</th>
-              <th>Location</th>
-              <th>Status</th>
-            </tr>
-          </thead>
+<input
+placeholder="Street"
+name="street"
+value={formData.street}
+onChange={handleChange}
+/>
 
-          <tbody>
+<input
+placeholder="Pipeline"
+name="pipeline"
+value={formData.pipeline}
+onChange={handleChange}
+/>
 
-            {issues.map(issue => (
-              <tr key={issue.id}>
-                <td>{issue.title}</td>
-                <td>{issue.location}</td>
-                <td className="status">{issue.status}</td>
-              </tr>
-            ))}
+<input
+placeholder="House No"
+name="houseNo"
+value={formData.houseNo}
+onChange={handleChange}
+/>
 
-          </tbody>
+<textarea
+placeholder="Description"
+name="description"
+value={formData.description}
+onChange={handleChange}
+/>
 
-        </table>
+<input
+type="file"
+accept="image/*"
+onChange={handlePhoto}
+/>
 
-      </div>
+<button className="report-btn" onClick={submitIssue}>
+Submit
+</button>
 
-    </div>
-  );
+</div>
+
+)}
+
+
+{/* ========================
+ELECTRICITY FORM
+======================== */}
+
+{activeForm==="electricity" && (
+
+<div className="report-box">
+
+<h2>Report Electricity Issue</h2>
+
+<input
+placeholder="Street"
+name="street"
+value={formData.street}
+onChange={handleChange}
+/>
+
+<input
+placeholder="Pole Number"
+name="pole"
+value={formData.pole}
+onChange={handleChange}
+/>
+
+<input
+placeholder="House No"
+name="houseNo"
+value={formData.houseNo}
+onChange={handleChange}
+/>
+
+<textarea
+placeholder="Description"
+name="description"
+value={formData.description}
+onChange={handleChange}
+/>
+
+<input
+type="file"
+accept="image/*"
+onChange={handlePhoto}
+/>
+
+<button className="report-btn" onClick={submitIssue}>
+Submit
+</button>
+
+</div>
+
+)}
+
+
+{/* ========================
+DRAINAGE FORM
+======================== */}
+
+{activeForm==="drainage" && (
+
+<div className="report-box">
+
+<h2>Report Drainage Issue</h2>
+
+<input
+placeholder="Street"
+name="street"
+value={formData.street}
+onChange={handleChange}
+/>
+
+<input
+placeholder="House No"
+name="houseNo"
+value={formData.houseNo}
+onChange={handleChange}
+/>
+
+<textarea
+placeholder="Description"
+name="description"
+value={formData.description}
+onChange={handleChange}
+/>
+
+<input
+type="file"
+accept="image/*"
+onChange={handlePhoto}
+/>
+
+<button className="report-btn" onClick={submitIssue}>
+Submit
+</button>
+
+</div>
+
+)}
+
+</div>
+
+);
+
 }

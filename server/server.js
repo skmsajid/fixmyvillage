@@ -1,13 +1,13 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+
+import express from "express";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
-
-
-
-dotenv.config();
+import issueRoutes from "./routes/issueRoutes.js";
+import fileRoutes from "./routes/fileRoutes.js";
 
 const app = express();
 
@@ -22,6 +22,8 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/issues", issueRoutes);
+app.use("/api/files", fileRoutes);
 
 app.get("/", (req, res) => {
   res.send("FixMyVillage API Running");
