@@ -1,6 +1,6 @@
 # FixMyVillage
 
-A civic-tech web platform for reporting and resolving village-level issues.
+A  civic-tech web platform for reporting and resolving village-level issues.
 
 ## Tech Stack
 - React.js
