@@ -6,7 +6,8 @@ createIssue,
 getElectricityIssues,
 getWaterIssues,
 getGarbageIssues,
-getDrainageIssues
+getDrainageIssues,
+updateIssueStatus
 } from "../controllers/issueController.js";
 
 const router = express.Router();
@@ -21,5 +22,6 @@ router.get("/electricity", getElectricityIssues);
 router.get("/water", getWaterIssues);
 router.get("/garbage", getGarbageIssues);
 router.get("/drainage", getDrainageIssues);
+router.put("/status/:type/:id", updateIssueStatus);
 
 export default router;

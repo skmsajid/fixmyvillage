@@ -241,3 +241,35 @@ res.status(500).json({message:"Server error"});
 }
 
 };
+export const updateIssueStatus = async (req,res)=>{
+
+try{
+
+const {type,id} = req.params;
+const {status,reason} = req.body;
+
+let Model;
+
+if(type==="electricity") Model = Electricity;
+if(type==="water") Model = Water;
+if(type==="garbage") Model = Garbage;
+if(type==="drainage") Model = Drainage;
+
+const updateData = { status };
+
+if(status==="Rejected"){
+updateData.rejectReason = reason;
+}
+
+await Model.findByIdAndUpdate(id,updateData);
+
+res.json({message:"Status updated"});
+
+}catch(err){
+
+console.log(err);
+res.status(500).json({message:"Server error"});
+
+}
+
+};

@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 export default function AdminDashboard(){
 
 const navigate = useNavigate();
-
 const adminName = "Admin";
 
 const logout = ()=>{
@@ -23,9 +22,9 @@ garbage:[],
 drainage:[]
 });
 
-/* ========================
-FETCH SIGNUP REQUESTS
-======================== */
+const [rejectReason,setRejectReason] = useState({});
+
+/* FETCH SIGNUP REQUESTS */
 
 useEffect(()=>{
 
@@ -36,9 +35,7 @@ fetch("http://localhost:5000/api/admin/requests")
 
 },[]);
 
-/* ========================
-FETCH ISSUES
-======================== */
+/* FETCH ISSUES */
 
 useEffect(()=>{
 
@@ -60,9 +57,7 @@ fetch("http://localhost:5000/api/issues/drainage")
 
 },[]);
 
-/* ========================
-APPROVE USER
-======================== */
+/* APPROVE USER */
 
 const approveUser = async(id)=>{
 
@@ -70,13 +65,11 @@ await fetch(`http://localhost:5000/api/admin/approve/${id}`,{
 method:"PUT"
 });
 
-setRequests(requests.filter(u=>u._id!==id));
+setRequests(requests.filter(user => user._id !== id));
 
 };
 
-/* ========================
-REJECT USER
-======================== */
+/* REJECT USER */
 
 const rejectUser = async(id)=>{
 
@@ -84,20 +77,62 @@ await fetch(`http://localhost:5000/api/admin/reject/${id}`,{
 method:"PUT"
 });
 
-setRequests(requests.filter(u=>u._id!==id));
+setRequests(requests.filter(user => user._id !== id));
 
 };
 
-/* ========================
-ISSUE LIST
-======================== */
+/* ACCEPT ISSUE */
+
+const acceptIssue = async(id)=>{
+
+await fetch(`http://localhost:5000/api/issues/status/${activeCategory}/${id}`,{
+method:"PUT",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({status:"Assigned"})
+});
+
+setIssues(prev=>({
+...prev,
+[activeCategory]: prev[activeCategory].filter(issue => issue._id !== id)
+}));
+
+};
+
+/* REJECT ISSUE */
+
+const rejectIssue = async(id)=>{
+
+if(!rejectReason[id]){
+alert("Please select rejection reason");
+return;
+}
+
+await fetch(`http://localhost:5000/api/issues/status/${activeCategory}/${id}`,{
+method:"PUT",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+status:"Rejected",
+reason: rejectReason[id]
+})
+});
+
+setIssues(prev=>({
+...prev,
+[activeCategory]: prev[activeCategory].filter(issue => issue._id !== id)
+}));
+
+};
+
+/* ISSUE LIST */
 
 const renderIssues = ()=>{
 
-const list = issues[activeCategory] || [];
+const list = (issues[activeCategory] || []).filter(
+issue => issue.status === "Pending"
+);
 
-if(list.length===0){
-return <p className="no-issues">No problems reported.</p>
+if(list.length === 0){
+return <p className="no-issues">No pending issues.</p>
 }
 
 return(
@@ -108,67 +143,72 @@ return(
 
 <div key={issue._id} className="issue-card">
 
-{/* LEFT DETAILS */}
-
 <div className="issue-left">
 
 <h3 className="issue-title">{activeCategory.toUpperCase()} ISSUE</h3>
 
-<p><b>Raised By:</b> {issue.villagerName || "Unknown"}</p>
-<p><b>Aadhaar:</b> {issue.aadhar || "N/A"}</p>
-
-{/* GARBAGE */}
-
-{activeCategory==="garbage" && (
-<>
+<p><b>Raised By:</b> {issue.villagerName}</p>
+<p><b>Aadhaar:</b> {issue.aadhar}</p>
 
 <p><b>Street:</b> {issue.street}</p>
-<p><b>Description:</b> {issue.description}</p>
-</>
-)}
-
-{/* WATER */}
 
 {activeCategory==="water" && (
-<>
 
-<p><b>Street:</b> {issue.street}</p>
 <p><b>Pipeline:</b> {issue.pipeline}</p>
-<p><b>House No:</b> {issue.houseNo}</p>
-<p><b>Description:</b> {issue.description}</p>
-</>
 )}
-
-{/* ELECTRICITY */}
 
 {activeCategory==="electricity" && (
-<>
 
-<p><b>Street:</b> {issue.street}</p>
 <p><b>Pole:</b> {issue.pole}</p>
-<p><b>House No:</b> {issue.houseNo}</p>
-<p><b>Description:</b> {issue.description}</p>
-</>
 )}
 
-{/* DRAINAGE */}
-
-{activeCategory==="drainage" && (
-<>
-
-<p><b>Street:</b> {issue.street}</p>
 <p><b>House No:</b> {issue.houseNo}</p>
-<p><b>Description:</b> {issue.description}</p>
-</>
-)}
 
-<p><b>Status:</b> {issue.status}</p>
+<p><b>Description:</b> {issue.description}</p>
+
 <p><b>Date:</b> {issue.date}</p>
 <p><b>Time:</b> {issue.time}</p>
 
+{/* ADMIN ACTIONS */}
+
+<div className="issue-actions">
+
+<button
+className="approve-btn"
+onClick={()=>acceptIssue(issue._id)}
+
+>
+
+Accept </button>
+
+<select
+value={rejectReason[issue._id] || ""}
+onChange={(e)=>setRejectReason({
+...rejectReason,
+[issue._id]: e.target.value
+})}
+
+>
+
+<option value="">Select reason</option>
+<option value="Duplicate issue">Duplicate issue</option>
+<option value="Wrong category">Wrong category</option>
+<option value="Fake complaint">Fake complaint</option>
+<option value="Already fixed">Already fixed</option>
+
+</select>
+
+<button
+className="reject-btn"
+onClick={()=>rejectIssue(issue._id)}
+
+>
+
+Reject </button>
+
 </div>
 
-{/* RIGHT IMAGE */}
+</div>
 
 {issue.photoId && (
 
@@ -207,9 +247,13 @@ return(
 
 <span>Hi {adminName}</span>
 
-<button onClick={logout} className="logout-btn">
-Logout
-</button>
+<button
+className="logout-btn"
+onClick={logout}
+
+>
+
+Logout </button>
 
 </div>
 
@@ -221,7 +265,7 @@ Logout
 
 <h3>Villager Registration Requests</h3>
 
-{requests.length===0 ?
+{requests.length === 0 ?
 
 <p className="no-issues">No Requests</p>
 
@@ -283,19 +327,31 @@ Reject
 
 <div className="category-cards">
 
-<div className="category-card" onClick={()=>setActiveCategory("electricity")}>
+<div
+className="category-card"
+onClick={()=>setActiveCategory("electricity")}
+>
 ⚡ Electricity
 </div>
 
-<div className="category-card" onClick={()=>setActiveCategory("water")}>
+<div
+className="category-card"
+onClick={()=>setActiveCategory("water")}
+>
 💧 Water
 </div>
 
-<div className="category-card" onClick={()=>setActiveCategory("garbage")}>
+<div
+className="category-card"
+onClick={()=>setActiveCategory("garbage")}
+>
 🗑 Garbage
 </div>
 
-<div className="category-card" onClick={()=>setActiveCategory("drainage")}>
+<div
+className="category-card"
+onClick={()=>setActiveCategory("drainage")}
+>
 🚰 Drainage
 </div>
 
