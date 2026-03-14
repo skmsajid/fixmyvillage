@@ -15,6 +15,13 @@ time:String,
 status:{
 type:String,
 default:"Pending"
+},
+deadline:{
+type:String
+},
+
+reason:{
+type:String
 }
 
 });

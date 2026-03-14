@@ -75,7 +75,6 @@ res.json({message:"Issue submitted successfully"});
 }catch(error){
 
 console.log(error);
-
 res.status(500).json({message:"Server error"});
 
 }
@@ -241,12 +240,19 @@ res.status(500).json({message:"Server error"});
 }
 
 };
+
+
+/* ========================
+UPDATE ISSUE STATUS
+======================== */
+
 export const updateIssueStatus = async (req,res)=>{
 
 try{
 
 const {type,id} = req.params;
-const {status,reason} = req.body;
+
+const {status,reason,deadline} = req.body;
 
 let Model;
 
@@ -255,15 +261,19 @@ if(type==="water") Model = Water;
 if(type==="garbage") Model = Garbage;
 if(type==="drainage") Model = Drainage;
 
-const updateData = { status };
+let updateData = { status };
 
-if(status==="Rejected"){
-updateData.rejectReason = reason;
+if(deadline){
+updateData.deadline = deadline;
+}
+
+if(status === "Rejected"){
+updateData.reason = reason;
 }
 
 await Model.findByIdAndUpdate(id,updateData);
 
-res.json({message:"Status updated"});
+res.json({message:"Status updated successfully"});
 
 }catch(err){
 

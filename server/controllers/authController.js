@@ -9,7 +9,7 @@ export const loginUser = async (req, res) => {
 
   try {
 
-    const { email, password } = req.body;
+    const { role, email, password } = req.body;
 
     const user = await User.findOne({ email });
 
@@ -19,13 +19,21 @@ export const loginUser = async (req, res) => {
       });
     }
 
+    // ⭐ Check role match
+    if (user.role !== role) {
+      return res.status(403).json({
+        message: `This account is not registered as ${role}.`
+      });
+    }
+
+    // password check
     if (user.password !== password) {
       return res.status(400).json({
         message: "Invalid password"
       });
     }
 
-    // villager status checks
+    // villager approval check
     if (user.role === "villager") {
 
       if (user.status === "pending") {
@@ -143,6 +151,39 @@ export const registerUser = async (req, res) => {
   } catch (error) {
 
     console.error("Signup Error:", error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
+
+};
+/* =========================
+   GET USER BY ID
+========================= */
+
+export const getUserById = async (req, res) => {
+
+  try {
+
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    res.json({
+      name: user.name,
+      email: user.email,
+      aadhar: user.aadhar
+    });
+
+  } catch (error) {
+
+    console.error(error);
 
     res.status(500).json({
       message: "Server error"

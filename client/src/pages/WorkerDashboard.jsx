@@ -69,7 +69,6 @@ task._id === id ? {...task,status} : task
 const resolveIssue = async(id)=>{
 
 const confirm = window.confirm("Are you sure the issue is resolved?");
-
 if(!confirm) return;
 
 await updateStatus(id,"Resolved");
@@ -109,6 +108,12 @@ return(
 
 <p><b>Status:</b> {task.status}</p>
 
+{/* DEADLINE DISPLAY */}
+
+{task.deadline && (
+<p style={{color:"red"}}><b>Deadline:</b> {task.deadline}</p>
+)}
+
 <div className="task-actions">
 
 {task.status === "Assigned" && (
@@ -116,10 +121,9 @@ return(
 <button
 className="progress-btn"
 onClick={()=>updateStatus(task._id,"In Progress")}
-
 >
-
-Start Work </button>
+Start Work
+</button>
 
 )}
 
@@ -128,10 +132,9 @@ Start Work </button>
 <button
 className="complete-btn"
 onClick={()=>resolveIssue(task._id)}
-
 >
-
-Mark Resolved </button>
+Mark Resolved
+</button>
 
 )}
 
@@ -161,46 +164,28 @@ Logout
 
 </div>
 
-{/* CATEGORY CARDS */}
-
 <div className="worker-cards">
 
-<div
-className="worker-card"
-onClick={()=>setActiveCategory("electricity")}
->
+<div className="worker-card" onClick={()=>setActiveCategory("electricity")}>
 ⚡ Electricity
 </div>
 
-<div
-className="worker-card"
-onClick={()=>setActiveCategory("water")}
->
+<div className="worker-card" onClick={()=>setActiveCategory("water")}>
 💧 Water
 </div>
 
-<div
-className="worker-card"
-onClick={()=>setActiveCategory("garbage")}
->
+<div className="worker-card" onClick={()=>setActiveCategory("garbage")}>
 🗑 Garbage
 </div>
 
-<div
-className="worker-card"
-onClick={()=>setActiveCategory("drainage")}
->
+<div className="worker-card" onClick={()=>setActiveCategory("drainage")}>
 🚰 Drainage
 </div>
 
 </div>
 
-{/* TASKS */}
-
 <div className="task-section">
-
 {activeCategory && renderTasks()}
-
 </div>
 
 </div>

@@ -1,90 +1,244 @@
 .villager-container{
-  padding:40px;
-  background:#f4f6f8;
-  min-height:100vh;
+padding:40px;
+background:#f4f7fb;
+min-height:100vh;
+font-family:system-ui;
 }
 
-.dashboard-title{
-  margin-bottom:25px;
+/* HEADER */
+
+.dashboard-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
 }
 
-.report-box{
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.08);
-  margin-bottom:30px;
+.logout-btn{
+background:#ef4444;
+color:white;
+border:none;
+padding:10px 18px;
+border-radius:6px;
+cursor:pointer;
+font-weight:600;
 }
 
-.report-box input,
-.report-box textarea{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  border:1px solid #ddd;
-  border-radius:6px;
+/* USER BOX */
+
+.user-box{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+margin-bottom:30px;
 }
 
-.report-btn{
-  margin-top:15px;
-  background:#2563eb;
-  color:white;
-  border:none;
-  padding:10px 16px;
-  border-radius:6px;
-  cursor:pointer;
+.user-box h3{
+margin-bottom:6px;
 }
 
-.table-box{
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.08);
+.user-id{
+font-size:14px;
+color:#555;
 }
 
-.issue-table{
-  width:100%;
-  border-collapse:collapse;
-}
+/* ISSUE CARDS */
 
-.issue-table th{
-  background:#2563eb;
-  color:white;
-  padding:12px;
-}
-
-.issue-table td{
-  padding:12px;
-  border-bottom:1px solid #eee;
-}
 .issue-cards{
 display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:20px;
-margin-bottom:30px;
+margin-bottom:40px;
 }
 
 .card{
 background:white;
-padding:30px;
-border-radius:10px;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
-cursor:pointer;
+padding:25px;
+border-radius:12px;
+box-shadow:0 4px 14px rgba(0,0,0,0.1);
 text-align:center;
-font-size:18px;
-font-weight:bold;
-transition:0.3s;
+font-weight:600;
+cursor:pointer;
+transition:0.25s;
 }
 
 .card:hover{
-transform:scale(1.05);
+transform:translateY(-4px);
 background:#2563eb;
 color:white;
 }
-.user-box{
+
+/* FORM */
+
+.report-box{
 background:white;
-padding:15px;
-margin-bottom:20px;
-border-radius:8px;
-box-shadow:0 3px 10px rgba(0,0,0,0.08);
+padding:25px;
+border-radius:10px;
+box-shadow:0 4px 14px rgba(0,0,0,0.08);
+margin-bottom:30px;
+}
+
+.report-box input,
+.report-box textarea{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:1px solid #ddd;
+border-radius:6px;
+}
+
+.report-btn{
+margin-top:15px;
+background:#2563eb;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* CAROUSEL */
+
+.progress-section{
+margin-bottom:40px;
+}
+
+.carousel{
+overflow:hidden;
+width:100%;
+}
+
+.carousel-track{
+display:flex;
+gap:20px;
+animation:scroll 28s linear infinite;
+}
+
+.issue-progress-card{
+min-width:260px;
+max-width:260px;
+background:white;
+border-radius:12px;
+box-shadow:0 6px 16px rgba(0,0,0,0.12);
+overflow:hidden;
+flex-shrink:0;
+transition:0.3s;
+}
+
+.issue-progress-card:hover{
+transform:translateY(-5px);
+}
+
+.issue-progress-card img{
+width:100%;
+height:160px;
+object-fit:cover;
+}
+
+.issue-info{
+padding:12px;
+}
+
+.issue-info p{
+font-size:14px;
+margin:4px 0;
+}
+
+.desc{
+color:#555;
+font-size:13px;
+}
+
+.status{
+font-weight:600;
+color:#2563eb;
+}
+
+.deadline{
+color:#ef4444;
+font-size:13px;
+}
+
+/* CATEGORY TAG */
+
+.category-tag{
+background:#2563eb;
+color:white;
+font-size:12px;
+padding:4px 8px;
+position:absolute;
+margin:8px;
+border-radius:6px;
+}
+
+/* CAROUSEL ANIMATION */
+
+@keyframes scroll{
+0%{transform:translateX(0)}
+100%{transform:translateX(-50%)}
+}
+
+/* EMPTY */
+
+.empty{
+color:#777;
+margin-top:10px;
+}
+.no-scroll{
+animation:none !important;
+justify-content:flex-start;
+}
+.stats-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+margin-bottom:40px;
+}
+
+.stat-card{
+background:white;
+padding:20px;
+border-radius:10px;
+text-align:center;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.stat-card h3{
+font-size:14px;
+color:#555;
+}
+
+.stat-card p{
+font-size:24px;
+font-weight:700;
+color:#2563eb;
+}
+
+.my-issues{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+margin-bottom:40px;
+}
+
+.issue-table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+.issue-table th{
+background:#2563eb;
+color:white;
+padding:10px;
+}
+
+.issue-table td{
+padding:10px;
+border-bottom:1px solid #eee;
 }
