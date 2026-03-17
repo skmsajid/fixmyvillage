@@ -1,6 +1,6 @@
 /* ===== PREMIUM HERO SECTION ===== */
 .hero-section {
-  margin-top: 55px;
+  margin-top: 0;
   min-height: calc(100vh - 55px);
   display: flex;
   align-items: center;
@@ -276,7 +276,7 @@
 
 @media (max-width: 768px) {
   .hero-section {
-    margin-top: 50px;
+    margin-top: 0;
     min-height: calc(100vh - 50px);
     padding: clamp(20px, 3vw, 50px) 20px;
   }
