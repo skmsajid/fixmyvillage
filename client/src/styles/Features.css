@@ -264,3 +264,39 @@
     animation: marquee 15s linear infinite;
   }
 }
+/* 🔥 MOBILE FIX — CLEAN 3 CARD VIEW */
+@media (max-width: 768px) {
+
+  .features-carousel-track {
+    animation: marquee 18s linear infinite;
+    gap: 12px;
+  }
+
+  .feature-card {
+    flex: 0 0 calc(33.33% - 10px); /* 🔥 3 cards */
+    min-width: 120px;
+    max-width: 140px;
+
+    height: 150px; /* proper height */
+    padding: 10px 8px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .feature-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .feature-content h3 {
+    font-size: 0.75rem;
+  }
+
+  .feature-content p {
+    font-size: 0.65rem;
+    line-height: 1.2;
+  }
+}

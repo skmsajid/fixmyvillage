@@ -236,3 +236,39 @@
     animation: marquee 15s linear infinite;
   }
 }
+/* 🔥 MOBILE FIX — SHOW 3 CARDS CLEAN */
+@media (max-width: 768px) {
+
+  .problems-carousel-track {
+    animation: marquee 18s linear infinite;
+    gap: 12px;
+  }
+
+  .problem-card {
+    flex: 0 0 calc(33.33% - 10px); /* 🔥 exactly 3 cards */
+    min-width: 120px;
+    max-width: 140px;
+
+    height: 140px; /* 🔥 fixed height */
+    padding: 12px 8px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .problem-icon {
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+  }
+
+  .problem-card h3 {
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+  }
+
+  .problem-card p {
+    font-size: 0.65rem;
+    line-height: 1.2;
+  }
+}

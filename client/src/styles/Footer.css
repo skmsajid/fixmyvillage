@@ -97,3 +97,15 @@
     font-size: 1rem;
   }
 }
+/* 🔥 MOBILE FOOTER GRID FIX */
+@media (max-width: 768px) {
+
+  .footer-content {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    gap: 20px;
+  }
+
+  .footer-section {
+    text-align: left;
+  }
+}

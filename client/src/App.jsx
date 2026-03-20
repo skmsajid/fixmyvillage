@@ -6,7 +6,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import VillagerDashboard from "./pages/VillagerDashboard";
 import WorkerDashboard from "./pages/WorkerDashboard";
 import Home from "./pages/Home";
-
+import ScrollTop from "./components/ScrollTop";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -14,6 +14,9 @@ function App() {
   return (
 
     <Router>
+
+      {/* 🔥 ADD HERE */}
+      <ScrollTop />
 
       <Routes>
 
@@ -55,7 +58,7 @@ function App() {
       </Routes>
 
     </Router>
-
+    
   );
 }
 
