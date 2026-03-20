@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
 import "../styles/login.css";
 
 export default function Login() {
 
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(null);
 
   const [formData, setFormData] = useState({
     role: "villager",
@@ -14,24 +18,20 @@ export default function Login() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-    // ⭐ Redirect if already logged in
+  // 🔁 redirect if already logged
   useEffect(() => {
-
     const role = localStorage.getItem("role");
 
-    if (role === "admin") {
-      navigate("/admin");
-    }
+    if (role === "admin") navigate("/admin");
+    else if (role === "worker") navigate("/worker");
+    else if (role === "villager") navigate("/villager");
+  }, [navigate]);
 
-    else if (role === "worker") {
-      navigate("/worker");
-    }
+  const showToast = (msg, type) => {
+    setToast({ message: msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
-    else if (role === "villager") {
-      navigate("/villager");
-    }
-
-  }, []);
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -39,66 +39,61 @@ export default function Login() {
     });
   };
 
-
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
+    if (loading) return; // 🔥 block multiple clicks
+
+    setLoading(true);
+
     try {
-
       const response = await fetch("http://localhost:5000/api/auth/login", {
-
         method: "POST",
-
         headers: {
           "Content-Type": "application/json"
         },
-
         body: JSON.stringify(formData)
-
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.message || "Login failed");
+        showToast(data.message || "Login failed", "error");
+        setLoading(false); // only here reset
         return;
       }
 
-      // ⭐ Save user session
+      // ✅ Save session
       localStorage.setItem("role", data.role);
       localStorage.setItem("userId", data.user.id);
       localStorage.setItem("userName", data.user.name);
 
-      alert("Login Successful");
+      showToast("Login Successful", "success");
 
-
-      // Role Based Navigation
-
-      if (data.role === "admin") {
-        navigate("/admin");
-      }
-
-      else if (data.role === "worker") {
-        navigate("/worker");
-      }
-
-      else {
-        navigate("/villager");
-      }
+      // 🔥 KEEP BUTTON BLOCKED UNTIL NAVIGATION
+      setTimeout(() => {
+        if (data.role === "admin") navigate("/admin");
+        else if (data.role === "worker") navigate("/worker");
+        else navigate("/villager");
+      }, 1200);
 
     } catch (error) {
-
       console.error(error);
-      alert("Server error. Please try again.");
-
+      showToast("Server error. Try again", "error");
+      setLoading(false);
     }
-
   };
-
 
   return (
     <div className="login-container">
+
+      {/* 🔙 Back */}
+      <div className="back-btn" onClick={() => navigate("/")}>
+        ←
+      </div>
+
+      {/* 🔔 Toast */}
+      {toast && <Toast message={toast.message} type={toast.type} />}
 
       <div className="login-card">
 
@@ -109,10 +104,8 @@ export default function Login() {
 
           <div className="form-grid">
 
-            {/* ROLE SELECT */}
             <div className="input-group">
               <label>Login As</label>
-
               <select
                 name="role"
                 value={formData.role}
@@ -124,32 +117,24 @@ export default function Login() {
               </select>
             </div>
 
-
-            {/* EMAIL */}
             <div className="input-group">
               <label>Email</label>
-
               <input
                 type="email"
                 name="email"
-                placeholder="Enter email"
                 value={formData.email}
                 onChange={handleChange}
                 required
               />
             </div>
 
-
-            {/* PASSWORD */}
             <div className="input-group password-group">
               <label>Password</label>
 
               <div className="password-wrapper">
-
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="Enter password"
                   value={formData.password}
                   onChange={handleChange}
                   required
@@ -161,22 +146,18 @@ export default function Login() {
                 >
                   {showPassword ? "🙈" : "👁"}
                 </span>
-
               </div>
             </div>
 
           </div>
 
-
-          {/* LOGIN BUTTON */}
-          <button className="login-btn">
-            Login
+          {/* 🔥 BUTTON */}
+          <button className="login-btn" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </button>
 
         </form>
 
-
-        {/* SIGNUP NAVIGATION */}
         <p className="auth-switch">
           Don't have an account? <Link to="/signup">Register</Link>
         </p>

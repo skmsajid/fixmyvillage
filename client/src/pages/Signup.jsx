@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
 import "../styles/Signup.css";
 
 export default function Signup() {
 
-  const navigate = useNavigate();   // ⭐ define navigate
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -17,83 +21,102 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-
-  // Redirect if already logged in
+  // 🔁 redirect if logged in
   useEffect(() => {
-
     const role = localStorage.getItem("role");
-
-    if (role === "admin") {
-      navigate("/admin");
-    }
-    else if (role === "worker") {
-      navigate("/worker");
-    }
-    else if (role === "villager") {
-      navigate("/villager");
-    }
-
+    if (role === "admin") navigate("/admin");
+    else if (role === "worker") navigate("/worker");
+    else if (role === "villager") navigate("/villager");
   }, [navigate]);
 
+  // 🔔 toast helper
+  const showToast = (msg, type) => {
+    setToast({ message: msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
+  // 🔥 Aadhaar formatter (XXXX XXXX XXXX)
+  const formatAadhar = (value) => {
+    const digits = value.replace(/\D/g, "").slice(0, 12);
+    return digits.replace(/(\d{4})(?=\d)/g, "$1 ");
+  };
+
+  // ✏️ input change
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "aadhar") {
+      const formatted = formatAadhar(value);
+      setFormData({
+        ...formData,
+        aadhar: formatted
+      });
+      return;
+    }
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
   };
 
-
+  // 🚀 submit
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
+    if (loading) return;
+    setLoading(true);
+
+    const rawAadhar = formData.aadhar.replace(/\s/g, "");
+
+    // 🔒 validation
+    if (rawAadhar.length !== 12) {
+      showToast("Aadhaar must be exactly 12 digits", "error");
+      setLoading(false);
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      showToast("Passwords do not match", "error");
+      setLoading(false);
       return;
     }
 
     try {
-
       const res = await fetch("http://localhost:5000/api/auth/signup", {
-
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          aadhar: formData.aadhar,
-          password: formData.password
+          ...formData,
+          aadhar: rawAadhar // send clean digits
         })
-
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message);
+        showToast(data.message, "error");
+        setLoading(false);
         return;
       }
 
-      alert("Signup request sent to admin");
+      showToast("Signup request sent", "success");
+      setTimeout(() => navigate("/login"), 1500);
 
-      navigate("/login");  // optional redirect after signup
-
-    }
-    catch (err) {
-
-      console.error(err);
-      alert("Server error");
-
+    } catch {
+      showToast("Server error", "error");
     }
 
+    setLoading(false);
   };
-
 
   return (
     <div className="signup-container">
+
+      {/* 🔙 Back */}
+      <div className="back-btn" onClick={() => navigate("/")}>←</div>
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
 
       <div className="signup-card">
 
@@ -101,54 +124,36 @@ export default function Signup() {
         <p className="subtitle">Register to report village issues</p>
 
         <form onSubmit={handleSubmit}>
-
           <div className="form-grid">
 
-            {/* Full Name */}
             <div className="input-group">
               <label>Full Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder="Enter full name"
-                onChange={handleChange}
-                required
-              />
+              <input name="name" onChange={handleChange} required />
             </div>
 
-            {/* Email */}
             <div className="input-group">
               <label>Email</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter email"
-                onChange={handleChange}
-                required
-              />
+              <input type="email" name="email" onChange={handleChange} required />
             </div>
 
-            {/* Aadhaar */}
+            {/* 🔥 Aadhaar */}
             <div className="input-group">
               <label>Aadhaar Number</label>
               <input
-                type="text"
                 name="aadhar"
-                placeholder="12 digit Aadhaar"
-                maxLength="12"
+                value={formData.aadhar}
                 onChange={handleChange}
+                placeholder="XXXX XXXX XXXX"
                 required
               />
             </div>
 
-            {/* Password */}
             <div className="input-group password-group">
               <label>Password</label>
               <div className="password-wrapper">
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="Create password"
                   onChange={handleChange}
                   required
                 />
@@ -158,14 +163,12 @@ export default function Signup() {
               </div>
             </div>
 
-            {/* Confirm Password */}
             <div className="input-group password-group">
               <label>Confirm Password</label>
               <div className="password-wrapper">
                 <input
                   type={showConfirm ? "text" : "password"}
                   name="confirmPassword"
-                  placeholder="Confirm password"
                   onChange={handleChange}
                   required
                 />
@@ -177,7 +180,9 @@ export default function Signup() {
 
           </div>
 
-          <button className="signup-btn">Register</button>
+          <button className="signup-btn" disabled={loading}>
+            {loading ? "Processing..." : "Register"}
+          </button>
 
         </form>
 
@@ -186,7 +191,6 @@ export default function Signup() {
         </p>
 
       </div>
-
     </div>
   );
 }
