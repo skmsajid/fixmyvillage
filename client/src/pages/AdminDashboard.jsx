@@ -53,6 +53,8 @@ rejected:0
 const [rejectReason,setRejectReason]=useState({});
 const [deadline,setDeadline]=useState({});
 
+const [popupMessage,setPopupMessage]=useState("");
+
 
 /* CATEGORY LABEL */
 
@@ -186,7 +188,7 @@ alert("Select deadline");
 return;
 }
 
-await fetch(`http://localhost:5000/api/issues/status/${activeCategory}/${id}`,{
+const res = await fetch(`http://localhost:5000/api/issues/status/${activeCategory}/${id}`,{
 method:"PUT",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
@@ -194,6 +196,14 @@ status:"Assigned",
 deadline:deadline[id]
 })
 });
+
+const data = await res.json();
+
+if(data.emailSent){
+setPopupMessage("Issue accepted and email sent to villager.");
+} else {
+setPopupMessage("Issue accepted but failed to send email to villager.");
+}
 
 fetchIssues(activeCategory);
 fetchAllIssues();
@@ -211,7 +221,7 @@ alert("Select rejection reason");
 return;
 }
 
-await fetch(`http://localhost:5000/api/issues/status/${activeCategory}/${id}`,{
+const res = await fetch(`http://localhost:5000/api/issues/status/${activeCategory}/${id}`,{
 method:"PUT",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
@@ -219,6 +229,14 @@ status:"Rejected",
 reason:rejectReason[id]
 })
 });
+
+const data = await res.json();
+
+if(data.emailSent){
+setPopupMessage("Issue rejected and email sent to villager.");
+} else {
+setPopupMessage("Issue rejected but failed to send email to villager.");
+}
 
 fetchIssues(activeCategory);
 fetchAllIssues();
@@ -351,15 +369,15 @@ return(
 <p><b>Street:</b> {issue.street}</p>
 
 {activeCategory==="water" && (
-<p><b>Pipeline:</b> {issue.pipeline}</p>
+<p><b>Pipeline:</b> {issue.pipeline || 'N/A'}</p>
 )}
 
 {activeCategory==="electricity" && (
-<p><b>Pole:</b> {issue.pole}</p>
+<p><b>Pole:</b> {issue.pole || 'N/A'}</p>
 )}
 
 {activeCategory!=="garbage" && (
-<p><b>House No:</b> {issue.houseNo}</p>
+<p><b>House No:</b> {issue.houseNo || 'N/A'}</p>
 )}
 
 <p><b>Description:</b> {issue.description}</p>
@@ -652,6 +670,28 @@ onClick={()=>{setActiveCategory("drainage");fetchIssues("drainage")}}>
 <div className="issue-section">
 {activeCategory && renderIssues()}
 </div>
+
+
+{/* EMAIL POPUP */}
+
+{popupMessage &&(
+
+<div className="popup-overlay">
+
+<div className="popup-box">
+
+<p>{popupMessage}</p>
+
+<button className="close-popup" onClick={()=>setPopupMessage("")}>
+Close
+</button>
+
+</div>
+
+</div>
+
+)}
+
 
 </div>
 

@@ -95,6 +95,8 @@ return(
 
 <div key={task._id} className="task-card">
 
+<div className="task-left">
+
 <h3>{activeCategory.toUpperCase()} TASK</h3>
 
 <p><b>Street:</b> {task.street}</p>
@@ -139,6 +141,16 @@ Mark Resolved
 )}
 
 </div>
+
+</div>
+
+{task.photoId &&(
+
+<div className="task-right">
+<img src={`http://localhost:5000/api/files/${task.photoId}`} alt="issue"/>
+</div>
+
+)}
 
 </div>
 

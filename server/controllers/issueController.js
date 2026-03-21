@@ -5,6 +5,7 @@ import Water from "../models/issues/WaterIssue.js";
 import Garbage from "../models/issues/GarbageIssue.js";
 import Drainage from "../models/issues/DrainageIssue.js";
 import User from "../models/User.js";
+import transporter from "../config/email.js";
 
 /* ========================
 CREATE ISSUE
@@ -273,7 +274,92 @@ updateData.reason = reason;
 
 await Model.findByIdAndUpdate(id,updateData);
 
-res.json({message:"Status updated successfully"});
+// Send email if status is Assigned, Rejected, or Resolved
+let emailSent = false;
+if (status === "Assigned" || status === "Rejected" || status === "Resolved") {
+  const issue = await Model.findById(id);
+  const user = await User.findById(issue.userId);
+  if (user && user.email) {
+    let subject, body;
+    if (status === "Assigned") {
+      subject = "Your Issue Has Been Accepted";
+      body = `
+Dear ${user.name},
+
+Your issue has been accepted.
+
+Issue Details:
+- Category: ${type}
+- Street: ${issue.street}
+- House No: ${issue.houseNo || 'N/A'}
+- Description: ${issue.description}
+- Date: ${issue.date}
+- Time: ${issue.time}
+- Deadline: ${deadline}
+
+Thank you for using FixMyVillage.
+
+Best regards,
+Admin Team
+      `;
+    } else if (status === "Rejected") {
+      subject = "Your Issue Has Been Rejected";
+      body = `
+Dear ${user.name},
+
+Your issue has been rejected.
+
+Issue Details:
+- Category: ${type}
+- Street: ${issue.street}
+- House No: ${issue.houseNo || 'N/A'}
+- Description: ${issue.description}
+- Date: ${issue.date}
+- Time: ${issue.time}
+- Reason: ${reason}
+
+Thank you for using FixMyVillage.
+
+Best regards,
+Admin Team
+      `;
+    } else if (status === "Resolved") {
+      subject = "Your Issue Has Been Resolved";
+      body = `
+Dear ${user.name},
+
+Your issue has been resolved.
+
+Issue Details:
+- Category: ${type}
+- Street: ${issue.street}
+- House No: ${issue.houseNo || 'N/A'}
+- Description: ${issue.description}
+- Date: ${issue.date}
+- Time: ${issue.time}
+
+Thank you for using FixMyVillage.
+
+Best regards,
+Worker Team
+      `;
+    }
+
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: subject,
+        text: body
+      });
+      emailSent = true;
+    } catch (emailError) {
+      console.log('Email send error:', emailError);
+    }
+  }
+}
+
+res.json({message:"Status updated successfully", emailSent});
 
 }catch(err){
 
