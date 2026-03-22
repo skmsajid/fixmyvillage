@@ -100,7 +100,7 @@ export default function Signup() {
         return;
       }
 
-      showToast("Signup request sent", "success");
+      showToast("Registration request is sent to Admin and Wait for Admin Approval", "success");
       setTimeout(() => navigate("/login"), 1500);
 
     } catch {

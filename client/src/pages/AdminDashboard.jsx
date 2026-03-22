@@ -93,27 +93,51 @@ fetch("http://localhost:5000/api/admin/requests")
 
 /* APPROVE USER */
 
-const approveUser=async(id)=>{
+const approveUser = async (id) => {
 
-await fetch(`http://localhost:5000/api/admin/approve/${id}`,{
-method:"PUT"
-});
+  try {
+    const res = await fetch(`http://localhost:5000/api/admin/approve/${id}`, {
+      method: "PUT"
+    });
 
-setRequests(requests.filter(u=>u._id!==id));
+    const data = await res.json();
 
+    if (data.emailSent === true) {
+      setPopupMessage("✅ Registration request is accepted and Approval mail is sent");
+    } else {
+      setPopupMessage("⚠️ Registration accepted but mail is not sent");
+    }
+
+    setRequests(requests.filter(u => u._id !== id));
+
+  } catch (err) {
+    setPopupMessage("❌ Error while approving request");
+  }
 };
 
 
 /* REJECT USER */
 
-const rejectUser=async(id)=>{
+const rejectUser = async (id) => {
 
-await fetch(`http://localhost:5000/api/admin/reject/${id}`,{
-method:"PUT"
-});
+  try {
+    const res = await fetch(`http://localhost:5000/api/admin/reject/${id}`, {
+      method: "PUT"
+    });
 
-setRequests(requests.filter(u=>u._id!==id));
+    const data = await res.json();
 
+    if (data.emailSent === true) {
+      setPopupMessage("❌ Registration request rejected and Rejection mail is sent");
+    } else {
+      setPopupMessage("⚠️ Registration rejected but mail is not sent");
+    }
+
+    setRequests(requests.filter(u => u._id !== id));
+
+  } catch (err) {
+    setPopupMessage("❌ Error while rejecting request");
+  }
 };
 
 
@@ -458,9 +482,17 @@ const renderIssues = () => {
 };
 
 
-
+useEffect(() => {
+  if (popupMessage) {
+    const timer = setTimeout(() => {
+      setPopupMessage("");
+    }, 2500);
+    return () => clearTimeout(timer);
+  }
+}, [popupMessage]);
 
 return (
+	
 	<div className="admin-container">
 		{/* NAVBAR */}
 		<div className="admin-navbar">
@@ -494,33 +526,41 @@ return (
 		{/* REQUEST POPUP */}
 		{showRequestPopup && (
 			<div className="popup-overlay">
-				<div className="popup-box">
-					<h2>Signup Requests</h2>
-					{requests.length===0 ? (
-						<>
-							<p>No signup requests.</p>
-						</>
-					) : (
-						requests.map(user=>(
-							<div key={user._id} className="request-card">
-								<p><b>Name:</b> {user.name}</p>
-								<p><b>Email:</b> {user.email}</p>
-								<p><b>Aadhaar:</b> {user.aadhar}</p>
-								<div className="request-actions">
-									<button className="approve-btn" onClick={()=>approveUser(user._id)}>
-										Approve
-									</button>
-									<button className="reject-btn" onClick={()=>rejectUser(user._id)}>
-										Reject
-									</button>
-								</div>
-							</div>
-						))
-					)}
-					<button className="close-popup" onClick={()=>setShowRequestPopup(false)}>
-						Close
-					</button>
-				</div>
+				<div className="popup-box request-popup">
+
+  {/* HEADER */}
+  <div className="popup-header">
+    <h2>Signup Requests</h2>
+  </div>
+
+  {/* SCROLL AREA */}
+  <div className="popup-content">
+
+    {requests.length===0 ? (
+      <p>No signup requests.</p>
+    ) : (
+      requests.map(user=>(
+        <div key={user._id} className="request-card">
+          <p><b>Name:</b> {user.name}</p>
+          <p><b>Email:</b> {user.email}</p>
+          <p><b>Aadhaar:</b> {user.aadhar}</p>
+
+          <div className="request-actions">
+            <button onClick={()=>approveUser(user._id)}>Approve</button>
+            <button onClick={()=>rejectUser(user._id)}>Reject</button>
+          </div>
+        </div>
+      ))
+    )}
+
+  </div>
+
+  {/* FOOTER */}
+  <div className="popup-footer">
+    <button onClick={()=>setShowRequestPopup(false)}>Close</button>
+  </div>
+
+</div>
 			</div>
 		)}
 
@@ -652,22 +692,10 @@ return (
 
 {/* EMAIL POPUP */}
 
-{popupMessage &&(
-
-<div className="popup-overlay">
-
-<div className="popup-box">
-
-<p>{popupMessage}</p>
-
-<button className="close-popup" onClick={()=>setPopupMessage("")}>
-Close
-</button>
-
-</div>
-
-</div>
-
+{popupMessage && (
+  <div className="side-toast">
+    {popupMessage}
+  </div>
 )}
 
 
