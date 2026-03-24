@@ -33,7 +33,7 @@ const confirmLogout = () => {
 	setTimeout(() => {
 		localStorage.clear();
 		navigate("/");
-	}, 1200);
+	}, 700);
 };
 
 
@@ -41,7 +41,7 @@ const [requests,setRequests]=useState([]);
 const [showRequestPopup,setShowRequestPopup]=useState(false);
 
 const [activeCategory,setActiveCategory]=useState("");
-
+const [requestLoading, setRequestLoading] = useState(null); 
 const [issues,setIssues]=useState({
 electricity:[],
 water:[],
@@ -94,6 +94,7 @@ fetch("http://localhost:5000/api/admin/requests")
 /* APPROVE USER */
 
 const approveUser = async (id) => {
+  setRequestLoading({ id, type: "approve" });
 
   try {
     const res = await fetch(`http://localhost:5000/api/admin/approve/${id}`, {
@@ -112,6 +113,8 @@ const approveUser = async (id) => {
 
   } catch (err) {
     setPopupMessage("❌ Error while approving request");
+  } finally {
+    setRequestLoading(null);
   }
 };
 
@@ -119,6 +122,7 @@ const approveUser = async (id) => {
 /* REJECT USER */
 
 const rejectUser = async (id) => {
+  setRequestLoading({ id, type: "reject" });
 
   try {
     const res = await fetch(`http://localhost:5000/api/admin/reject/${id}`, {
@@ -137,6 +141,8 @@ const rejectUser = async (id) => {
 
   } catch (err) {
     setPopupMessage("❌ Error while rejecting request");
+  } finally {
+    setRequestLoading(null);
   }
 };
 
@@ -293,16 +299,34 @@ const COLORS=["#f59e0b","#3b82f6","#6366f1","#22c55e","#ef4444"];
 
 /* ISSUE CARD */
 
-const IssueCard=({issue})=>(
+const IssueCard=({issue})=>{
 
+const [imgLoaded,setImgLoaded]=useState(false);
+
+return (
 <div className="issue-progress-card">
 
-<div className="category-tag">
-{label(issue.category)}
-</div>
+ 
 
-{issue.photoId &&(
-<img src={`http://localhost:5000/api/files/${issue.photoId}`} alt="issue"/>
+{issue.photoId && (
+  <div className="image-wrapper">
+    <div className={`category-tag on-image ${issue.category}`}>
+  {label(issue.category)}
+</div>
+    {!imgLoaded && (
+      <div className="image-skeleton"></div>
+    )}
+
+    <img
+      src={`http://localhost:5000/api/files/${issue.photoId}`}
+      alt="issue"
+      onLoad={()=>setImgLoaded(true)}
+style={{
+    opacity: imgLoaded ? 1 : 0,
+    transition: "opacity 0.4s ease"
+  }}    />
+    
+  </div>
 )}
 
 <div className="issue-info">
@@ -325,7 +349,7 @@ const IssueCard=({issue})=>(
 
 </div>
 
-);
+)};
 
 
 
@@ -357,7 +381,7 @@ const Carousel = ({ issues, title, loading, highlight }) => {
         <h2 className={`section-title${highlight ? ' highlight' : ''}`}>{title}</h2>
       </div>
       <div className="carousel" style={isMobile ? {overflowX:'auto'} : {}}>
-        <div className="carousel-track" style={isMobile ? {gap:12, transition:'transform 0.6s cubic-bezier(.4,2,.6,1)'} : {}}>
+        <div className="carousel-track" style={isMobile ? {gap:10, transition:'transform 0.4s ease-in-out'} : {}}>
           {loading ? (
             Array.from({length: isMobile ? 3 : 4}).map((_,i)=>(
               <div key={i} className="skeleton-card" style={{minWidth:260,maxWidth:260,height:220}}></div>
@@ -496,7 +520,7 @@ return (
 	<div className="admin-container">
 		{/* NAVBAR */}
 		<div className="admin-navbar">
-			<h2 style={{fontSize:'clamp(1.1rem,4vw,2.1rem)',fontWeight:800}}>Admin Dashboard</h2>
+<h2 className="main-heading">Admin Dashboard</h2>
 			<div className="admin-right">
 				<div className="request-button" onClick={()=>setShowRequestPopup(true)}>
 					Signup Requests
@@ -516,9 +540,13 @@ return (
 					<button onClick={confirmLogout} disabled={logoutLoading} style={{marginRight:8}}>
 						{logoutLoading ? "Logging out..." : "Yes, Logout"}
 					</button>
-					<button onClick={()=>setShowLogoutConfirm(false)} disabled={logoutLoading}>
-						Cancel
-					</button>
+					<button 
+  className="cancel-btn"
+  onClick={()=>setShowLogoutConfirm(false)} 
+  disabled={logoutLoading}
+>
+  Cancel
+</button>
 				</div>
 			</div>
 		)}
@@ -546,9 +574,26 @@ return (
           <p><b>Aadhaar:</b> {user.aadhar}</p>
 
           <div className="request-actions">
-            <button onClick={()=>approveUser(user._id)}>Approve</button>
-            <button onClick={()=>rejectUser(user._id)}>Reject</button>
-          </div>
+  <button
+    onClick={() => approveUser(user._id)}
+    disabled={requestLoading !== null}
+    className={requestLoading?.id === user._id && requestLoading?.type === "approve" ? "loading" : ""}
+  >
+    {requestLoading?.id === user._id && requestLoading?.type === "approve"
+      ? "Approving..."
+      : "Approve"}
+  </button>
+
+  <button
+    onClick={() => rejectUser(user._id)}
+    disabled={requestLoading !== null}
+    className={requestLoading?.id === user._id && requestLoading?.type === "reject" ? "loading" : ""}
+  >
+    {requestLoading?.id === user._id && requestLoading?.type === "reject"
+      ? "Rejecting..."
+      : "Reject"}
+  </button>
+</div>
         </div>
       ))
     )}
@@ -566,7 +611,7 @@ return (
 
 		{/* DASHBOARD STATISTICS */}
 		<div className="stats-section">
-			<h2>Dashboard Statistics</h2>
+			<h2 className="main-heading">Dashboard Statistics</h2>
 			<div className="stats-cards">
 				{loadingData ? (
 					Array.from({length:6}).map((_,i)=>(
@@ -585,7 +630,7 @@ return (
 			</div>
 			<div className="charts">
 				<div className="chart-box">
-					<h3>Status Distribution</h3>
+					<h3 className="sub-heading">Status Distribution</h3>
 					{loadingData ? (
 						<SkeletonBox height={250} />
 					) : (
@@ -605,7 +650,7 @@ return (
 					)}
 				</div>
 				<div className="chart-box">
-					<h3>Status Comparison</h3>
+					<h3 className="sub-heading">Status Comparison</h3>
 					{loadingData ? (
 						<SkeletonBox height={250} />
 					) : (
@@ -654,19 +699,35 @@ return (
 
 
 
-{/* ASSIGNED */}
-<Carousel title="Assigned Issues" issues={assignedIssues} loading={loadingData} highlight/>
+{/* ASSIGNED WRAPPER */}
+<div className="issue-group assigned-group">
+  <Carousel 
+    title="Assigned Issues" 
+    issues={assignedIssues} 
+    loading={loadingData} 
+    highlight
+  />
+</div>
 
-{/* IN PROGRESS */}
-<Carousel title="In Progress Issues" issues={progressIssues} loading={loadingData} highlight/>
-
+{/* IN PROGRESS WRAPPER */}
+<div className="issue-group progress-group">
+  <Carousel 
+    title="In Progress Issues" 
+    issues={progressIssues} 
+    loading={loadingData} 
+    highlight
+  />
+</div>
 
 {/* CATEGORY CARDS */}
+<div className="raise-wrapper">
 
-<div className="category-section">
+  <div className="category-section">
+
     <div className="section-header" style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
         <h2 className="section-title highlight">Reported Issues</h2>
     </div>
+
     <div className="category-cards">
         {['electricity','water','garbage','drainage'].map(cat => (
             <div
@@ -680,7 +741,10 @@ return (
             </div>
         ))}
     </div>
-</div>
+
+  </div> {/* category-section */}
+
+</div> {/* raise-wrapper */}
 
 
 {/* CATEGORY ISSUES */}
