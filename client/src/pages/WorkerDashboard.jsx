@@ -15,7 +15,7 @@ function TaskImageWithSkeleton({ photoId }) {
     <div className="task-right">
       {!imgLoaded && <div className="task-img-skeleton" />}
       <img
-        src={`http://localhost:5000/api/files/${photoId}`}
+        src={`/api/files/${photoId}`}
         alt="issue"
         style={{ display: imgLoaded ? 'block' : 'none' }}
         onLoad={() => setImgLoaded(true)}
@@ -81,10 +81,10 @@ export default function WorkerDashboard() {
     setLoading(true);
 
     Promise.all([
-      fetch("http://localhost:5000/api/issues/electricity").then(res => res.json()),
-      fetch("http://localhost:5000/api/issues/water").then(res => res.json()),
-      fetch("http://localhost:5000/api/issues/garbage").then(res => res.json()),
-      fetch("http://localhost:5000/api/issues/drainage").then(res => res.json())
+      fetch("/api/issues/electricity").then(res => res.json()),
+      fetch("/api/issues/water").then(res => res.json()),
+      fetch("/api/issues/garbage").then(res => res.json()),
+      fetch("/api/issues/drainage").then(res => res.json())
     ])
       .then(([electricity, water, garbage, drainage]) => {
         setTasks({ electricity, water, garbage, drainage });
@@ -95,7 +95,7 @@ export default function WorkerDashboard() {
 
   /* UPDATE */
   const updateStatus = async (id, status) => {
-    const res = await fetch(`http://localhost:5000/api/issues/status/${activeCategory}/${id}`, {
+    const res = await fetch(`/api/issues/status/${activeCategory}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status })

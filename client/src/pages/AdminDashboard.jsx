@@ -85,7 +85,7 @@ if(cat==="drainage") return "🚰 Drainage";
 /* FETCH SIGNUP REQUESTS */
 
 useEffect(()=>{
-fetch("http://localhost:5000/api/admin/requests")
+fetch("/api/admin/requests")
 .then(res=>res.json())
 .then(data=>setRequests(data));
 },[]);
@@ -97,7 +97,7 @@ const approveUser = async (id) => {
   setRequestLoading({ id, type: "approve" });
 
   try {
-    const res = await fetch(`http://localhost:5000/api/admin/approve/${id}`, {
+    const res = await fetch(`/api/admin/approve/${id}`, {
       method: "PUT"
     });
 
@@ -125,7 +125,7 @@ const rejectUser = async (id) => {
   setRequestLoading({ id, type: "reject" });
 
   try {
-    const res = await fetch(`http://localhost:5000/api/admin/reject/${id}`, {
+    const res = await fetch(`/api/admin/reject/${id}`, {
       method: "PUT"
     });
 
@@ -163,7 +163,7 @@ const fetchAllIssues=async()=>{
 	let rejected=0;
 	let pendingObj = {};
 	for(const cat of categories){
-		const res=await fetch(`http://localhost:5000/api/issues/${cat}`);
+		const res=await fetch(`/api/issues/${cat}`);
 		const data=await res.json();
 		const withCategory=data.map(i=>({...i,category:cat}));
 		total+=withCategory.length;
@@ -205,7 +205,7 @@ useEffect(()=>{
 
 const fetchIssues=async(category)=>{
 
-const res=await fetch(`http://localhost:5000/api/issues/${category}`);
+const res=await fetch(`/api/issues/${category}`);
 const data=await res.json();
 
 setIssues(prev=>({
@@ -227,7 +227,7 @@ const acceptIssue = async (id) => {
 	}
 	setIssueLoading(prev => ({ ...prev, [id]: 'accept' }));
 	try {
-		const res = await fetch(`http://localhost:5000/api/issues/status/${activeCategory}/${id}`, {
+		const res = await fetch(`/api/issues/status/${activeCategory}/${id}`, {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
@@ -260,7 +260,7 @@ const rejectIssue = async (id) => {
 	}
 	setIssueLoading(prev => ({ ...prev, [id]: 'reject' }));
 	try {
-		const res = await fetch(`http://localhost:5000/api/issues/status/${activeCategory}/${id}`, {
+		const res = await fetch(`/api/issues/status/${activeCategory}/${id}`, {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
@@ -318,7 +318,7 @@ return (
     )}
 
     <img
-      src={`http://localhost:5000/api/files/${issue.photoId}`}
+      src={`/api/files/${issue.photoId}`}
       alt="issue"
       onLoad={()=>setImgLoaded(true)}
 style={{
@@ -494,7 +494,7 @@ const renderIssues = () => {
                             </div>
                             {issue.photoId && (
                                 <div className="issue-right">
-                                    <img src={`http://localhost:5000/api/files/${issue.photoId}`} alt="issue" className="issue-photo"/>
+                                    <img src={`/api/files/${issue.photoId}`} alt="issue" className="issue-photo"/>
                                 </div>
                             )}
                         </div>

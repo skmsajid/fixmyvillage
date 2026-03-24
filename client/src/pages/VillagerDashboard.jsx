@@ -63,7 +63,7 @@ export default function VillagerDashboard() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/auth/users/${userId}`);
+        const res = await fetch(`/api/auth/users/${userId}`);
         const data = await res.json();
 
         setUserInfo({
@@ -90,7 +90,7 @@ export default function VillagerDashboard() {
         let assigned = [], progress = [], resolved = [], my = [], total = 0;
 
         for (const cat of categories) {
-          const res = await fetch(`http://localhost:5000/api/issues/${cat}`);
+          const res = await fetch(`/api/issues/${cat}`);
           const data = await res.json();
 
           const issues = data.map(i => ({ ...i, category: cat }));
@@ -162,7 +162,7 @@ export default function VillagerDashboard() {
     data.append("time", new Date().toLocaleTimeString());
 
     try {
-      const res = await fetch(`http://localhost:5000/api/issues/${activeForm}`, {
+      const res = await fetch(`/api/issues/${activeForm}`, {
         method: "POST",
         body: data
       });
@@ -206,7 +206,7 @@ const Carousel = ({ issues, title }) => (
                 <div className="category-tag">{label(issue.category)}</div>
 
                 {issue.photoId && (
-                  <img src={`http://localhost:5000/api/files/${issue.photoId}`} alt="" />
+                  <img src={`/api/files/${issue.photoId}`} alt="" />
                 )}
 
                 <div className="issue-info">
