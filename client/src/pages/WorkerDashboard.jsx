@@ -95,39 +95,44 @@ export default function WorkerDashboard() {
 
   /* UPDATE */
   const updateStatus = async (id, status) => {
+  try {
     const res = await fetch(`/api/issues/status/${activeCategory}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status })
     });
-    let emailSent = false;
-    try {
-      const data = await res.json();
-      emailSent = data.emailSent;
-    } catch (e) {}
 
+    const data = await res.json();
+
+    // ✅ update UI immediately
     setTasks(prev => ({
       ...prev,
       [activeCategory]: prev[activeCategory].map(task =>
         task._id === id ? { ...task, status } : task
       )
     }));
-    return emailSent;
-  };
 
+    return data; // return full response
+
+  } catch (err) {
+    return { success: false, emailSent: false };
+  }
+};
   /* COMPLETE */
   const resolveIssue = (id) => {
     openConfirm("Mark this task as completed?", async () => {
       setActionLoading(true);
-      const emailSent = await updateStatus(id, "Resolved");
-      setActionLoading(false);
-      if (emailSent === true) {
-        showPopup("✅ Task completed! Email sent to villager.");
-      } else if (emailSent === false) {
-        showPopup("✅ Task completed! Email could not be sent.");
-      } else {
-        showPopup("✅ Task completed!");
-      }
+      const data = await updateStatus(id, "Resolved");
+
+if (data.success) {
+  if (data.emailSent) {
+    showPopup("✅ Task completed & mail sent");
+  } else {
+    showPopup("✅ Task completed (mail not sent)");
+  }
+} else {
+  showPopup("❌ Failed to complete task");
+}
     });
   };
 const getDeadlineInfo = (deadline) => {
@@ -207,9 +212,14 @@ const getDeadlineInfo = (deadline) => {
                     onClick={() =>
                       openConfirm("Start this task?", async () => {
                         setActionLoading(true);
-                        await updateStatus(task._id, "In Progress");
-                        setActionLoading(false);
-                        showPopup("🚀 Task Started!");
+                        const data = await updateStatus(task._id, "In Progress");
+setActionLoading(false);
+
+if (data.success) {
+  showPopup("🚀 Task Started!");
+} else {
+  showPopup("❌ Failed to start task");
+}
                       })
                     }
                   >

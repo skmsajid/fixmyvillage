@@ -29,10 +29,21 @@ export const approveUser = async (req, res) => {
 
     // 📧 EMAIL CONTENT
     const html = `
-      <h2>✅ Registration Approved</h2>
-      <p>Hello <b>${user.name}</b>,</p>
-      <p>Your FixMyVillage account has been approved.</p>
-    `;
+  <h2>✅ Registration Approved</h2>
+  <p>Hello <b>${user.name}</b>,</p>
+
+  <p>Your FixMyVillage account has been approved.</p>
+
+  <h3>🔐 Your Credentials:</h3>
+  <ul>
+    <li><b>Name:</b> ${user.name}</li>
+    <li><b>Email:</b> ${user.email}</li>
+    <li><b>Aadhar:</b> ${user.aadhar}</li>
+    <li><b>Password:</b> ${user.password}</li>
+  </ul>
+
+  <p>You can now login to the system.</p>
+`;
 
     let emailSent = false;
 
@@ -69,10 +80,15 @@ export const rejectUser = async (req, res) => {
     }
 
     const html = `
-      <h2>❌ Registration Rejected</h2>
-      <p>Hello <b>${user.name}</b>,</p>
-      <p>Your FixMyVillage registration request has been rejected.</p>
-    `;
+  <h2>❌ Registration Rejected</h2>
+  <p>Hello <b>${user.name}</b>,</p>
+
+  <p>Your FixMyVillage registration request has been rejected.</p>
+
+  <p><b>Reason:</b> Verification failed / invalid details.</p>
+
+  <p>Please register again or contact admin.</p>
+`;
 
     let emailSent = false;
 
