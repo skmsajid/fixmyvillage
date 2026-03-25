@@ -247,125 +247,78 @@ res.status(500).json({message:"Server error"});
 UPDATE ISSUE STATUS
 ======================== */
 
-export const updateIssueStatus = async (req,res)=>{
+export const updateIssueStatus = async (req, res) => {
+  try {
+    const { type, id } = req.params;
+    const { status, reason, deadline } = req.body;
 
-try{
+    let Model;
+    if (type === "electricity") Model = Electricity;
+    if (type === "water") Model = Water;
+    if (type === "garbage") Model = Garbage;
+    if (type === "drainage") Model = Drainage;
 
-const {type,id} = req.params;
+    let updateData = { status };
 
-const {status,reason,deadline} = req.body;
+    if (deadline) updateData.deadline = deadline;
+    if (status === "Rejected") updateData.reason = reason;
 
-let Model;
+    // ✅ UPDATE ISSUE FIRST
+    await Model.findByIdAndUpdate(id, updateData);
 
-if(type==="electricity") Model = Electricity;
-if(type==="water") Model = Water;
-if(type==="garbage") Model = Garbage;
-if(type==="drainage") Model = Drainage;
+    // ✅ FETCH UPDATED ISSUE
+    const issue = await Model.findById(id);
+    const user = await User.findById(issue.userId);
 
-let updateData = { status };
+    let emailSent = false;
 
-if(deadline){
-updateData.deadline = deadline;
-}
+    // ✅ SEND EMAIL (OPTIONAL - SAFE)
+    if (user && user.email) {
+      try {
+        let subject = "";
+        let body = "";
 
-if(status === "Rejected"){
-updateData.reason = reason;
-}
+        if (status === "Assigned") {
+          subject = "Issue Accepted";
+          body = `Your issue has been accepted. Deadline: ${deadline}`;
+        }
 
-await Model.findByIdAndUpdate(id,updateData);
+        if (status === "Rejected") {
+          subject = "Issue Rejected";
+          body = `Your issue has been rejected. Reason: ${reason}`;
+        }
 
-// Send email if status is Assigned, Rejected, or Resolved
-let emailSent = false;
-if (status === "Assigned" || status === "Rejected" || status === "Resolved") {
-  const issue = await Model.findById(id);
-  const user = await User.findById(issue.userId);
-  if (user && user.email) {
-    let subject, body;
-    if (status === "Assigned") {
-      subject = "Your Issue Has Been Accepted";
-      body = `
-Dear ${user.name},
+        if (status === "Resolved") {
+          subject = "Issue Resolved";
+          body = `Your issue has been resolved.`;
+        }
 
-Your issue has been accepted.
+        await transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: user.email,
+          subject,
+          text: body
+        });
 
-Issue Details:
-- Category: ${type}
-- Street: ${issue.street}
-- House No: ${issue.houseNo || 'N/A'}
-- Description: ${issue.description}
-- Date: ${issue.date}
-- Time: ${issue.time}
-- Deadline: ${deadline}
+        emailSent = true;
 
-Thank you for using FixMyVillage.
-
-Best regards,
-Admin Team
-      `;
-    } else if (status === "Rejected") {
-      subject = "Your Issue Has Been Rejected";
-      body = `
-Dear ${user.name},
-
-Your issue has been rejected.
-
-Issue Details:
-- Category: ${type}
-- Street: ${issue.street}
-- House No: ${issue.houseNo || 'N/A'}
-- Description: ${issue.description}
-- Date: ${issue.date}
-- Time: ${issue.time}
-- Reason: ${reason}
-
-Thank you for using FixMyVillage.
-
-Best regards,
-Admin Team
-      `;
-    } else if (status === "Resolved") {
-      subject = "Your Issue Has Been Resolved";
-      body = `
-Dear ${user.name},
-
-Your issue has been resolved.
-
-Issue Details:
-- Category: ${type}
-- Street: ${issue.street}
-- House No: ${issue.houseNo || 'N/A'}
-- Description: ${issue.description}
-- Date: ${issue.date}
-- Time: ${issue.time}
-
-Thank you for using FixMyVillage.
-
-Best regards,
-Worker Team
-      `;
+      } catch (err) {
+        console.log("Mail error:", err);
+        emailSent = false;
+      }
     }
 
-    try {
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: user.email,
-        subject: subject,
-        text: body
-      });
-      emailSent = true;
-    } catch (emailError) {
-      console.log('Email send error:', emailError);
-    }
+    // 🔥 ALWAYS SEND RESPONSE (IMPORTANT)
+    res.json({
+      success: true,
+      emailSent
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      emailSent: false
+    });
   }
-}
-
-res.json({message:"Status updated successfully", emailSent});
-
-}catch(err){
-
-console.log(err);
-res.status(500).json({message:"Server error"});
-
-}
-
 };

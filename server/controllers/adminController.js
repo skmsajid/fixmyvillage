@@ -16,13 +16,11 @@ export const getRequests = async (req,res)=>{
 
 
 export const approveUser = async (req, res) => {
-
   try {
-
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      return res.status(404).json({ emailSent: false });
+      return res.status(404).json({ success: false, emailSent: false });
     }
 
     // ✅ update status
@@ -33,67 +31,73 @@ export const approveUser = async (req, res) => {
     const html = `
       <h2>✅ Registration Approved</h2>
       <p>Hello <b>${user.name}</b>,</p>
-
       <p>Your FixMyVillage account has been approved.</p>
-
-      <h3>🔐 Your Credentials:</h3>
-      <ul>
-        <li><b>Name:</b> ${user.name}</li>
-        <li><b>Email:</b> ${user.email}</li>
-        <li><b>Aadhar:</b> ${user.aadhar}</li>
-        <li><b>Password:</b> ${user.password}</li>
-      </ul>
-
-      <p>You can now login to the system.</p>
     `;
 
-    const emailSent = await sendMail({
-      to: user.email,
-      subject: "FixMyVillage - Approval",
-      html
-    });
+    let emailSent = false;
 
-    res.json({ emailSent });
+    try {
+      await sendMail({
+        to: user.email,
+        subject: "FixMyVillage - Approval",
+        html
+      });
+      emailSent = true;
+    } catch (err) {
+      console.error("Mail error:", err);
+      emailSent = false;
+    }
+
+    // ✅ ALWAYS SEND RESPONSE
+    res.json({
+      success: true,
+      emailSent
+    });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ emailSent: false });
+    res.status(500).json({ success: false, emailSent: false });
   }
 };
 
-
 export const rejectUser = async (req, res) => {
-
   try {
-
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      return res.status(404).json({ emailSent: false });
+      return res.status(404).json({ success: false, emailSent: false });
     }
 
     const html = `
       <h2>❌ Registration Rejected</h2>
       <p>Hello <b>${user.name}</b>,</p>
-
       <p>Your FixMyVillage registration request has been rejected.</p>
-
-      <p>Please register again or contact admin.</p>
     `;
 
-    const emailSent = await sendMail({
-      to: user.email,
-      subject: "FixMyVillage - Rejected",
-      html
-    });
+    let emailSent = false;
 
-    // delete user
+    try {
+      await sendMail({
+        to: user.email,
+        subject: "FixMyVillage - Rejected",
+        html
+      });
+      emailSent = true;
+    } catch (err) {
+      console.error("Mail error:", err);
+      emailSent = false;
+    }
+
+    // delete user anyway ✅
     await User.findByIdAndDelete(req.params.id);
 
-    res.json({ emailSent });
+    res.json({
+      success: true,
+      emailSent
+    });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ emailSent: false });
+    res.status(500).json({ success: false, emailSent: false });
   }
 };

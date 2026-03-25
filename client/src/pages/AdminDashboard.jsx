@@ -103,11 +103,15 @@ const approveUser = async (id) => {
 
     const data = await res.json();
 
-    if (data.emailSent === true) {
-      setPopupMessage("✅ Registration request is accepted and Approval mail is sent");
-    } else {
-      setPopupMessage("⚠️ Registration accepted but mail is not sent");
-    }
+    if (data.success) {
+  if (data.emailSent) {
+    setPopupMessage("✅ Approved & mail sent");
+  } else {
+    setPopupMessage("✅ Approved (mail not sent)");
+  }
+} else {
+  setPopupMessage("❌ Operation failed");
+}
 
     setRequests(requests.filter(u => u._id !== id));
 
@@ -131,11 +135,15 @@ const rejectUser = async (id) => {
 
     const data = await res.json();
 
-    if (data.emailSent === true) {
-      setPopupMessage("❌ Registration request rejected and Rejection mail is sent");
-    } else {
-      setPopupMessage("⚠️ Registration rejected but mail is not sent");
-    }
+   if (data.success) {
+  if (data.emailSent) {
+    setPopupMessage("❌ Rejected & mail sent");
+  } else {
+    setPopupMessage("❌ Rejected (mail not sent)");
+  }
+} else {
+  setPopupMessage("❌ Reject failed");
+}
 
     setRequests(requests.filter(u => u._id !== id));
 
@@ -236,11 +244,15 @@ const acceptIssue = async (id) => {
 			})
 		});
 		const data = await res.json();
-		if (data.emailSent) {
-			setPopupMessage("Issue accepted and email sent to villager.");
-		} else {
-			setPopupMessage("Issue accepted but failed to send email to villager.");
-		}
+		if (data.success) {
+  if (data.emailSent) {
+    setPopupMessage("✅ Issue accepted & mail sent");
+  } else {
+    setPopupMessage("✅ Issue accepted (mail not sent)");
+  }
+} else {
+  setPopupMessage("❌ Failed to accept issue");
+}
 		await fetchIssues(activeCategory);
 		await fetchAllIssues();
 	} finally {
@@ -269,11 +281,15 @@ const rejectIssue = async (id) => {
 			})
 		});
 		const data = await res.json();
-		if (data.emailSent) {
-			setPopupMessage("Issue rejected and email sent to villager.");
-		} else {
-			setPopupMessage("Issue rejected but failed to send email to villager.");
-		}
+		if (data.success) {
+  if (data.emailSent) {
+    setPopupMessage("❌ Issue rejected & mail sent");
+  } else {
+    setPopupMessage("❌ Issue rejected (mail not sent)");
+  }
+} else {
+  setPopupMessage("❌ Failed to reject issue");
+}
 		await fetchIssues(activeCategory);
 		await fetchAllIssues();
 	} finally {
