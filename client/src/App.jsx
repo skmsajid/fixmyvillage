@@ -8,6 +8,7 @@ import WorkerDashboard from "./pages/WorkerDashboard";
 import Home from "./pages/Home";
 import ScrollTop from "./components/ScrollTop";
 import ProtectedRoute from "./components/ProtectedRoute";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
 
@@ -54,6 +55,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* 404 Fallback Route */}
+        <Route path="*" element={<NotFoundPage />} />
 
       </Routes>
 

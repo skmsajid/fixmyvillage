@@ -509,7 +509,7 @@ return (
 					Signup Requests
 					{requests.length>0 && <span className="notification-dot"></span>}
 				</div>
-				<button className="logout-btn" onClick={logout} style={{fontSize:'clamp(0.9rem,2.5vw,1.1rem)',padding:'8px 14px'}}>
+				<button className="logout-btn" onClick={logout}>
 					Logout
 				</button>
 			</div>
@@ -548,35 +548,48 @@ return (
   <div className="popup-content">
 
     {requests.length===0 ? (
-      <p>No signup requests.</p>
+      <div className="empty-state" style={{ gridColumn: '1 / -1' }}>
+        <span className="empty-icon">📂</span>
+        <p>No signup requests at the moment.</p>
+      </div>
     ) : (
       requests.map(user=>(
-        <div key={user._id} className="request-card">
-          <p><b>Name:</b> {user.name}</p>
-          <p><b>Email:</b> {user.email}</p>
-          <p><b>Aadhaar:</b> {user.aadhar}</p>
+        <div key={user._id} className="request-card premium-request-card">
+          <div className="req-card-header">
+            <div className="req-avatar">{user.name.charAt(0).toUpperCase()}</div>
+            <div className="req-info">
+              <h4>{user.name}</h4>
+              <span className="req-email">{user.email}</span>
+            </div>
+          </div>
+          <div className="req-body">
+            <div className="req-badge">
+              <span className="req-icon">🪪</span>
+              <span>Aadhaar: <b>{user.aadhar}</b></span>
+            </div>
+          </div>
 
           <div className="request-actions">
-  <button
-    onClick={() => approveUser(user._id)}
-    disabled={requestLoading !== null}
-    className={requestLoading?.id === user._id && requestLoading?.type === "approve" ? "loading" : ""}
-  >
-    {requestLoading?.id === user._id && requestLoading?.type === "approve"
-      ? "Approving..."
-      : "Approve"}
-  </button>
+            <button
+              onClick={() => approveUser(user._id)}
+              disabled={requestLoading !== null}
+              className={`btn-approve ${requestLoading?.id === user._id && requestLoading?.type === "approve" ? "loading" : ""}`}
+            >
+              {requestLoading?.id === user._id && requestLoading?.type === "approve"
+                ? "Approving..."
+                : "✓ Approve"}
+            </button>
 
-  <button
-    onClick={() => rejectUser(user._id)}
-    disabled={requestLoading !== null}
-    className={requestLoading?.id === user._id && requestLoading?.type === "reject" ? "loading" : ""}
-  >
-    {requestLoading?.id === user._id && requestLoading?.type === "reject"
-      ? "Rejecting..."
-      : "Reject"}
-  </button>
-</div>
+            <button
+              onClick={() => rejectUser(user._id)}
+              disabled={requestLoading !== null}
+              className={`btn-reject ${requestLoading?.id === user._id && requestLoading?.type === "reject" ? "loading" : ""}`}
+            >
+              {requestLoading?.id === user._id && requestLoading?.type === "reject"
+                ? "Rejecting..."
+                : "✕ Reject"}
+            </button>
+          </div>
         </div>
       ))
     )}

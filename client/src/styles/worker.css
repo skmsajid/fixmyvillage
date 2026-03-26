@@ -13,29 +13,40 @@
 }
 
 .worker-container {
-  padding: 28px 32px;
+  padding: 0 32px 28px 32px;
   background: #f0f4ff;
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
 }
 
 @media (max-width: 768px) {
   .worker-container {
-    padding: 14px 12px;
+    padding: 0 12px 14px 12px;
   }
 }
 
 /* ══ NAVBAR ══ */
 .worker-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff;
-  padding: 16px 24px;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.09);
-  margin-bottom: 24px;
+  padding: 18px 40px;
+  width: calc(100% + 64px);
+  margin: 0 -32px 24px -32px;
+  border-radius: 0 0 24px 24px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.08), inset 0 0 0 1px rgba(255,255,255,0.5);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-top: none;
+}
+
+@media (max-width: 768px) {
+  .worker-navbar { padding: 14px 20px !important; margin: 0 -12px 24px -12px !important; width: calc(100% + 24px) !important; }
 }
 
 .wd-nav-brand {
