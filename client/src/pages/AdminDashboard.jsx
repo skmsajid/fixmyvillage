@@ -95,28 +95,17 @@ fetch("/api/admin/requests")
 
 const approveUser = async (id) => {
   setRequestLoading({ id, type: "approve" });
-
   try {
-    const res = await fetch(`/api/admin/approve/${id}`, {
-      method: "PUT"
-    });
-
+    const res = await fetch(`/api/admin/approve/${id}`, { method: "PUT" });
     const data = await res.json();
-
     if (data.success) {
-  if (data.emailSent) {
-    setPopupMessage("✅ Approved & mail sent");
-  } else {
-    setPopupMessage("✅ Approved (mail not sent)");
-  }
-} else {
-  setPopupMessage("❌ Operation failed");
-}
-
+      setPopupMessage("✅ Request Approved");
+    } else {
+      setPopupMessage("❌ Operation failed");
+    }
     setRequests(requests.filter(u => u._id !== id));
-
   } catch (err) {
-    setPopupMessage("❌ Error while approving request");
+    setPopupMessage("❌ Error while approving");
   } finally {
     setRequestLoading(null);
   }
@@ -127,28 +116,17 @@ const approveUser = async (id) => {
 
 const rejectUser = async (id) => {
   setRequestLoading({ id, type: "reject" });
-
   try {
-    const res = await fetch(`/api/admin/reject/${id}`, {
-      method: "PUT"
-    });
-
+    const res = await fetch(`/api/admin/reject/${id}`, { method: "PUT" });
     const data = await res.json();
-
-   if (data.success) {
-  if (data.emailSent) {
-    setPopupMessage("❌ Rejected & mail sent");
-  } else {
-    setPopupMessage("❌ Rejected (mail not sent)");
-  }
-} else {
-  setPopupMessage("❌ Reject failed");
-}
-
+    if (data.success) {
+      setPopupMessage("❌ Request Rejected");
+    } else {
+      setPopupMessage("❌ Reject failed");
+    }
     setRequests(requests.filter(u => u._id !== id));
-
   } catch (err) {
-    setPopupMessage("❌ Error while rejecting request");
+    setPopupMessage("❌ Error while rejecting");
   } finally {
     setRequestLoading(null);
   }
@@ -230,7 +208,7 @@ setIssues(prev=>({
 
 const acceptIssue = async (id) => {
 	if (!deadline[id]) {
-		setPopupMessage("Select deadline");
+		setPopupMessage("⚠️ Please select a deadline first");
 		return;
 	}
 	setIssueLoading(prev => ({ ...prev, [id]: 'accept' }));
@@ -238,21 +216,14 @@ const acceptIssue = async (id) => {
 		const res = await fetch(`/api/issues/status/${activeCategory}/${id}`, {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				status: "Assigned",
-				deadline: deadline[id]
-			})
+			body: JSON.stringify({ status: "Assigned", deadline: deadline[id] })
 		});
 		const data = await res.json();
 		if (data.success) {
-  if (data.emailSent) {
-    setPopupMessage("✅ Issue accepted & mail sent");
-  } else {
-    setPopupMessage("✅ Issue accepted (mail not sent)");
-  }
-} else {
-  setPopupMessage("❌ Failed to accept issue");
-}
+			setPopupMessage("✅ Issue Accepted");
+		} else {
+			setPopupMessage("❌ Failed to accept issue");
+		}
 		await fetchIssues(activeCategory);
 		await fetchAllIssues();
 	} finally {
@@ -267,7 +238,7 @@ const acceptIssue = async (id) => {
 
 const rejectIssue = async (id) => {
 	if (!rejectReason[id]) {
-		setPopupMessage("Select rejection reason");
+		setPopupMessage("⚠️ Please select a rejection reason");
 		return;
 	}
 	setIssueLoading(prev => ({ ...prev, [id]: 'reject' }));
@@ -275,21 +246,14 @@ const rejectIssue = async (id) => {
 		const res = await fetch(`/api/issues/status/${activeCategory}/${id}`, {
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				status: "Rejected",
-				reason: rejectReason[id]
-			})
+			body: JSON.stringify({ status: "Rejected", reason: rejectReason[id] })
 		});
 		const data = await res.json();
 		if (data.success) {
-  if (data.emailSent) {
-    setPopupMessage("❌ Issue rejected & mail sent");
-  } else {
-    setPopupMessage("❌ Issue rejected (mail not sent)");
-  }
-} else {
-  setPopupMessage("❌ Failed to reject issue");
-}
+			setPopupMessage("✅ Issue Rejected");
+		} else {
+			setPopupMessage("❌ Failed to reject issue");
+		}
 		await fetchIssues(activeCategory);
 		await fetchAllIssues();
 	} finally {
@@ -315,107 +279,114 @@ const COLORS=["#f59e0b","#3b82f6","#6366f1","#22c55e","#ef4444"];
 
 /* ISSUE CARD */
 
-const IssueCard=({issue})=>{
+const IssueCard = ({ issue }) => {
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const statusClass = issue.status === "Assigned" ? "badge-assigned" : "badge-progress";
 
-const [imgLoaded,setImgLoaded]=useState(false);
+  return (
+    <div className="ipc-card">
 
-return (
-<div className="issue-progress-card">
+      {/* Photo header */}
+      {issue.photoId && (
+        <div className="ipc-img-wrap">
+          <div className={`ipc-cat-pill ${issue.category}`}>{label(issue.category)}</div>
+          {!imgLoaded && <div className="ipc-img-skeleton" />}
+          <img
+            src={`/api/files/${issue.photoId}`}
+            alt="issue"
+            className="ipc-img"
+            onLoad={() => setImgLoaded(true)}
+            style={{ opacity: imgLoaded ? 1 : 0, transition: "opacity 0.4s ease" }}
+          />
+        </div>
+      )}
 
- 
+      {/* No photo: category pill in body */}
+      {!issue.photoId && (
+        <div className="ipc-body-pill">
+          <span className={`ipc-cat-pill ${issue.category}`}>{label(issue.category)}</span>
+        </div>
+      )}
 
-{issue.photoId && (
-  <div className="image-wrapper">
-    <div className={`category-tag on-image ${issue.category}`}>
-  {label(issue.category)}
-</div>
-    {!imgLoaded && (
-      <div className="image-skeleton"></div>
-    )}
+      {/* Info body */}
+      <div className="ipc-body">
+        <div className="ipc-row">
+          <span className="ipc-icon">📍</span>
+          <span><b>Street&nbsp;</b>{issue.street}</span>
+        </div>
 
-    <img
-      src={`/api/files/${issue.photoId}`}
-      alt="issue"
-      onLoad={()=>setImgLoaded(true)}
-style={{
-    opacity: imgLoaded ? 1 : 0,
-    transition: "opacity 0.4s ease"
-  }}    />
-    
-  </div>
-)}
+        {issue.houseNo && (
+          <div className="ipc-row">
+            <span className="ipc-icon">🏠</span>
+            <span><b>House&nbsp;</b>{issue.houseNo}</span>
+          </div>
+        )}
 
-<div className="issue-info">
+        <p className="ipc-desc">{issue.description}</p>
 
-<p><b>Street:</b> {issue.street}</p>
+        <div className="ipc-footer">
+          <span className={`ipc-status ${statusClass}`}>{issue.status}</span>
+          {issue.deadline && (
+            <span className="ipc-deadline">📅 {issue.deadline}</span>
+          )}
+        </div>
+      </div>
 
-{issue.houseNo &&(
-<p><b>House:</b> {issue.houseNo}</p>
-)}
-
-<p className="desc">{issue.description}</p>
-
-<p className="status">{issue.status}</p>
-
-{issue.deadline &&(
-<p className="deadline">Deadline: {issue.deadline}</p>
-)}
-
-</div>
-
-</div>
-
-)};
+    </div>
+  );
+};
 
 
 
 
-// Responsive Carousel for Assigned/In Progress (Villager style)
+
+// Carousel for Assigned/In Progress issues
+// ≤4 issues → static flex wrap  |  >4 issues → CSS marquee (infinite scroll)
 const Carousel = ({ issues, title, loading, highlight }) => {
-  const [scrollIndex, setScrollIndex] = useState(0);
-  const isMobile = window.innerWidth <= 768;
-  const visibleCount = isMobile ? 3 : issues.length;
   const total = issues.length;
-
-  // Auto-scroll for mobile
-  useEffect(() => {
-    if (!isMobile || total <= 3) return;
-    const interval = setInterval(() => {
-      setScrollIndex(prev => (prev + 1) % (total - 2));
-    }, 1200); // Faster speed (was 2200)
-    return () => clearInterval(interval);
-  }, [isMobile, total]);
-
-  const getVisible = () => {
-    if (!isMobile || total <= 3) return issues;
-    return issues.slice(scrollIndex, scrollIndex + 3);
-  };
+  const useCarousel = total > 4;
+  // Duration scales with issue count so speed stays consistent
+  const duration = Math.max(total * 3, 14);
 
   return (
     <div className="progress-section">
       <div className="section-header" style={{display:'flex',alignItems:'center',gap:8}}>
         <h2 className={`section-title${highlight ? ' highlight' : ''}`}>{title}</h2>
+        {useCarousel && <span className="carousel-badge">{total} issues</span>}
       </div>
-      <div className="carousel" style={isMobile ? {overflowX:'auto'} : {}}>
-        <div className="carousel-track" style={isMobile ? {gap:10, transition:'transform 0.4s ease-in-out'} : {}}>
-          {loading ? (
-            Array.from({length: isMobile ? 3 : 4}).map((_,i)=>(
-              <div key={i} className="skeleton-card" style={{minWidth:260,maxWidth:260,height:220}}></div>
-            ))
-          ) : (
-            getVisible().length === 0 ? (
-              <p className="no-issues">No issues</p>
-            ) : (
-              getVisible().map(issue => (
-                <IssueCard key={issue._id} issue={issue} />
-              ))
-            )
-          )}
+
+      {loading ? (
+        <div style={{display:'flex',gap:20,overflow:'hidden'}}>
+          {Array.from({length:4}).map((_,i)=>(
+            <div key={i} className="skeleton-card" style={{minWidth:260,maxWidth:260,height:220}}/>
+          ))}
         </div>
-      </div>
+      ) : total === 0 ? (
+        <p className="no-issues">No issues</p>
+      ) : useCarousel ? (
+        /* ── Marquee: render issues twice, animate translateX(0→-50%) ── */
+        <div className="crs-wrap">
+          <div
+            className="crs-marquee"
+            style={{animationDuration:`${duration}s`}}
+          >
+            {[...issues, ...issues].map((issue, idx) => (
+              <IssueCard key={`${issue._id}-${idx}`} issue={issue} />
+            ))}
+          </div>
+        </div>
+      ) : (
+        /* ── Static: just flex-wrap ── */
+        <div className="crs-static">
+          {issues.map(issue => (
+            <IssueCard key={issue._id} issue={issue} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
+
 
 
 
@@ -426,10 +397,12 @@ const renderIssues = () => {
     const list = (issues[activeCategory] || []).filter(
         issue => issue.status === "Pending"
     );
+    const needsScroll = list.length > 4;
     return (
         <div>
             <div className="section-header" style={{display:'flex',alignItems:'center',gap:8}}>
                 <h2 className="section-title highlight">{label(activeCategory)} Issues</h2>
+                {list.length > 0 && <span className="issue-count-badge">{list.length} pending</span>}
             </div>
             {loadingData ? (
                 <div className="issue-grid">
@@ -440,7 +413,7 @@ const renderIssues = () => {
             ) : list.length === 0 ? (
                 <p className="no-issues">No pending issues.</p>
             ) : (
-                <div className="issue-grid">
+                <div className={needsScroll ? "issue-list-scroll" : "issue-grid"}>
                     {list.map(issue => (
                         <div key={issue._id} className="issue-card super-modern animate-fadein">
                             <div className="issue-left">
@@ -454,22 +427,19 @@ const renderIssues = () => {
                                     {activeCategory !== "garbage" && <span><b>House No:</b> {issue.houseNo || 'N/A'}</span>}
                                 </div>
                                 <div className="desc" style={{marginBottom:8}}>{issue.description}</div>
-                                <div className="issue-date-row" style={{display:'flex',gap:16,alignItems:'center',marginBottom:8}}>
+                                <div className="issue-date-row" style={{display:'flex',gap:16,alignItems:'center',marginBottom:8,flexWrap:'wrap'}}>
                                     <span className="date-pill">📅 {issue.date}</span>
                                     <span className="date-pill">⏰ {issue.time}</span>
                                     {issue.deadline && <span className="date-pill deadline">Deadline: {issue.deadline}</span>}
                                 </div>
-                                <div className="reason-row" style={{display:'flex',gap:10,alignItems:'center',marginBottom:8}}>
+                                <div className="reason-row">
                                     <input
                                         type="date"
                                         min={new Date().toISOString().split("T")[0]}
                                         value={deadline[issue._id]||""}
                                         onChange={(e)=>{
                                             e.stopPropagation();
-                                            setDeadline({
-                                                ...deadline,
-                                                [issue._id]:e.target.value
-                                            });
+                                            setDeadline({...deadline,[issue._id]:e.target.value});
                                         }}
                                         className="date-input"
                                     />
@@ -477,14 +447,11 @@ const renderIssues = () => {
                                         value={rejectReason[issue._id]||""}
                                         onChange={(e)=>{
                                             e.stopPropagation();
-                                            setRejectReason({
-                                                ...rejectReason,
-                                                [issue._id]:e.target.value
-                                            });
+                                            setRejectReason({...rejectReason,[issue._id]:e.target.value});
                                         }}
                                         className="reason-select"
                                     >
-                                        <option value="">Reason</option>
+                                        <option value="">Select Reason</option>
                                         <option>Duplicate issue</option>
                                         <option>Wrong category</option>
                                         <option>Fake complaint</option>
@@ -495,16 +462,16 @@ const renderIssues = () => {
                                     <button
                                         className={`approve-btn super-btn${issueLoading[issue._id]==='accept' ? ' loading' : ''}`}
                                         onClick={(e)=>{e.stopPropagation(); acceptIssue(issue._id);}}
-                                        disabled={issueLoading[issue._id]==='accept'||issueLoading[issue._id]==='reject'}
+                                        disabled={!!issueLoading[issue._id]}
                                     >
-                                        {issueLoading[issue._id]==='accept' ? 'Accepting...' : 'Accept'}
+                                        {issueLoading[issue._id]==='accept' ? 'Accepting...' : '✓ Accept'}
                                     </button>
                                     <button
                                         className={`reject-btn super-btn${issueLoading[issue._id]==='reject' ? ' loading' : ''}`}
                                         onClick={(e)=>{e.stopPropagation(); rejectIssue(issue._id);}}
-                                        disabled={issueLoading[issue._id]==='accept'||issueLoading[issue._id]==='reject'}
+                                        disabled={!!issueLoading[issue._id]}
                                     >
-                                        {issueLoading[issue._id]==='reject' ? 'Rejecting...' : 'Reject'}
+                                        {issueLoading[issue._id]==='reject' ? 'Rejecting...' : '✕ Reject'}
                                     </button>
                                 </div>
                             </div>
@@ -753,7 +720,7 @@ return (
                 style={{position:'relative' }}
             >
                 {label(cat)}
-                {pendingCounts[cat]>0 && <span className="notification-dot moving-dot"></span>}
+                {pendingCounts[cat]>0 && <span className="notification-dot"></span>}
             </div>
         ))}
     </div>

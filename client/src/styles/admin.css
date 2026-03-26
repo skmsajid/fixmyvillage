@@ -186,29 +186,288 @@ margin:35px 0;
   }
 }
 
-/* --- Moving dot for category-cards only --- */
-.moving-dot {
-  animation: dotMove 1.2s infinite alternate cubic-bezier(.4,2,.6,1);
-}
-@keyframes dotMove {
-  0% { right: -4px; }
-  50% { right: 80%; }
-  100% { right: -4px; }
-}
-
-
-
-/* CAROUSEL */
-
-.carousel{
-overflow:hidden;
+/* --- Notification dot inside category cards --- */
+.category-card .notification-dot {
+  top: 8px;
+  right: 8px;
+  width: 14px;
+  height: 14px;
+  background: #ef4444;
+  box-shadow: 0 0 0 0 rgba(239,68,68,0.7);
+  animation: categoryDotPulse 1.4s infinite ease-out;
+  z-index: 10;
 }
 
-.carousel-track{
-display:flex;
-gap:20px;
-animation:scroll 30s linear infinite;
+@keyframes categoryDotPulse {
+  0%   { transform: scale(1);   box-shadow: 0 0 0 0 rgba(239,68,68,0.7); }
+  60%  { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+  100% { transform: scale(1);   box-shadow: 0 0 0 0 rgba(239,68,68,0); }
 }
+
+
+
+/* ═══════════════════════════════════════════
+   CAROUSEL — CSS MARQUEE (>4 issues)
+═══════════════════════════════════════════ */
+
+/* ── 1. Viewport: clips the overflow ── */
+.crs-wrap {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+/* Soft fade edges for polished look */
+.crs-wrap::before,
+.crs-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 48px;
+  z-index: 2;
+  pointer-events: none;
+}
+.crs-wrap::before {
+  left: 0;
+  background: linear-gradient(90deg, #ffffff 0%, transparent 100%);
+}
+.crs-wrap::after {
+  right: 0;
+  background: linear-gradient(270deg, #ffffff 0%, transparent 100%);
+}
+
+/* ── 2. Marquee strip: all cards + duplicate in one row ── */
+.crs-marquee {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: crsScroll linear infinite;
+  will-change: transform;
+}
+
+/* Pause on hover */
+.crs-wrap:hover .crs-marquee {
+  animation-play-state: paused;
+}
+
+/* Cards inside marquee always use fixed width so -50% works exactly */
+.crs-marquee .ipc-card {
+  min-width: 258px !important;
+  max-width: 258px !important;
+  flex-shrink: 0;
+}
+
+/* ── 3. The keyframe: scroll from 0 → -50% (= first half width) ── */
+@keyframes crsScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── 4. Static layout (≤4 issues): flex wrap ── */
+.crs-static {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Badge showing issue count */
+.carousel-badge {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #ede9fe;
+  color: #6d28d9;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-left: 4px;
+}
+
+/* Legacy carousel classes (kept for safety) */
+.carousel { overflow: hidden; }
+.carousel-track { display: flex; gap: 20px; }
+.carousel-track--static { flex-wrap: wrap; }
+/* .carousel-track--animated removed (empty) */
+
+
+
+
+/* ═══════════════════════════════════════════
+   IPC CARD  (Assigned / In Progress cards)
+═══════════════════════════════════════════ */
+
+.ipc-card {
+  min-width: 240px;
+  max-width: 280px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(37,99,235,0.10), 0 2px 6px rgba(0,0,0,0.05);
+  border: 1.5px solid #e0e7ff;
+  transition: transform 0.25s cubic-bezier(.4,2,.6,1), box-shadow 0.25s;
+  animation: ipcFadeIn 0.5s cubic-bezier(.4,2,.6,1);
+}
+.ipc-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(37,99,235,0.15), 0 4px 12px rgba(0,0,0,0.06);
+  border-color: #6366f1;
+}
+@keyframes ipcFadeIn {
+  from { opacity:0; transform:translateY(16px) scale(.97); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* — Photo header — */
+.ipc-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 148px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+.ipc-img-skeleton {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, #e5e7eb, #f1f5f9, #e5e7eb);
+  background-size: 200% 100%;
+  animation: shine 1.2s infinite;
+}
+.ipc-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* — Category pill — */
+.ipc-cat-pill {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  backdrop-filter: blur(8px);
+  background: rgba(255,255,255,0.88);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.14);
+}
+/* Colour variants */
+.ipc-cat-pill.electricity { color: #92400e; background: #fde68a; }
+.ipc-cat-pill.water       { color: #075985; background: #bae6fd; }
+.ipc-cat-pill.garbage     { color: #14532d; background: #bbf7d0; }
+.ipc-cat-pill.drainage    { color: #4c1d95; background: #ddd6fe; }
+
+/* When there's no photo, pill sits above body */
+.ipc-body-pill {
+  padding: 12px 14px 0;
+}
+.ipc-body-pill .ipc-cat-pill {
+  position: static;
+  display: inline-block;
+}
+
+/* — Body — */
+.ipc-body {
+  padding: 12px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* — Info rows — */
+.ipc-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #1e293b;
+  line-height: 1.4;
+  min-width: 0;
+}
+.ipc-row span:last-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.ipc-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.ipc-row b {
+  color: #475569;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* — Description — */
+.ipc-desc {
+  font-size: 12.5px;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 2px 0 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  line-clamp: 3;
+  max-height: calc(1.5em * 3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* — Footer: status + deadline — */
+.ipc-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 4px;
+}
+.ipc-status {
+  padding: 3px 11px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.badge-assigned {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.badge-progress {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+.ipc-deadline {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* — Mobile — */
+@media (max-width: 768px) {
+  .ipc-card {
+    min-width: 46%;
+    max-width: 48%;
+  }
+}
+@media (max-width: 480px) {
+  .ipc-card {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  .carousel-track--static,
+  .carousel-track--animated {
+    flex-wrap: wrap;
+  }
+}
+
+
 
 .issue-progress-card{
 min-width:260px;
@@ -1082,3 +1341,110 @@ border-top:1px solid #e5e7eb;
   color: #4c1d95;
   background: #ddd6fe !important;
 }
+
+
+/* ═══════════════════════════════════════════
+   SCROLLABLE ISSUE LIST  (>4 pending issues)
+═══════════════════════════════════════════ */
+
+.issue-list-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-height: 700px;
+  overflow-y: auto;
+  padding-right: 8px;
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+.issue-list-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.issue-list-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 99px;
+}
+.issue-list-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6366f1, #3b82f6);
+  border-radius: 99px;
+}
+.issue-list-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #4f46e5, #2563eb);
+}
+
+
+/* ═══════════════════════════════════════════
+   PENDING COUNT BADGE
+═══════════════════════════════════════════ */
+
+.issue-count-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6366f1, #3b82f6);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.25);
+  margin-left: 4px;
+}
+
+
+/* ═══════════════════════════════════════════
+   REASON ROW — RESPONSIVE (Mobile fix)
+═══════════════════════════════════════════ */
+
+.reason-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.reason-row .date-input,
+.reason-row .reason-select {
+  flex: 1 1 140px;
+  min-width: 130px;
+  max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  .reason-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .reason-row .date-input,
+  .reason-row .reason-select {
+    width: 100%;
+    min-width: 0;
+    flex: unset;
+    font-size: 15px;
+    padding: 10px 12px;
+  }
+
+  /* Stack action buttons on mobile */
+  .issue-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .issue-actions .super-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Issue card: single column on mobile */
+  .issue-card.super-modern {
+    grid-template-columns: 1fr !important;
+  }
+
+  .issue-right {
+    margin-top: 8px;
+  }
+}

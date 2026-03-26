@@ -259,66 +259,52 @@ export const updateIssueStatus = async (req, res) => {
     if (type === "drainage") Model = Drainage;
 
     let updateData = { status };
-
     if (deadline) updateData.deadline = deadline;
     if (status === "Rejected") updateData.reason = reason;
 
-    // ✅ UPDATE ISSUE FIRST
+    // ✅ Update DB
     await Model.findByIdAndUpdate(id, updateData);
 
-    // ✅ FETCH UPDATED ISSUE
-    const issue = await Model.findById(id);
-    const user = await User.findById(issue.userId);
+    // ⚡ Respond INSTANTLY — no email wait
+    res.json({ success: true, message: "Status updated" });
 
-    let emailSent = false;
-
-    // ✅ SEND EMAIL (OPTIONAL - SAFE)
-    if (user && user.email) {
+    // 📧 Send email in background (non-blocking)
+    setImmediate(async () => {
       try {
+        const issue = await Model.findById(id);
+        const user = await User.findById(issue?.userId);
+
+        if (!user?.email) return;
+
         let subject = "";
         let body = "";
 
         if (status === "Assigned") {
           subject = "Issue Accepted";
           body = `Your issue has been accepted. Deadline: ${deadline}`;
-        }
-
-        if (status === "Rejected") {
+        } else if (status === "Rejected") {
           subject = "Issue Rejected";
           body = `Your issue has been rejected. Reason: ${reason}`;
-        }
-
-        if (status === "Resolved") {
+        } else if (status === "Resolved") {
           subject = "Issue Resolved";
           body = `Your issue has been resolved.`;
         }
 
-        await transporter.sendMail({
-          from: process.env.EMAIL_USER,
-          to: user.email,
-          subject,
-          text: body
-        });
-
-        emailSent = true;
-
+        if (subject) {
+          await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject,
+            text: body
+          });
+        }
       } catch (err) {
-        console.log("Mail error:", err);
-        emailSent = false;
+        console.log("Issue mail error:", err);
       }
-    }
-
-    // 🔥 ALWAYS SEND RESPONSE (IMPORTANT)
-    res.json({
-      success: true,
-      emailSent
     });
 
   } catch (err) {
     console.log(err);
-    res.status(500).json({
-      success: false,
-      emailSent: false
-    });
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
