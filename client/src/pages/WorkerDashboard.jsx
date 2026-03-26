@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { SkeletonBox } from "../components/Skeleton";
 import {
   PieChart, Pie, Cell, ResponsiveContainer,
-  Tooltip, Legend, BarChart, Bar, XAxis, YAxis
+  Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid
 } from "recharts";
 
 const STATUS = ["Assigned", "In Progress", "Resolved"];
+const CHART_COLORS = ["#3b82f6", "#8b5cf6", "#10b981"];
 
 function TaskImageWithSkeleton({ photoId }) {
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -17,7 +18,7 @@ function TaskImageWithSkeleton({ photoId }) {
       <img
         src={`/api/files/${photoId}`}
         alt="issue"
-        style={{ display: imgLoaded ? 'block' : 'none' }}
+        style={{ display: imgLoaded ? "block" : "none" }}
         onLoad={() => setImgLoaded(true)}
       />
     </div>
@@ -25,289 +26,232 @@ function TaskImageWithSkeleton({ photoId }) {
 }
 
 export default function WorkerDashboard() {
-
   const navigate = useNavigate();
 
-  /* 🔥 STATES */
-  const [confirmBox, setConfirmBox] = useState({
-    show: false,
-    message: "",
-    action: null
-  });
-
+  /* ── STATES ── */
+  const [confirmBox, setConfirmBox] = useState({ show: false, message: "", action: null });
   const [actionLoading, setActionLoading] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
-
-  const [popup, setPopup] = useState({ show: false, message: "" });
-
+  const [popup, setPopup] = useState({ show: false, message: "", type: "success" });
   const [activeCategory, setActiveCategory] = useState("");
   const [loading, setLoading] = useState(true);
+  const [tasks, setTasks] = useState({ electricity: [], water: [], garbage: [], drainage: [] });
 
-  const [tasks, setTasks] = useState({
-    electricity: [],
-    water: [],
-    garbage: [],
-    drainage: []
-  });
+  /* ── HELPERS ── */
+  const openConfirm = (message, action) => setConfirmBox({ show: true, message, action });
+  const closeConfirm = () => setConfirmBox({ show: false, message: "", action: null });
 
-  /* 🔧 HELPERS */
-  const openConfirm = (message, action) => {
-    setConfirmBox({ show: true, message, action });
+  const showPopup = (msg, type = "success") => {
+    setPopup({ show: true, message: msg, type });
+    setTimeout(() => setPopup({ show: false, message: "", type: "success" }), 2800);
   };
 
-  const closeConfirm = () => {
-    setConfirmBox({ show: false, message: "", action: null });
-  };
-
-  const showPopup = (msg) => {
-    setPopup({ show: true, message: msg });
-    setTimeout(() => setPopup({ show: false, message: "" }), 2500);
-  };
-
-  /* 🔐 LOGOUT WITH ANIMATION */
+  /* ── LOGOUT ── */
   const logout = () => {
     openConfirm("Are you sure you want to logout?", async () => {
       setLogoutLoading(true);
-
-      setTimeout(() => {
-        localStorage.clear();
-        navigate("/");
-      }, 1500);
+      setTimeout(() => { localStorage.clear(); navigate("/"); }, 1500);
     });
   };
 
-  /* FETCH */
+  /* ── FETCH ── */
   useEffect(() => {
     setLoading(true);
-
     Promise.all([
-      fetch("/api/issues/electricity").then(res => res.json()),
-      fetch("/api/issues/water").then(res => res.json()),
-      fetch("/api/issues/garbage").then(res => res.json()),
-      fetch("/api/issues/drainage").then(res => res.json())
-    ])
-      .then(([electricity, water, garbage, drainage]) => {
-        setTasks({ electricity, water, garbage, drainage });
-      })
-      .finally(() => setLoading(false));
-
+      fetch("/api/issues/electricity").then(r => r.json()),
+      fetch("/api/issues/water").then(r => r.json()),
+      fetch("/api/issues/garbage").then(r => r.json()),
+      fetch("/api/issues/drainage").then(r => r.json()),
+    ]).then(([electricity, water, garbage, drainage]) => {
+      setTasks({ electricity, water, garbage, drainage });
+    }).finally(() => setLoading(false));
   }, []);
 
-  /* UPDATE */
+  /* ── UPDATE STATUS ── */
   const updateStatus = async (id, status) => {
-  try {
-    const res = await fetch(`/api/issues/status/${activeCategory}/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status })
-    });
+    try {
+      const res = await fetch(`/api/issues/status/${activeCategory}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      const data = await res.json();
+      // ✅ Update UI immediately
+      setTasks(prev => ({
+        ...prev,
+        [activeCategory]: prev[activeCategory].map(t => t._id === id ? { ...t, status } : t),
+      }));
+      return data;
+    } catch {
+      return { success: false };
+    }
+  };
 
-    const data = await res.json();
-
-    // ✅ update UI immediately
-    setTasks(prev => ({
-      ...prev,
-      [activeCategory]: prev[activeCategory].map(task =>
-        task._id === id ? { ...task, status } : task
-      )
-    }));
-
-    return data; // return full response
-
-  } catch (err) {
-    return { success: false, emailSent: false };
-  }
-};
-  /* COMPLETE */
+  /* ── COMPLETE TASK ── */
   const resolveIssue = (id) => {
     openConfirm("Mark this task as completed?", async () => {
       setActionLoading(true);
       const data = await updateStatus(id, "Resolved");
-
-if (data.success) {
-  if (data.emailSent) {
-    showPopup("✅ Task completed & mail sent");
-  } else {
-    showPopup("✅ Task completed (mail not sent)");
-  }
-} else {
-  showPopup("❌ Failed to complete task");
-}
+      setActionLoading(false);
+      // ✅ Instant feedback — not based on email
+      if (data.success) {
+        showPopup("✅ Task Completed!", "success");
+      } else {
+        showPopup("❌ Failed to complete task", "error");
+      }
     });
   };
-const getDeadlineInfo = (deadline) => {
-  if (!deadline) return null;
 
-  const today = new Date();
-  const d = new Date(deadline);
-
-  const diff = Math.ceil((d - today) / (1000 * 60 * 60 * 24));
-
-  if (diff > 0) {
-    return `${diff} day${diff > 1 ? "s" : ""} left`;
-  } else if (diff === 0) {
-    return "Due today";
-  } else {
+  /* ── DEADLINE STATUS ── */
+  const getDeadlineInfo = (deadline) => {
+    if (!deadline) return null;
+    const diff = Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24));
+    if (diff > 0) return `${diff} day${diff > 1 ? "s" : ""} left`;
+    if (diff === 0) return "Due today";
     return "❌ Deadline Over";
-  }
-};
-  /* TASK LIST */
+  };
+
+  /* ── TASK LIST ── */
   const renderTasks = () => {
-
     const list = (tasks[activeCategory] || []).filter(
-      task => task.status === "Assigned" || task.status === "In Progress"
+      t => t.status === "Assigned" || t.status === "In Progress"
     );
-
-    if (list.length === 0) {
-      return <p className="no-tasks">No assigned tasks.</p>;
-    }
-
     return (
-      <div className="task-grid">
-        {list.map(task => (
-          <div key={task._id} className="task-card">
-
-
+      <div className="wd-task-list-container">
+        <div className="wd-section-header" style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'18px'}}>
+          <h2 className="wd-section-heading" style={{margin:0}}>📋 {activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Tasks</h2>
+          {list.length > 0 && <span className="wd-cat-badge" style={{position:'static',animation:'none',transform:'none'}}>{list.length}</span>}
+        </div>
+        
+        {list.length === 0 ? (
+          <p className="no-tasks">No assigned tasks for this category.</p>
+        ) : (
+          <div className={`task-grid ${list.length > 4 ? "task-list-scroll" : ""}`}>
+            {list.map(task => (
+              <div key={task._id} className="task-card">
             <div className="task-left">
-              <h3 style={{marginBottom: 8, color: '#2563eb', fontWeight: 800, fontSize: '1.13rem', letterSpacing: '0.01em'}}>
-                {activeCategory.toUpperCase()} TASK
-              </h3>
+              {/* Header */}
+              <div className="task-card-header">
+                <span className={`task-cat-pill task-cat-${activeCategory}`}>
+                  {activeCategory === "electricity" ? "⚡" :
+                    activeCategory === "water" ? "💧" :
+                      activeCategory === "garbage" ? "🗑" : "🚰"} {activeCategory.toUpperCase()}
+                </span>
+                <span className={`task-status-pill ${task.status === "Assigned" ? "status-assigned" : "status-progress"}`}>
+                  {task.status}
+                </span>
+              </div>
+
+              {/* Details */}
               <div className="task-detail-row">
-  <span className="task-detail-label">Street:</span>
-  <span className="task-detail-value">{task.street}</span>
-</div>
-
-<div className="task-detail-row">
-  <span className="task-detail-label">House No:</span>
-  <span className="task-detail-value">{task.houseNo}</span>
-</div>
+                <span className="task-detail-label">📍 Street</span>
+                <span className="task-detail-value">{task.street}</span>
+              </div>
+              {task.houseNo && (
+                <div className="task-detail-row">
+                  <span className="task-detail-label">🏠 House</span>
+                  <span className="task-detail-value">{task.houseNo}</span>
+                </div>
+              )}
               <div className="task-detail-row">
-  <span className="task-detail-label">Status:</span>
-  <span className="task-status-inprogress">{task.status}</span>
-</div>
+                <span className="task-detail-label">📝 Description</span>
+                <span className="task-detail-value task-desc">{task.description}</span>
+              </div>
 
-<div className="task-detail-row">
-  <span className="task-detail-label">Description:</span>
-  <span className="task-detail-value">{task.description}</span>
-</div>
+              {task.deadline && (
+                <div className="task-deadline-row">
+                  <span className="task-deadline-label">📅 Deadline:</span>
+                  <span className="task-deadline-date">{task.deadline}</span>
+                  <span className={`deadline-chip ${getDeadlineInfo(task.deadline)?.includes("Over") ? "chip-expired" : "chip-active"}`}>
+                    {getDeadlineInfo(task.deadline)}
+                  </span>
+                </div>
+              )}
 
-{task.deadline && (
-  <div className="task-detail-row deadline-row">
-    <span className="task-detail-label">Deadline:</span>
-    <span className="task-deadline">{task.deadline}</span>
-
-    <span className={`deadline-status ${
-      getDeadlineInfo(task.deadline).includes("Over")
-        ? "expired"
-        : "active"
-    }`}>
-      {getDeadlineInfo(task.deadline)}
-    </span>
-  </div>
-)}
+              {/* Actions */}
               <div className="task-actions">
                 {task.status === "Assigned" && (
                   <button
                     className="progress-btn"
-                    onClick={() =>
-                      openConfirm("Start this task?", async () => {
-                        setActionLoading(true);
-                        const data = await updateStatus(task._id, "In Progress");
-setActionLoading(false);
-
-if (data.success) {
-  showPopup("🚀 Task Started!");
-} else {
-  showPopup("❌ Failed to start task");
-}
-                      })
-                    }
+                    onClick={() => openConfirm("Start this task?", async () => {
+                      setActionLoading(true);
+                      const data = await updateStatus(task._id, "In Progress");
+                      setActionLoading(false);
+                      if (data.success) showPopup("🚀 Task Started!", "success");
+                      else showPopup("❌ Failed to start task", "error");
+                    })}
                   >
-                    Start
+                    ▶ Start Task
                   </button>
                 )}
                 {task.status === "In Progress" && (
-                  <button
-                    className="complete-btn"
-                    onClick={() => resolveIssue(task._id)}
-                  >
-                    Complete
+                  <button className="complete-btn" onClick={() => resolveIssue(task._id)}>
+                    ✓ Mark Complete
                   </button>
                 )}
               </div>
             </div>
 
-
-            {task.photoId && (
-              <TaskImageWithSkeleton photoId={task.photoId} />
-            )}
-
+            {task.photoId && <TaskImageWithSkeleton photoId={task.photoId} />}
           </div>
         ))}
+          </div>
+        )}
       </div>
     );
   };
 
-  /* STATS */
+  /* ── STATS ── */
   const getStats = () => {
-    let stats = { Assigned: 0, "In Progress": 0, Resolved: 0 };
-
-    Object.values(tasks).forEach(arr => {
-      arr.forEach(task => {
-        if (STATUS.includes(task.status)) stats[task.status]++;
-      });
-    });
-
-    return stats;
+    let s = { Assigned: 0, "In Progress": 0, Resolved: 0 };
+    Object.values(tasks).forEach(arr => arr.forEach(t => { if (STATUS.includes(t.status)) s[t.status]++; }));
+    return s;
   };
-
   const stats = getStats();
-
-  const chartData = STATUS.map(status => ({
-    name: status,
-    value: stats[status]
-  }));
-
+  const chartData = STATUS.map(status => ({ name: status, value: stats[status] }));
   const categoryData = Object.keys(tasks).map(cat => {
     let c = { Assigned: 0, "In Progress": 0, Resolved: 0 };
-
-    tasks[cat].forEach(t => {
-      if (STATUS.includes(t.status)) c[t.status]++;
-    });
-
-    return {
-      name: cat,
-      Assigned: c["Assigned"],
-      Progress: c["In Progress"],
-      Resolved: c["Resolved"]
-    };
+    tasks[cat].forEach(t => { if (STATUS.includes(t.status)) c[t.status]++; });
+    return { name: cat, Assigned: c["Assigned"], Progress: c["In Progress"], Resolved: c["Resolved"] };
   });
+
+  /* ── CATEGORY CARD HELPER ── */
+  const catConfig = {
+    electricity: { icon: "⚡", label: "Electricity", color: "#f59e0b", bg: "linear-gradient(135deg,#fde68a,#f59e0b)" },
+    water: { icon: "💧", label: "Water", color: "#0ea5e9", bg: "linear-gradient(135deg,#bae6fd,#0ea5e9)" },
+    garbage: { icon: "🗑", label: "Garbage", color: "#16a34a", bg: "linear-gradient(135deg,#bbf7d0,#16a34a)" },
+    drainage: { icon: "🚰", label: "Drainage", color: "#7c3aed", bg: "linear-gradient(135deg,#ddd6fe,#7c3aed)" },
+  };
 
   return (
     <div className="worker-container">
 
-      {/* 🔔 TOAST */}
-      {popup.show && <div className="popup">{popup.message}</div>}
+      {/* ── TOAST ── */}
+      {popup.show && (
+        <div className={`wd-toast ${popup.type === "error" ? "wd-toast--error" : "wd-toast--success"}`}>
+          {popup.message}
+        </div>
+      )}
 
-      {/* 🔥 LOGOUT ANIMATION */}
+      {/* ── LOGOUT OVERLAY ── */}
       {logoutLoading && (
-        <div className="logout-overlay">
-          <div className="logout-box">
-            <div className="logout-spinner"></div>
-            <p>Logging out<span className="dots"></span></p>
+        <div className="wd-overlay">
+          <div className="wd-overlay-box">
+            <div className="wd-spinner" />
+            <p>Logging out<span className="dots" /></p>
           </div>
         </div>
       )}
 
-      {/* CONFIRM */}
+      {/* ── CONFIRM DIALOG ── */}
       {confirmBox.show && (
-        <div className="confirm-overlay">
-          <div className="confirm-box">
-            <p>{confirmBox.message}</p>
-
-            <div className="confirm-actions">
+        <div className="wd-overlay" onClick={closeConfirm}>
+          <div className="wd-confirm-box" onClick={e => e.stopPropagation()}>
+            <div className="wd-confirm-icon">🤔</div>
+            <p className="wd-confirm-msg">{confirmBox.message}</p>
+            <div className="wd-confirm-actions">
               <button
-                className="yes-btn"
+                className="wd-btn-yes"
                 disabled={actionLoading || logoutLoading}
                 onClick={async () => {
                   setActionLoading(true);
@@ -316,86 +260,73 @@ if (data.success) {
                   closeConfirm();
                 }}
               >
-                {actionLoading ? "Processing..." : "Yes"}
+                {actionLoading ? "Processing…" : "✓ Yes"}
               </button>
-
-              <button className="no-btn" onClick={closeConfirm}>
-                Cancel
-              </button>
+              <button className="wd-btn-no" onClick={closeConfirm}>✕ Cancel</button>
             </div>
-
           </div>
         </div>
       )}
 
-      {/* GLOBAL LOADER (TASKS ONLY) */}
-      {actionLoading && (
-        <div className="global-loading">
-          <div className="loader-box">⏳ Processing...</div>
-        </div>
-      )}
-
+      {/* ── NAVBAR ── */}
       <div className="worker-navbar">
-        <h2>Worker Dashboard</h2>
+        <div className="wd-nav-brand">
+          <span className="wd-nav-dot" />
+          <h2 className="wd-nav-title">Worker Dashboard</h2>
+        </div>
         <button className="logout-btn" onClick={logout}>Logout</button>
       </div>
 
-      {/* STATS */}
+      {/* ── STATISTICS ── */}
       <div className="stats-section">
-        <h2 className="section-title highlight">📊 Task Statistics</h2>
+        <h2 className="wd-section-heading">📊 Task Statistics</h2>
 
         <div className="stats-subsection">
-          <h3>Status Overview</h3>
+          <h3 className="wd-sub-heading title-overview">Status Overview</h3>
           <div className="stats-cards">
             {loading ? (
-              [1,2,3].map(i => <SkeletonBox key={i} height={50} />)
+              [1, 2, 3].map(i => <SkeletonBox key={i} height={70} />)
             ) : (
               <>
-                <div className="stat-card assigned">Assigned<br />{stats["Assigned"]}</div>
-                <div className="stat-card progress">In Progress<br />{stats["In Progress"]}</div>
-                <div className="stat-card resolved">Resolved<br />{stats["Resolved"]}</div>
+                <div className="stat-card assigned"><span className="stat-num">{stats["Assigned"]}</span><span className="stat-lbl">Assigned</span></div>
+                <div className="stat-card progress"><span className="stat-num">{stats["In Progress"]}</span><span className="stat-lbl">In Progress</span></div>
+                <div className="stat-card resolved"><span className="stat-num">{stats["Resolved"]}</span><span className="stat-lbl">Resolved</span></div>
               </>
             )}
           </div>
 
           <div className="charts">
-            <div className="chart-box" style={{ minHeight: "fit-content"}}>
-              <h4 className="chart-title">Status Distribution (Pie Chart)</h4>
-              {loading ? <SkeletonBox height={400} /> : (
-                <ResponsiveContainer width="100%" minHeight={400}>
-                  <PieChart margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
-                    <Pie
-                      data={chartData}
-                      dataKey="value"
-                      nameKey="name"
-                      labelLine={true}
-                      label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      innerRadius={60}
-                      paddingAngle={8}
-                    >
-                      <Cell fill="#3b82f6"/>
-                      <Cell fill="#6366f1"/>
-                      <Cell fill="#22c55e"/>
+            <div className="chart-box">
+              <h4 className="wd-chart-title chart-dist">Status Distribution</h4>
+              {loading ? <SkeletonBox height={300} /> : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie data={chartData} dataKey="value" nameKey="name"
+                      cx="50%" cy="50%" outerRadius={95} innerRadius={60} paddingAngle={6} stroke="none">
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                      ))}
                     </Pie>
-                    <Tooltip />
-                    <Legend verticalAlign="bottom" height={36}/>
+                    <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }} />
+                    <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontWeight: 600, color: '#475569', fontSize: '13px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               )}
             </div>
-
             <div className="chart-box">
-              <h4 className="chart-title">Status Count (Bar Chart)</h4>
-              {loading ? <SkeletonBox height={400} /> : (
-                <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={chartData}>
-                    <XAxis dataKey="name"/>
-                    <YAxis/>
-                    <Tooltip/>
-                    <Bar dataKey="value" fill="#2563eb" barSize={32} radius={[8,8,0,0]}/>
+              <h4 className="wd-chart-title chart-count">Status Count</h4>
+              {loading ? <SkeletonBox height={300} /> : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                    <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 13, fontWeight: 600 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: '#64748b', fontSize: 13, fontWeight: 600 }} axisLine={false} tickLine={false} />
+                    <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }} />
+                    <Bar dataKey="value" barSize={34} radius={[6, 6, 0, 0]}>
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               )}
@@ -404,19 +335,20 @@ if (data.success) {
         </div>
 
         <div className="stats-subsection">
-          <h3>Category-wise Performance</h3>
+          <h3 className="wd-sub-heading title-perf">Category-wise Performance</h3>
           <div className="chart-box">
-            <h4>Category Bar Chart</h4>
+            <h4 className="wd-chart-title chart-prog">Category Progress</h4>
             {loading ? <SkeletonBox height={250} /> : (
               <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={categoryData}>
-                  <XAxis dataKey="name"/>
-                  <YAxis/>
-                  <Tooltip/>
-                  <Legend/>
-                  <Bar dataKey="Assigned" fill="#3b82f6"/>
-                  <Bar dataKey="Progress" fill="#6366f1"/>
-                  <Bar dataKey="Resolved" fill="#22c55e"/>
+                <BarChart data={categoryData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                  <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 13, fontWeight: 600 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: '#64748b', fontSize: 13, fontWeight: 600 }} axisLine={false} tickLine={false} />
+                  <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }} />
+                  <Legend iconType="circle" wrapperStyle={{ fontWeight: 600, color: '#475569', fontSize: '13px', paddingTop: '10px' }} />
+                  <Bar dataKey="Assigned" fill={CHART_COLORS[0]} radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Progress" fill={CHART_COLORS[1]} radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Resolved" fill={CHART_COLORS[2]} radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -424,65 +356,35 @@ if (data.success) {
         </div>
       </div>
 
-      {/* CATEGORY SELECTION */}
-      <div className="category-section">
-        <h2 className="section-title highlight">🗂️ Select Issue Category</h2>
-        <div className="worker-cards modern-category-cards">
-          <div className="worker-card modern-category-card electricity-card"
-            onClick={() => setActiveCategory("electricity")}
-            tabIndex={0}
-            style={{ filter: activeCategory === "electricity" ? "none" : "blur(0)", outline: activeCategory === "electricity" ? "2px solid #3b82f6" : "none" }}
-          >
-            <div className="category-icon">⚡</div>
-            <div className="category-label">Electricity</div>
-            {tasks.electricity && (tasks.electricity.filter(t => t.status === "Assigned" || t.status === "In Progress").length > 0) && (
-              <div className="bubble-anim inside-bubble electricity-bubble">
-                {tasks.electricity.filter(t => t.status === "Assigned" || t.status === "In Progress").length}
+      {/* ── CATEGORY SELECTION ── */}
+      <div className="wd-cat-section">
+        <h2 className="wd-section-heading">🗂️ Select Issue Category</h2>
+        <div className="wd-cat-grid">
+          {Object.entries(catConfig).map(([key, cfg]) => {
+            const active = activeCategory === key;
+            const taskCount = tasks[key]?.filter(t => t.status === "Assigned" || t.status === "In Progress").length || 0;
+            return (
+              <div
+                key={key}
+                className={`wd-cat-card ${active ? "wd-cat-card--active" : ""}`}
+                style={{ "--cat-color": cfg.color, "--cat-bg": cfg.bg }}
+                onClick={() => setActiveCategory(key)}
+                tabIndex={0}
+                onKeyDown={e => e.key === "Enter" && setActiveCategory(key)}
+              >
+                <div className="wd-cat-icon">{cfg.icon}</div>
+                <div className="wd-cat-label">{cfg.label}</div>
+                {taskCount > 0 && (
+                  <div className="wd-cat-badge">{taskCount}</div>
+                )}
+                {active && <div className="wd-cat-active-bar" />}
               </div>
-            )}
-          </div>
-          <div className="worker-card modern-category-card water-card"
-            onClick={() => setActiveCategory("water")}
-            tabIndex={0}
-            style={{ filter: activeCategory === "water" ? "none" : "blur(0)", outline: activeCategory === "water" ? "2px solid #06b6d4" : "none" }}
-          >
-            <div className="category-icon">💧</div>
-            <div className="category-label">Water</div>
-            {tasks.water && (tasks.water.filter(t => t.status === "Assigned" || t.status === "In Progress").length > 0) && (
-              <div className="bubble-anim inside-bubble water-bubble">
-                {tasks.water.filter(t => t.status === "Assigned" || t.status === "In Progress").length}
-              </div>
-            )}
-          </div>
-          <div className="worker-card modern-category-card garbage-card"
-            onClick={() => setActiveCategory("garbage")}
-            tabIndex={0}
-            style={{ filter: activeCategory === "garbage" ? "none" : "blur(0)", outline: activeCategory === "garbage" ? "2px solid #fbbf24" : "none" }}
-          >
-            <div className="category-icon">🗑</div>
-            <div className="category-label">Garbage</div>
-            {tasks.garbage && (tasks.garbage.filter(t => t.status === "Assigned" || t.status === "In Progress").length > 0) && (
-              <div className="bubble-anim inside-bubble garbage-bubble">
-                {tasks.garbage.filter(t => t.status === "Assigned" || t.status === "In Progress").length}
-              </div>
-            )}
-          </div>
-          <div className="worker-card modern-category-card drainage-card"
-            onClick={() => setActiveCategory("drainage")}
-            tabIndex={0}
-            style={{ filter: activeCategory === "drainage" ? "none" : "blur(0)", outline: activeCategory === "drainage" ? "2px solid #10b981" : "none" }}
-          >
-            <div className="category-icon">🚰</div>
-            <div className="category-label">Drainage</div>
-            {tasks.drainage && (tasks.drainage.filter(t => t.status === "Assigned" || t.status === "In Progress").length > 0) && (
-              <div className="bubble-anim inside-bubble drainage-bubble">
-                {tasks.drainage.filter(t => t.status === "Assigned" || t.status === "In Progress").length}
-              </div>
-            )}
-          </div>
+            );
+          })}
         </div>
       </div>
 
+      {/* ── TASK LIST ── */}
       <div className="task-section">
         {activeCategory && renderTasks()}
       </div>
