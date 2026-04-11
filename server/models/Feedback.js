@@ -1,0 +1,32 @@
+import mongoose from "mongoose";
+
+const feedbackSchema = new mongoose.Schema({
+  userName: {
+    type: String,
+    required: true,
+  },
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5,
+  },
+  category: {
+    type: String,
+    required: true,
+  },
+  message: {
+    type: String,
+  },
+  date: {
+    type: String,
+    required: true,
+  },
+  time: {
+    type: String,
+    required: true,
+  },
+}, { timestamps: true });
+
+const Feedback = mongoose.model("Feedback", feedbackSchema);
+export default Feedback;

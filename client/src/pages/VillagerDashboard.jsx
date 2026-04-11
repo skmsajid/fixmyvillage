@@ -5,7 +5,7 @@ import Toast from "../components/Toast";
 
 const IssueCard = ({ issue, label }) => {
   const [imgLoaded, setImgLoaded] = useState(false);
-  const statusClass = issue.status === "Assigned" ? "badge-assigned" : issue.status === "Resolved" ? "badge-resolved" : issue.status === "Rejected" ? "badge-rejected" : "badge-progress";
+  const statusClass = issue.status === "Assigned" ? "badge-assigned" : issue.status === "Resolved" ? "badge-resolved" : issue.status === "Rejected" ? "badge-rejected" : issue.status === "Pending" ? "badge-pending" : "badge-progress";
 
   return (
     <div className="ipc-card">
@@ -72,6 +72,109 @@ const Carousel = ({ issues, title, highlight, label }) => {
   );
 };
 
+/* ─── Status configuration ─── */
+const STATUS_STEPS = ['Pending', 'Assigned', 'In Progress', 'Resolved'];
+const STATUS_ICONS = { Pending: '🕒', Assigned: '👤', 'In Progress': '🔧', Resolved: '✅', Rejected: '❌' };
+const CAT_COLOR = {
+  electricity: { bg: '#fef3c7', color: '#d97706', border: '#fde68a' },
+  water:       { bg: '#e0f2fe', color: '#0284c7', border: '#bae6fd' },
+  garbage:     { bg: '#f0fdf4', color: '#16a34a', border: '#bbf7d0' },
+  drainage:    { bg: '#f3e8ff', color: '#7c3aed', border: '#ddd6fe' },
+};
+
+function StatusStepper({ status }) {
+  if (status === 'Rejected') {
+    return (
+      <div className="mi2-rejected-bar">
+        <span>❌</span> This issue was <strong>Rejected</strong>
+      </div>
+    );
+  }
+  const activeIdx = STATUS_STEPS.indexOf(status);
+  return (
+    <div className="mi2-stepper">
+      {STATUS_STEPS.map((step, idx) => {
+        const done    = idx < activeIdx;
+        const current = idx === activeIdx;
+        return (
+          <div key={step} className="mi2-step-wrap">
+            <div className={`mi2-step-node ${done ? 'done' : ''} ${current ? 'active' : ''}`}>
+              {done ? '✔' : STATUS_ICONS[step]}
+            </div>
+            <span className={`mi2-step-label ${current ? 'active-label' : ''} ${done ? 'done-label' : ''}`}>{step}</span>
+            {idx < STATUS_STEPS.length - 1 && (
+              <div className={`mi2-step-line ${done || current ? 'filled' : ''}`} />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function MyIssueCard({ issue, label, idx }) {
+  const [expanded, setExpanded] = useState(false);
+  const colors = CAT_COLOR[issue.category] || CAT_COLOR.garbage;
+  const isRejected = issue.status === 'Rejected';
+
+  return (
+    <div
+      className={`mi2-card ${isRejected ? 'mi2-rejected' : ''}`}
+      style={{ animationDelay: `${idx * 0.07}s` }}
+    >
+      {/* Top row */}
+      <div className="mi2-card-top">
+        <span className="mi2-cat-badge" style={{ background: colors.bg, color: colors.color, border: `1.5px solid ${colors.border}` }}>
+          {label(issue.category)}
+        </span>
+        <span className="mi2-date">📅 {issue.date}</span>
+      </div>
+
+      {/* Location row */}
+      <div className="mi2-location">
+        <span>📍 Street {issue.street}</span>
+        {issue.houseNo && <span> · 🏠 {issue.houseNo}</span>}
+      </div>
+
+      {/* Status stepper */}
+      <StatusStepper status={issue.status} />
+
+      {/* Collapsed preview */}
+      <p className="mi2-preview">
+        {issue.description.length > 80 ? issue.description.slice(0, 80) + '…' : issue.description}
+      </p>
+
+      {/* Track Details toggle */}
+      <button className="mi2-toggle-btn" onClick={() => setExpanded(e => !e)}>
+        {expanded ? '▲ Hide Details' : '🔍 Track Details'}
+      </button>
+
+      {/* Expanded content */}
+      <div className={`mi2-expand ${expanded ? 'open' : ''}`}>
+        <div className="mi2-expand-inner">
+          <p className="mi2-full-desc">{issue.description}</p>
+          {issue.photoId && (
+            <img
+              className="mi2-photo"
+              src={`/api/files/${issue.photoId}`}
+              alt="Issue"
+            />
+          )}
+          {isRejected && issue.reason && (
+            <div className="mi2-reason">
+              <strong>❌ Rejection Reason:</strong> {issue.reason}
+            </div>
+          )}
+          <div className="mi2-meta-row">
+            <span>🕒 {issue.time}</span>
+            <span>📂 {issue.category}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function VillagerDashboard() {
   const navigate = useNavigate();
   const userName = localStorage.getItem("userName");
@@ -81,12 +184,15 @@ export default function VillagerDashboard() {
   const [toast, setToast] = useState(null);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [userInfo, setUserInfo] = useState({ email: "", aadhar: "" });
   const [assignedIssues, setAssignedIssues] = useState([]);
   const [progressIssues, setProgressIssues] = useState([]);
   const [resolvedIssues, setResolvedIssues] = useState([]);
   const [myIssues, setMyIssues] = useState([]);
+  const [filterCat, setFilterCat] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
 
   const [stats, setStats] = useState({ total: 0, assigned: 0, progress: 0, resolved: 0 });
   const [activeForm, setActiveForm] = useState("");
@@ -185,6 +291,12 @@ export default function VillagerDashboard() {
     if (cat === "drainage") return "🚰 Drainage";
   };
 
+  const filteredMyIssues = myIssues.filter(i => {
+    const catOk = filterCat === 'all' || i.category === filterCat;
+    const statusOk = filterStatus === 'all' || i.status === filterStatus;
+    return catOk && statusOk;
+  });
+
   return (
     <div className="villager-container">
       {toast && <Toast message={toast.message} type={toast.type} />}
@@ -195,9 +307,50 @@ export default function VillagerDashboard() {
           <h1 className="header-title">🏘️ Villager Dashboard</h1>
           <span className="header-badge">Live System</span>
         </div>
-        <button className="premium-logout" onClick={() => setShowLogoutConfirm(true)}>
-          <span className="logout-icon">⏻</span> {logoutLoading ? "..." : "Logout"}
+
+        {/* Desktop — hidden on mobile via CSS */}
+        <div className="vd-desktop-btns">
+          <button
+            className="premium-logout"
+            onClick={() => navigate("/villager/feedback")}
+            style={{
+              background: 'linear-gradient(135deg, #3b82f6, #60a5fa)',
+              color: 'white',
+              border: 'none',
+              boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+            }}
+          >
+            <span className="logout-icon">⭐</span> Give Feedback
+          </button>
+          <button className="premium-logout" onClick={() => setShowLogoutConfirm(true)}>
+            <span className="logout-icon">⏻</span> {logoutLoading ? "..." : "Logout"}
+          </button>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="vd-hamburger"
+          onClick={() => setMobileMenuOpen((o) => !o)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? '✕' : '☰'}
         </button>
+
+        {/* Mobile dropdown — lives inside sticky header so it scrolls with it */}
+        <div className={`vd-mobile-menu${mobileMenuOpen ? ' open' : ''}`}>
+          <button
+            className="vd-menu-item"
+            onClick={() => { setMobileMenuOpen(false); navigate('/villager/feedback'); }}
+          >
+            <span>⭐</span> Give Feedback
+          </button>
+          <button
+            className="vd-menu-item vd-menu-logout"
+            onClick={() => { setMobileMenuOpen(false); setShowLogoutConfirm(true); }}
+          >
+            <span>⏻</span> Logout
+          </button>
+        </div>
       </div>
 
       {/* LOGOUT POPUP */}
@@ -289,41 +442,64 @@ export default function VillagerDashboard() {
         )}
       </div>
 
-      {/* MY ISSUES */}
-      <div className="my-issues module-box">
-        <div className="section-header">
-          <h2 className="section-title">My Tracked Issues</h2>
-          <p className="section-sub">View the status of issues you have successfully reported.</p>
+      {/* MY ISSUES — Premium */}
+      <div className="mi2-section module-box">
+        <div className="section-header" style={{ marginTop: 0 }}>
+          <h2 className="section-title">📋 My Tracked Issues</h2>
+          <p className="section-sub">Track the real-time status of all your reported issues.</p>
         </div>
 
+        {/* Filter Bar */}
+        {!loadingData && myIssues.length > 0 && (
+          <div className="mi2-filter-bar">
+            <div className="mi2-filter-group">
+              <span className="mi2-filter-label">Category</span>
+              {['all', 'electricity', 'water', 'garbage', 'drainage'].map(cat => (
+                <button
+                  key={cat}
+                  className={`mi2-filter-btn${filterCat === cat ? ' active' : ''}`}
+                  onClick={() => setFilterCat(cat)}
+                >
+                  {cat === 'all' ? '🔍 All' : label(cat)}
+                </button>
+              ))}
+            </div>
+            <div className="mi2-filter-group">
+              <span className="mi2-filter-label">Status</span>
+              {['all', 'Pending', 'Assigned', 'In Progress', 'Resolved', 'Rejected'].map(st => (
+                <button
+                  key={st}
+                  className={`mi2-filter-btn mi2-filter-status ${st.toLowerCase().replace(/\s+/g, '-')}${filterStatus === st ? ' active' : ''}`}
+                  onClick={() => setFilterStatus(st)}
+                >
+                  {st === 'all' ? '🔍 All' : st}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {loadingData ? (
-          <div className="my-issues-grid">
-            {[1, 2, 3].map(i => <div key={i} className="skeleton-stat" style={{ height: 180 }}></div>)}
+          <div className="mi2-grid">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="skeleton-stat" style={{ height: 200 }} />
+            ))}
           </div>
         ) : myIssues.length === 0 ? (
-          <p style={{ color: '#64748b', fontWeight: 500, padding: 20 }}>No reported issues found.</p>
+          <div className="mi2-empty">
+            <span>📭</span>
+            <p>No issues reported yet. Raise a complaint above!</p>
+          </div>
+        ) : filteredMyIssues.length === 0 ? (
+          <div className="mi2-empty">
+            <span>🔎</span>
+            <p>No issues match the selected filters.</p>
+          </div>
         ) : (
-          <div className="my-issues-grid">
-            {myIssues.map((i, index) => {
-              const statusClass = i.status === "Assigned" ? "badge-assigned" : i.status === "Resolved" ? "badge-resolved" : i.status === "Rejected" ? "badge-rejected" : "badge-progress";
-              return (
-                <div key={i._id} className="my-issue-card" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <div className="my-issue-header">
-                    <span className="mi-cat">{label(i.category)}</span>
-                    <span className="mi-date">{i.date} {i.time}</span>
-                  </div>
-                  <div className="mi-body">
-                    <p><b>House No:</b> {i.houseNo}</p>
-                    <p><b>Street:</b> {i.street}</p>
-                    <p><b>Details:</b> {i.description.length > 50 ? i.description.substring(0, 50) + "..." : i.description}</p>
-
-                  </div>
-                  <div className="mi-footer">
-                    <span className={`ipc-status ${statusClass}`}>{i.status === "Rejected" ? `Rejected (${i.reason || "No reason"})` : i.status}</span>
-                  </div>
-                </div>
-              );
-            })}
+          <div className={`mi2-grid${filteredMyIssues.length > 4 ? ' mi2-grid--scroll' : ''}`}>
+            {filteredMyIssues.map((issue, idx) => (
+              <MyIssueCard key={issue._id} issue={issue} label={label} idx={idx} />
+            ))}
           </div>
         )}
       </div>

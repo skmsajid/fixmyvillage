@@ -6,6 +6,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import VillagerDashboard from "./pages/VillagerDashboard";
 import WorkerDashboard from "./pages/WorkerDashboard";
 import Home from "./pages/Home";
+import VillagerFeedback from "./pages/VillagerFeedback";
+import AdminFeedback from "./pages/AdminFeedback";
 import ScrollTop from "./components/ScrollTop";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -35,6 +37,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/admin/feedback"
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <AdminFeedback />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Worker */}
         <Route
@@ -55,6 +65,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/villager/feedback"
+          element={
+            <ProtectedRoute allowedRole="villager">
+              <VillagerFeedback />
+            </ProtectedRoute>
+          }
+        />
 
         {/* 404 Fallback Route */}
         <Route path="*" element={<NotFoundPage />} />
@@ -62,7 +80,7 @@ function App() {
       </Routes>
 
     </Router>
-    
+
   );
 }
 

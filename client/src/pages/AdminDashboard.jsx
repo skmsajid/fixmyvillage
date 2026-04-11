@@ -5,762 +5,775 @@ import { useNavigate } from "react-router-dom";
 import { SkeletonBox, SkeletonCircle, SkeletonText } from "../components/Skeleton";
 
 import {
-BarChart,
-Bar,
-XAxis,
-YAxis,
-Tooltip,
-PieChart,
-Pie,
-Cell,
-ResponsiveContainer,
-Legend
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Legend
 } from "recharts";
 
-export default function AdminDashboard(){
+export default function AdminDashboard() {
 
-const navigate = useNavigate();
-const adminName="Admin";
-
-
-const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-const [logoutLoading, setLogoutLoading] = useState(false);
-const logout = () => {
-	setShowLogoutConfirm(true);
-};
-const confirmLogout = () => {
-	setLogoutLoading(true);
-	setTimeout(() => {
-		localStorage.clear();
-		navigate("/");
-	}, 700);
-};
+  const navigate = useNavigate();
+  const adminName = "Admin";
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 
-const [requests,setRequests]=useState([]);
-const [showRequestPopup,setShowRequestPopup]=useState(false);
-
-const [activeCategory,setActiveCategory]=useState("");
-const [requestLoading, setRequestLoading] = useState(null); 
-const [issues,setIssues]=useState({
-electricity:[],
-water:[],
-garbage:[],
-drainage:[]
-});
-
-
-const [assignedIssues,setAssignedIssues]=useState([]);
-const [progressIssues,setProgressIssues]=useState([]);
-const [overdueIssues,setOverdueIssues]=useState([]);
-const [loadingData, setLoadingData] = useState(true);
-
-const [stats,setStats]=useState({
-total:0,
-pending:0,
-assigned:0,
-progress:0,
-resolved:0,
-rejected:0
-});
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
+  const logout = () => {
+    setShowLogoutConfirm(true);
+  };
+  const confirmLogout = () => {
+    setLogoutLoading(true);
+    setTimeout(() => {
+      localStorage.clear();
+      navigate("/");
+    }, 700);
+  };
 
 
-const [rejectReason,setRejectReason]=useState({});
-const [deadline,setDeadline]=useState({});
-const [issueLoading, setIssueLoading] = useState({});
+  const [requests, setRequests] = useState([]);
+  const [showRequestPopup, setShowRequestPopup] = useState(false);
 
-const [popupMessage,setPopupMessage]=useState("");
-const [pendingCounts, setPendingCounts] = useState({ electricity: 0, water: 0, garbage: 0, drainage: 0 });
-
-/* CATEGORY LABEL */
-
-const label=(cat)=>{
-if(cat==="electricity") return "⚡ Electricity";
-if(cat==="water") return "💧 Water";
-if(cat==="garbage") return "🗑 Garbage";
-if(cat==="drainage") return "🚰 Drainage";
-};
+  const [activeCategory, setActiveCategory] = useState("");
+  const [requestLoading, setRequestLoading] = useState(null);
+  const [issues, setIssues] = useState({
+    electricity: [],
+    water: [],
+    garbage: [],
+    drainage: []
+  });
 
 
-/* FETCH SIGNUP REQUESTS */
+  const [assignedIssues, setAssignedIssues] = useState([]);
+  const [progressIssues, setProgressIssues] = useState([]);
+  const [overdueIssues, setOverdueIssues] = useState([]);
+  const [loadingData, setLoadingData] = useState(true);
 
-useEffect(()=>{
-fetch("/api/admin/requests")
-.then(res=>res.json())
-.then(data=>setRequests(data));
-},[]);
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    assigned: 0,
+    progress: 0,
+    resolved: 0,
+    rejected: 0
+  });
 
 
-/* APPROVE USER */
+  const [rejectReason, setRejectReason] = useState({});
+  const [deadline, setDeadline] = useState({});
+  const [issueLoading, setIssueLoading] = useState({});
 
-const approveUser = async (id) => {
-  setRequestLoading({ id, type: "approve" });
-  try {
-    const res = await fetch(`/api/admin/approve/${id}`, { method: "PUT" });
-    const data = await res.json();
-    if (data.success) {
-      setPopupMessage("✅ Request Approved");
-    } else {
-      setPopupMessage("❌ Operation failed");
+  const [popupMessage, setPopupMessage] = useState("");
+  const [pendingCounts, setPendingCounts] = useState({ electricity: 0, water: 0, garbage: 0, drainage: 0 });
+
+  /* CATEGORY LABEL */
+
+  const label = (cat) => {
+    if (cat === "electricity") return "⚡ Electricity";
+    if (cat === "water") return "💧 Water";
+    if (cat === "garbage") return "🗑 Garbage";
+    if (cat === "drainage") return "🚰 Drainage";
+  };
+
+
+  /* FETCH SIGNUP REQUESTS */
+
+  useEffect(() => {
+    fetch("/api/admin/requests")
+      .then(res => res.json())
+      .then(data => setRequests(data));
+  }, []);
+
+
+  /* APPROVE USER */
+
+  const approveUser = async (id) => {
+    setRequestLoading({ id, type: "approve" });
+    try {
+      const res = await fetch(`/api/admin/approve/${id}`, { method: "PUT" });
+      const data = await res.json();
+      if (data.success) {
+        setPopupMessage("✅ Request Approved");
+      } else {
+        setPopupMessage("❌ Operation failed");
+      }
+      setRequests(requests.filter(u => u._id !== id));
+    } catch (err) {
+      setPopupMessage("❌ Error while approving");
+    } finally {
+      setRequestLoading(null);
     }
-    setRequests(requests.filter(u => u._id !== id));
-  } catch (err) {
-    setPopupMessage("❌ Error while approving");
-  } finally {
-    setRequestLoading(null);
-  }
-};
+  };
 
 
-/* REJECT USER */
+  /* REJECT USER */
 
-const rejectUser = async (id) => {
-  setRequestLoading({ id, type: "reject" });
-  try {
-    const res = await fetch(`/api/admin/reject/${id}`, { method: "PUT" });
-    const data = await res.json();
-    if (data.success) {
-      setPopupMessage("❌ Request Rejected");
-    } else {
-      setPopupMessage("❌ Reject failed");
+  const rejectUser = async (id) => {
+    setRequestLoading({ id, type: "reject" });
+    try {
+      const res = await fetch(`/api/admin/reject/${id}`, { method: "PUT" });
+      const data = await res.json();
+      if (data.success) {
+        setPopupMessage("❌ Request Rejected");
+      } else {
+        setPopupMessage("❌ Reject failed");
+      }
+      setRequests(requests.filter(u => u._id !== id));
+    } catch (err) {
+      setPopupMessage("❌ Error while rejecting");
+    } finally {
+      setRequestLoading(null);
     }
-    setRequests(requests.filter(u => u._id !== id));
-  } catch (err) {
-    setPopupMessage("❌ Error while rejecting");
-  } finally {
-    setRequestLoading(null);
-  }
-};
+  };
 
 
 
-/* FETCH ALL ISSUES */
+  /* FETCH ALL ISSUES */
 
 
-const fetchAllIssues=async()=>{
-	setLoadingData(true);
-	const categories=["electricity","water","garbage","drainage"];
-	let assigned=[];
-	let progress=[];
-	let overdue=[];
-	let total=0;
-	let pending=0;
-	let resolved=0;
-	let rejected=0;
-	let pendingObj = {};
-	for(const cat of categories){
-		const res=await fetch(`/api/issues/${cat}`);
-		const data=await res.json();
-		const withCategory=data.map(i=>({...i,category:cat}));
-		total+=withCategory.length;
-		const catPending = withCategory.filter(i=>i.status==="Pending").length;
-		pending+=catPending;
-		pendingObj[cat] = catPending;
-		resolved+=withCategory.filter(i=>i.status==="Resolved").length;
-		rejected+=withCategory.filter(i=>i.status==="Rejected").length;
-		assigned.push(...withCategory.filter(i=>i.status==="Assigned"));
-		progress.push(...withCategory.filter(i=>i.status==="In Progress"));
-		const today=new Date();
-		overdue.push(...withCategory.filter(i=>{
-			if(!i.deadline) return false;
-			return new Date(i.deadline)<=today && i.status!=="Resolved";
-		}));
-	}
-	setAssignedIssues(assigned);
-	setProgressIssues(progress);
-	setOverdueIssues(overdue);
-	setStats({
-		total,
-		pending,
-		assigned:assigned.length,
-		progress:progress.length,
-		resolved,
-		rejected
-	});
-	setPendingCounts(pendingObj);
-	setLoadingData(false);
-};
+  const fetchAllIssues = async () => {
+    setLoadingData(true);
+    const categories = ["electricity", "water", "garbage", "drainage"];
+    let assigned = [];
+    let progress = [];
+    let overdue = [];
+    let total = 0;
+    let pending = 0;
+    let resolved = 0;
+    let rejected = 0;
+    let pendingObj = {};
+    for (const cat of categories) {
+      const res = await fetch(`/api/issues/${cat}`);
+      const data = await res.json();
+      const withCategory = data.map(i => ({ ...i, category: cat }));
+      total += withCategory.length;
+      const catPending = withCategory.filter(i => i.status === "Pending").length;
+      pending += catPending;
+      pendingObj[cat] = catPending;
+      resolved += withCategory.filter(i => i.status === "Resolved").length;
+      rejected += withCategory.filter(i => i.status === "Rejected").length;
+      assigned.push(...withCategory.filter(i => i.status === "Assigned"));
+      progress.push(...withCategory.filter(i => i.status === "In Progress"));
+      const today = new Date();
+      overdue.push(...withCategory.filter(i => {
+        if (!i.deadline) return false;
+        return new Date(i.deadline) <= today && i.status !== "Resolved";
+      }));
+    }
+    setAssignedIssues(assigned);
+    setProgressIssues(progress);
+    setOverdueIssues(overdue);
+    setStats({
+      total,
+      pending,
+      assigned: assigned.length,
+      progress: progress.length,
+      resolved,
+      rejected
+    });
+    setPendingCounts(pendingObj);
+    setLoadingData(false);
+  };
 
-useEffect(()=>{
-	fetchAllIssues();
-},[]);
-
-
-
-/* FETCH CATEGORY ISSUES */
-
-const fetchIssues=async(category)=>{
-
-const res=await fetch(`/api/issues/${category}`);
-const data=await res.json();
-
-setIssues(prev=>({
-...prev,
-[category]:data
-}));
-
-};
+  useEffect(() => {
+    fetchAllIssues();
+  }, []);
 
 
 
-/* ACCEPT ISSUE */
+  /* FETCH CATEGORY ISSUES */
 
+  const fetchIssues = async (category) => {
 
-const acceptIssue = async (id) => {
-	if (!deadline[id]) {
-		setPopupMessage("⚠️ Please select a deadline first");
-		return;
-	}
-	setIssueLoading(prev => ({ ...prev, [id]: 'accept' }));
-	try {
-		const res = await fetch(`/api/issues/status/${activeCategory}/${id}`, {
-			method: "PUT",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ status: "Assigned", deadline: deadline[id] })
-		});
-		const data = await res.json();
-		if (data.success) {
-			setPopupMessage("✅ Issue Accepted");
-		} else {
-			setPopupMessage("❌ Failed to accept issue");
-		}
-		await fetchIssues(activeCategory);
-		await fetchAllIssues();
-	} finally {
-		setIssueLoading(prev => ({ ...prev, [id]: null }));
-	}
-};
+    const res = await fetch(`/api/issues/${category}`);
+    const data = await res.json();
+
+    setIssues(prev => ({
+      ...prev,
+      [category]: data
+    }));
+
+  };
 
 
 
-/* REJECT ISSUE */
+  /* ACCEPT ISSUE */
 
 
-const rejectIssue = async (id) => {
-	if (!rejectReason[id]) {
-		setPopupMessage("⚠️ Please select a rejection reason");
-		return;
-	}
-	setIssueLoading(prev => ({ ...prev, [id]: 'reject' }));
-	try {
-		const res = await fetch(`/api/issues/status/${activeCategory}/${id}`, {
-			method: "PUT",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ status: "Rejected", reason: rejectReason[id] })
-		});
-		const data = await res.json();
-		if (data.success) {
-			setPopupMessage("✅ Issue Rejected");
-		} else {
-			setPopupMessage("❌ Failed to reject issue");
-		}
-		await fetchIssues(activeCategory);
-		await fetchAllIssues();
-	} finally {
-		setIssueLoading(prev => ({ ...prev, [id]: null }));
-	}
-};
-
-
-
-/* CHART DATA */
-
-const chartData=[
-{name:"Pending",value:stats.pending},
-{name:"Assigned",value:stats.assigned},
-{name:"Progress",value:stats.progress},
-{name:"Resolved",value:stats.resolved},
-{name:"Rejected",value:stats.rejected}
-];
-
-const COLORS=["#f59e0b","#3b82f6","#6366f1","#22c55e","#ef4444"];
+  const acceptIssue = async (id) => {
+    if (!deadline[id]) {
+      setPopupMessage("⚠️ Please select a deadline first");
+      return;
+    }
+    setIssueLoading(prev => ({ ...prev, [id]: 'accept' }));
+    try {
+      const res = await fetch(`/api/issues/status/${activeCategory}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Assigned", deadline: deadline[id] })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPopupMessage("✅ Issue Accepted");
+      } else {
+        setPopupMessage("❌ Failed to accept issue");
+      }
+      await fetchIssues(activeCategory);
+      await fetchAllIssues();
+    } finally {
+      setIssueLoading(prev => ({ ...prev, [id]: null }));
+    }
+  };
 
 
 
-/* ISSUE CARD */
+  /* REJECT ISSUE */
 
-const IssueCard = ({ issue }) => {
-  const [imgLoaded, setImgLoaded] = useState(false);
-  const statusClass = issue.status === "Assigned" ? "badge-assigned" : "badge-progress";
 
-  return (
-    <div className="ipc-card">
+  const rejectIssue = async (id) => {
+    if (!rejectReason[id]) {
+      setPopupMessage("⚠️ Please select a rejection reason");
+      return;
+    }
+    setIssueLoading(prev => ({ ...prev, [id]: 'reject' }));
+    try {
+      const res = await fetch(`/api/issues/status/${activeCategory}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Rejected", reason: rejectReason[id] })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPopupMessage("✅ Issue Rejected");
+      } else {
+        setPopupMessage("❌ Failed to reject issue");
+      }
+      await fetchIssues(activeCategory);
+      await fetchAllIssues();
+    } finally {
+      setIssueLoading(prev => ({ ...prev, [id]: null }));
+    }
+  };
 
-      {/* Photo header */}
-      {issue.photoId && (
-        <div className="ipc-img-wrap">
-          <div className={`ipc-cat-pill ${issue.category}`}>{label(issue.category)}</div>
-          {!imgLoaded && <div className="ipc-img-skeleton" />}
-          <img
-            src={`/api/files/${issue.photoId}`}
-            alt="issue"
-            className="ipc-img"
-            onLoad={() => setImgLoaded(true)}
-            style={{ opacity: imgLoaded ? 1 : 0, transition: "opacity 0.4s ease" }}
-          />
-        </div>
-      )}
 
-      {/* No photo: category pill in body */}
-      {!issue.photoId && (
-        <div className="ipc-body-pill">
-          <span className={`ipc-cat-pill ${issue.category}`}>{label(issue.category)}</span>
-        </div>
-      )}
 
-      {/* Info body */}
-      <div className="ipc-body">
-        <div className="ipc-row">
-          <span className="ipc-icon">📍</span>
-          <span><b>Street&nbsp;</b>{issue.street}</span>
-        </div>
+  /* CHART DATA */
 
-        {issue.houseNo && (
-          <div className="ipc-row">
-            <span className="ipc-icon">🏠</span>
-            <span><b>House&nbsp;</b>{issue.houseNo}</span>
+  const chartData = [
+    { name: "Pending", value: stats.pending },
+    { name: "Assigned", value: stats.assigned },
+    { name: "Progress", value: stats.progress },
+    { name: "Resolved", value: stats.resolved },
+    { name: "Rejected", value: stats.rejected }
+  ];
+
+  const COLORS = ["#f59e0b", "#3b82f6", "#6366f1", "#22c55e", "#ef4444"];
+
+
+
+  /* ISSUE CARD */
+
+  const IssueCard = ({ issue }) => {
+    const [imgLoaded, setImgLoaded] = useState(false);
+    const statusClass = issue.status === "Assigned" ? "badge-assigned" : "badge-progress";
+
+    return (
+      <div className="ipc-card">
+
+        {/* Photo header */}
+        {issue.photoId && (
+          <div className="ipc-img-wrap">
+            <div className={`ipc-cat-pill ${issue.category}`}>{label(issue.category)}</div>
+            {!imgLoaded && <div className="ipc-img-skeleton" />}
+            <img
+              src={`/api/files/${issue.photoId}`}
+              alt="issue"
+              className="ipc-img"
+              onLoad={() => setImgLoaded(true)}
+              style={{ opacity: imgLoaded ? 1 : 0, transition: "opacity 0.4s ease" }}
+            />
           </div>
         )}
 
-        <p className="ipc-desc">{issue.description}</p>
+        {/* No photo: category pill in body */}
+        {!issue.photoId && (
+          <div className="ipc-body-pill">
+            <span className={`ipc-cat-pill ${issue.category}`}>{label(issue.category)}</span>
+          </div>
+        )}
 
-        <div className="ipc-footer">
-          <span className={`ipc-status ${statusClass}`}>{issue.status}</span>
-          {issue.deadline && (
-            <span className="ipc-deadline">📅 {issue.deadline}</span>
+        {/* Info body */}
+        <div className="ipc-body">
+          <div className="ipc-row">
+            <span className="ipc-icon">📍</span>
+            <span><b>Street&nbsp;</b>{issue.street}</span>
+          </div>
+
+          {issue.houseNo && (
+            <div className="ipc-row">
+              <span className="ipc-icon">🏠</span>
+              <span><b>House&nbsp;</b>{issue.houseNo}</span>
+            </div>
           )}
-        </div>
-      </div>
 
-    </div>
-  );
-};
+          <p className="ipc-desc">{issue.description}</p>
 
-
-
-
-
-// Carousel for Assigned/In Progress issues
-// ≤4 issues → static flex wrap  |  >4 issues → CSS marquee (infinite scroll)
-const Carousel = ({ issues, title, loading, highlight }) => {
-  const total = issues.length;
-  const useCarousel = total > 4;
-  // Duration scales with issue count so speed stays consistent
-  const duration = Math.max(total * 3, 14);
-
-  return (
-    <div className="progress-section">
-      <div className="section-header" style={{display:'flex',alignItems:'center',gap:8}}>
-        <h2 className={`section-title${highlight ? ' highlight' : ''}`}>{title}</h2>
-        {useCarousel && <span className="carousel-badge">{total} issues</span>}
-      </div>
-
-      {loading ? (
-        <div style={{display:'flex',gap:20,overflow:'hidden'}}>
-          {Array.from({length:4}).map((_,i)=>(
-            <div key={i} className="skeleton-card" style={{minWidth:260,maxWidth:260,height:220}}/>
-          ))}
-        </div>
-      ) : total === 0 ? (
-        <p className="no-issues">No issues</p>
-      ) : useCarousel ? (
-        /* ── Marquee: render issues twice, animate translateX(0→-50%) ── */
-        <div className="crs-wrap">
-          <div
-            className="crs-marquee"
-            style={{animationDuration:`${duration}s`}}
-          >
-            {[...issues, ...issues].map((issue, idx) => (
-              <IssueCard key={`${issue._id}-${idx}`} issue={issue} />
-            ))}
+          <div className="ipc-footer">
+            <span className={`ipc-status ${statusClass}`}>{issue.status}</span>
+            {issue.deadline && (
+              <span className="ipc-deadline">📅 {issue.deadline}</span>
+            )}
           </div>
         </div>
-      ) : (
-        /* ── Static: just flex-wrap ── */
-        <div className="crs-static">
-          {issues.map(issue => (
-            <IssueCard key={issue._id} issue={issue} />
-          ))}
+
+      </div>
+    );
+  };
+
+
+
+
+
+  // Carousel for Assigned/In Progress issues
+  // ≤4 issues → static flex wrap  |  >4 issues → CSS marquee (infinite scroll)
+  const Carousel = ({ issues, title, loading, highlight }) => {
+    const total = issues.length;
+    const useCarousel = total > 4;
+    // Duration scales with issue count so speed stays consistent
+    const duration = Math.max(total * 3, 14);
+
+    return (
+      <div className="progress-section">
+        <div className="section-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <h2 className={`section-title${highlight ? ' highlight' : ''}`}>{title}</h2>
+          {useCarousel && <span className="carousel-badge">{total} issues</span>}
         </div>
-      )}
-    </div>
-  );
-};
+
+        {loading ? (
+          <div style={{ display: 'flex', gap: 20, overflow: 'hidden' }}>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="skeleton-card" style={{ minWidth: 260, maxWidth: 260, height: 220 }} />
+            ))}
+          </div>
+        ) : total === 0 ? (
+          <p className="no-issues">No issues</p>
+        ) : useCarousel ? (
+          /* ── Marquee: render issues twice, animate translateX(0→-50%) ── */
+          <div className="crs-wrap">
+            <div
+              className="crs-marquee"
+              style={{ animationDuration: `${duration}s` }}
+            >
+              {[...issues, ...issues].map((issue, idx) => (
+                <IssueCard key={`${issue._id}-${idx}`} issue={issue} />
+              ))}
+            </div>
+          </div>
+        ) : (
+          /* ── Static: just flex-wrap ── */
+          <div className="crs-static">
+            {issues.map(issue => (
+              <IssueCard key={issue._id} issue={issue} />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
 
 
 
-/* CATEGORY ISSUE LIST */
+  /* CATEGORY ISSUE LIST */
 
 
-const renderIssues = () => {
+  const renderIssues = () => {
     const list = (issues[activeCategory] || []).filter(
-        issue => issue.status === "Pending"
+      issue => issue.status === "Pending"
     );
     const needsScroll = list.length > 4;
     return (
-        <div>
-            <div className="section-header" style={{display:'flex',alignItems:'center',gap:8}}>
-                <h2 className="section-title highlight">{label(activeCategory)} Issues</h2>
-                {list.length > 0 && <span className="issue-count-badge">{list.length} pending</span>}
-            </div>
-            {loadingData ? (
-                <div className="issue-grid">
-                    {Array.from({length:2}).map((_,i)=>(
-                        <div key={i} className="skeleton-card" style={{minWidth:320,maxWidth:420,height:220}}></div>
-                    ))}
-                </div>
-            ) : list.length === 0 ? (
-                <p className="no-issues">No pending issues.</p>
-            ) : (
-                <div className={needsScroll ? "issue-list-scroll" : "issue-grid"}>
-                    {list.map(issue => (
-                        <div key={issue._id} className="issue-card super-modern animate-fadein">
-                            <div className="issue-left">
-                                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4,flexWrap:'wrap'}}>
-                                    <span className="category-tag" style={{position:'static',margin:0}}>{label(activeCategory)}</span>
-                                    <span className="issue-title" style={{marginRight:8}}>{issue.villagerName}</span>
-                                    <span className="aadhaar-stamp">(Aadhaar: {issue.aadhar})</span>
-                                </div>
-                                <div className="issue-meta" style={{display:'flex',flexWrap:'wrap',gap:12,marginBottom:6}}>
-                                    <span><b>Street:</b> {issue.street}</span>
-                                    {activeCategory !== "garbage" && <span><b>House No:</b> {issue.houseNo || 'N/A'}</span>}
-                                </div>
-                                <div className="desc" style={{marginBottom:8}}>{issue.description}</div>
-                                <div className="issue-date-row" style={{display:'flex',gap:16,alignItems:'center',marginBottom:8,flexWrap:'wrap'}}>
-                                    <span className="date-pill">📅 {issue.date}</span>
-                                    <span className="date-pill">⏰ {issue.time}</span>
-                                    {issue.deadline && <span className="date-pill deadline">Deadline: {issue.deadline}</span>}
-                                </div>
-                                <div className="reason-row">
-                                    <input
-                                        type="date"
-                                        min={new Date().toISOString().split("T")[0]}
-                                        value={deadline[issue._id]||""}
-                                        onChange={(e)=>{
-                                            e.stopPropagation();
-                                            setDeadline({...deadline,[issue._id]:e.target.value});
-                                        }}
-                                        className="date-input"
-                                    />
-                                    <select
-                                        value={rejectReason[issue._id]||""}
-                                        onChange={(e)=>{
-                                            e.stopPropagation();
-                                            setRejectReason({...rejectReason,[issue._id]:e.target.value});
-                                        }}
-                                        className="reason-select"
-                                    >
-                                        <option value="">Select Reason</option>
-                                        <option>Duplicate issue</option>
-                                        <option>Wrong category</option>
-                                        <option>Fake complaint</option>
-                                        <option>Already fixed</option>
-                                    </select>
-                                </div>
-                                <div className="issue-actions">
-                                    <button
-                                        className={`approve-btn super-btn${issueLoading[issue._id]==='accept' ? ' loading' : ''}`}
-                                        onClick={(e)=>{e.stopPropagation(); acceptIssue(issue._id);}}
-                                        disabled={!!issueLoading[issue._id]}
-                                    >
-                                        {issueLoading[issue._id]==='accept' ? 'Accepting...' : '✓ Accept'}
-                                    </button>
-                                    <button
-                                        className={`reject-btn super-btn${issueLoading[issue._id]==='reject' ? ' loading' : ''}`}
-                                        onClick={(e)=>{e.stopPropagation(); rejectIssue(issue._id);}}
-                                        disabled={!!issueLoading[issue._id]}
-                                    >
-                                        {issueLoading[issue._id]==='reject' ? 'Rejecting...' : '✕ Reject'}
-                                    </button>
-                                </div>
-                            </div>
-                            {issue.photoId && (
-                                <div className="issue-right">
-                                    <img src={`/api/files/${issue.photoId}`} alt="issue" className="issue-photo"/>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            )}
+      <div>
+        <div className="section-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <h2 className="section-title highlight">{label(activeCategory)} Issues</h2>
+          {list.length > 0 && <span className="issue-count-badge">{list.length} pending</span>}
         </div>
-    );
-};
-
-
-useEffect(() => {
-  if (popupMessage) {
-    const timer = setTimeout(() => {
-      setPopupMessage("");
-    }, 2500);
-    return () => clearTimeout(timer);
-  }
-}, [popupMessage]);
-
-return (
-	
-	<div className="admin-container">
-		{/* NAVBAR */}
-		<div className="admin-navbar">
-<h2 className="main-heading">Admin Dashboard</h2>
-			<div className="admin-right">
-				<div className="request-button" onClick={()=>setShowRequestPopup(true)}>
-					Signup Requests
-					{requests.length>0 && <span className="notification-dot"></span>}
-				</div>
-				<button className="logout-btn" onClick={logout}>
-					Logout
-				</button>
-			</div>
-		</div>
-
-		{/* LOGOUT CONFIRMATION POPUP */}
-		{showLogoutConfirm && (
-			<div className="popup-overlay">
-				<div className="popup-box">
-					<p>Are you sure you want to logout?</p>
-					<button onClick={confirmLogout} disabled={logoutLoading} style={{marginRight:8}}>
-						{logoutLoading ? "Logging out..." : "Yes, Logout"}
-					</button>
-					<button 
-  className="cancel-btn"
-  onClick={()=>setShowLogoutConfirm(false)} 
-  disabled={logoutLoading}
->
-  Cancel
-</button>
-				</div>
-			</div>
-		)}
-
-		{/* REQUEST POPUP */}
-		{showRequestPopup && (
-			<div className="popup-overlay">
-				<div className="popup-box request-popup">
-
-  {/* HEADER */}
-  <div className="popup-header">
-    <h2>Signup Requests</h2>
-  </div>
-
-  {/* SCROLL AREA */}
-  <div className="popup-content">
-
-    {requests.length===0 ? (
-      <div className="empty-state" style={{ gridColumn: '1 / -1' }}>
-        <span className="empty-icon">📂</span>
-        <p>No signup requests at the moment.</p>
+        {loadingData ? (
+          <div className="issue-grid">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <div key={i} className="skeleton-card" style={{ minWidth: 320, maxWidth: 420, height: 220 }}></div>
+            ))}
+          </div>
+        ) : list.length === 0 ? (
+          <p className="no-issues">No pending issues.</p>
+        ) : (
+          <div className={needsScroll ? "issue-list-scroll" : "issue-grid"}>
+            {list.map(issue => (
+              <div key={issue._id} className="issue-card super-modern animate-fadein">
+                <div className="issue-left">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
+                    <span className="category-tag" style={{ position: 'static', margin: 0 }}>{label(activeCategory)}</span>
+                    <span className="issue-title" style={{ marginRight: 8 }}>{issue.villagerName}</span>
+                    <span className="aadhaar-stamp">(Aadhaar: {issue.aadhar})</span>
+                  </div>
+                  <div className="issue-meta" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 6 }}>
+                    <span><b>Street:</b> {issue.street}</span>
+                    {activeCategory !== "garbage" && <span><b>House No:</b> {issue.houseNo || 'N/A'}</span>}
+                  </div>
+                  <div className="desc" style={{ marginBottom: 8 }}>{issue.description}</div>
+                  <div className="issue-date-row" style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 8, flexWrap: 'wrap' }}>
+                    <span className="date-pill">📅 {issue.date}</span>
+                    <span className="date-pill">⏰ {issue.time}</span>
+                    {issue.deadline && <span className="date-pill deadline">Deadline: {issue.deadline}</span>}
+                  </div>
+                  <div className="reason-row">
+                    <input
+                      type="date"
+                      min={new Date().toISOString().split("T")[0]}
+                      value={deadline[issue._id] || ""}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        setDeadline({ ...deadline, [issue._id]: e.target.value });
+                      }}
+                      className="date-input"
+                    />
+                    <select
+                      value={rejectReason[issue._id] || ""}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        setRejectReason({ ...rejectReason, [issue._id]: e.target.value });
+                      }}
+                      className="reason-select"
+                    >
+                      <option value="">Select Reason</option>
+                      <option>Duplicate issue</option>
+                      <option>Wrong category</option>
+                      <option>Fake complaint</option>
+                      <option>Already fixed</option>
+                    </select>
+                  </div>
+                  <div className="issue-actions">
+                    <button
+                      className={`approve-btn super-btn${issueLoading[issue._id] === 'accept' ? ' loading' : ''}`}
+                      onClick={(e) => { e.stopPropagation(); acceptIssue(issue._id); }}
+                      disabled={!!issueLoading[issue._id]}
+                    >
+                      {issueLoading[issue._id] === 'accept' ? 'Accepting...' : '✓ Accept'}
+                    </button>
+                    <button
+                      className={`reject-btn super-btn${issueLoading[issue._id] === 'reject' ? ' loading' : ''}`}
+                      onClick={(e) => { e.stopPropagation(); rejectIssue(issue._id); }}
+                      disabled={!!issueLoading[issue._id]}
+                    >
+                      {issueLoading[issue._id] === 'reject' ? 'Rejecting...' : '✕ Reject'}
+                    </button>
+                  </div>
+                </div>
+                {issue.photoId && (
+                  <div className="issue-right">
+                    <img src={`/api/files/${issue.photoId}`} alt="issue" className="issue-photo" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    ) : (
-      requests.map(user=>(
-        <div key={user._id} className="request-card premium-request-card">
-          <div className="req-card-header">
-            <div className="req-avatar">{user.name.charAt(0).toUpperCase()}</div>
-            <div className="req-info">
-              <h4>{user.name}</h4>
-              <span className="req-email">{user.email}</span>
-            </div>
-          </div>
-          <div className="req-body">
-            <div className="req-badge">
-              <span className="req-icon">🪪</span>
-              <span>Aadhaar: <b>{user.aadhar}</b></span>
-            </div>
-          </div>
+    );
+  };
 
-          <div className="request-actions">
-            <button
-              onClick={() => approveUser(user._id)}
-              disabled={requestLoading !== null}
-              className={`btn-approve ${requestLoading?.id === user._id && requestLoading?.type === "approve" ? "loading" : ""}`}
-            >
-              {requestLoading?.id === user._id && requestLoading?.type === "approve"
-                ? "Approving..."
-                : "✓ Approve"}
+
+  useEffect(() => {
+    if (popupMessage) {
+      const timer = setTimeout(() => {
+        setPopupMessage("");
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [popupMessage]);
+
+  return (
+
+    <div className="admin-container">
+      {/* NAVBAR */}
+      <div className="admin-navbar">
+        <h2 className="main-heading">Admin Dashboard</h2>
+        
+        {/* Mobile Hamburger */}
+        <button 
+          className="admin-hamburger" 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? "✕" : "☰"}
+        </button>
+
+        <div className={`admin-right ${isMobileMenuOpen ? 'menu-open' : ''}`}>
+          <button className="premium-nav-btn nav-feedback" onClick={() => { setIsMobileMenuOpen(false); navigate("/admin/feedback"); }}>
+            <span className="n-icon">📝</span> Manage Feedbacks
+          </button>
+          <button className="premium-nav-btn nav-requests" onClick={() => { setIsMobileMenuOpen(false); setShowRequestPopup(true); }}>
+            <span className="n-icon">👤</span> Signup Requests
+            {requests.length > 0 && <span className="notification-dot"></span>}
+          </button>
+          <button className="premium-nav-btn nav-logout" onClick={() => { setIsMobileMenuOpen(false); logout(); }}>
+            <span className="n-icon">⏻</span> Logout
+          </button>
+        </div>
+      </div>
+
+      {/* LOGOUT CONFIRMATION POPUP */}
+      {showLogoutConfirm && (
+        <div className="popup-overlay">
+          <div className="popup-box">
+            <p>Are you sure you want to logout?</p>
+            <button onClick={confirmLogout} disabled={logoutLoading} style={{ marginRight: 8 }}>
+              {logoutLoading ? "Logging out..." : "Yes, Logout"}
             </button>
-
             <button
-              onClick={() => rejectUser(user._id)}
-              disabled={requestLoading !== null}
-              className={`btn-reject ${requestLoading?.id === user._id && requestLoading?.type === "reject" ? "loading" : ""}`}
+              className="cancel-btn"
+              onClick={() => setShowLogoutConfirm(false)}
+              disabled={logoutLoading}
             >
-              {requestLoading?.id === user._id && requestLoading?.type === "reject"
-                ? "Rejecting..."
-                : "✕ Reject"}
+              Cancel
             </button>
           </div>
         </div>
-      ))
-    )}
+      )}
 
-  </div>
+      {/* REQUEST POPUP */}
+      {showRequestPopup && (
+        <div className="popup-overlay">
+          <div className="popup-box request-popup">
 
-  {/* FOOTER */}
-  <div className="popup-footer">
-    <button onClick={()=>setShowRequestPopup(false)}>Close</button>
-  </div>
-
-</div>
-			</div>
-		)}
-
-		{/* DASHBOARD STATISTICS */}
-		<div className="stats-section">
-			<h2 className="main-heading">Dashboard Statistics</h2>
-			<div className="stats-cards">
-				{loadingData ? (
-					Array.from({length:6}).map((_,i)=>(
-						<div key={i} className="stat-card"><SkeletonBox height={38} /></div>
-					))
-				) : (
-					<>
-						<div className="stat-card">Total<br/>{stats.total}</div>
-						<div className="stat-card pending">Pending<br/>{stats.pending}</div>
-						<div className="stat-card assigned">Assigned<br/>{stats.assigned}</div>
-						<div className="stat-card progress">Progress<br/>{stats.progress}</div>
-						<div className="stat-card resolved">Resolved<br/>{stats.resolved}</div>
-						<div className="stat-card rejected">Rejected<br/>{stats.rejected}</div>
-					</>
-				)}
-			</div>
-			<div className="charts">
-				<div className="chart-box">
-					<h3 className="sub-heading">Status Distribution</h3>
-					{loadingData ? (
-						<SkeletonBox height={250} />
-					) : (
-						<div className="responsive-chart-container">
-							<ResponsiveContainer width="100%" height={250}>
-								<PieChart>
-									<Pie data={chartData} dataKey="value" outerRadius={80}>
-										{chartData.map((entry,index)=>(
-											<Cell key={index} fill={COLORS[index]}/>
-										))}
-									</Pie>
-									<Tooltip/>
-									<Legend/>
-								</PieChart>
-							</ResponsiveContainer>
-						</div>
-					)}
-				</div>
-				<div className="chart-box">
-					<h3 className="sub-heading">Status Comparison</h3>
-					{loadingData ? (
-						<SkeletonBox height={250} />
-					) : (
-						<div className="responsive-chart-container">
-							<ResponsiveContainer width="100%" height={250}>
-								<BarChart data={chartData}>
-									<XAxis dataKey="name"/>
-									<YAxis/>
-									<Tooltip/>
-									<Bar dataKey="value" fill="#2563eb"/>
-								</BarChart>
-							</ResponsiveContainer>
-						</div>
-					)}
-				</div>
-			</div>
-		</div>
-		{/* ...existing code... */}
-
-
-
-{/* OVERDUE ISSUES */}
-<div className="overdue-section animated-overdue">
-	<div className="section-header" style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
-		<h2 className="section-title" style={{color:'#dc2626'}}>⚠ Overdue Tasks</h2>
-	</div>
-	{loadingData ? (
-		<>
-			<div className="skeleton-row" style={{height:32,marginBottom:8}}></div>
-			<div className="skeleton-row" style={{height:32,marginBottom:8}}></div>
-		</>
-	) : overdueIssues.length === 0 ? (
-		<p className="no-issues">No overdue issues.</p>
-	) : (
-		<div className="overdue-grid overdue-scroll">
-			{overdueIssues.map(i => (
-				<div key={i._id} className="overdue-card animated-overdue-card">
-					<p><b>Street:</b> {i.street}</p>
-					<p><b>Deadline:</b> <span style={{color:'#dc2626'}}>{i.deadline}</span></p>
-					<p style={{fontWeight:600,color:'#64748b'}}>{label(i.category)}</p>
-				</div>
-			))}
-		</div>
-	)}
-</div>
-
-
-
-{/* ASSIGNED WRAPPER */}
-<div className="issue-group assigned-group">
-  <Carousel 
-    title="Assigned Issues" 
-    issues={assignedIssues} 
-    loading={loadingData} 
-    highlight
-  />
-</div>
-
-{/* IN PROGRESS WRAPPER */}
-<div className="issue-group progress-group">
-  <Carousel 
-    title="In Progress Issues" 
-    issues={progressIssues} 
-    loading={loadingData} 
-    highlight
-  />
-</div>
-
-{/* CATEGORY CARDS */}
-<div className="raise-wrapper">
-
-  <div className="category-section">
-
-    <div className="section-header" style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
-        <h2 className="section-title highlight">Reported Issues</h2>
-    </div>
-
-    <div className="category-cards">
-        {['electricity','water','garbage','drainage'].map(cat => (
-            <div
-                key={cat}
-                className={`category-card${activeCategory===cat ? ' active' : ''}`}
-                onClick={()=>{setActiveCategory(cat);fetchIssues(cat)}}
-                style={{position:'relative' }}
-            >
-                {label(cat)}
-                {pendingCounts[cat]>0 && <span className="notification-dot"></span>}
+            {/* HEADER */}
+            <div className="popup-header">
+              <h2>Signup Requests</h2>
             </div>
-        ))}
+
+            {/* SCROLL AREA */}
+            <div className="popup-content">
+
+              {requests.length === 0 ? (
+                <div className="empty-state" style={{ gridColumn: '1 / -1' }}>
+                  <span className="empty-icon">📂</span>
+                  <p>No signup requests at the moment.</p>
+                </div>
+              ) : (
+                requests.map(user => (
+                  <div key={user._id} className="request-card premium-request-card">
+                    <div className="req-card-header">
+                      <div className="req-avatar">{user.name.charAt(0).toUpperCase()}</div>
+                      <div className="req-info">
+                        <h4>{user.name}</h4>
+                        <span className="req-email">{user.email}</span>
+                      </div>
+                    </div>
+                    <div className="req-body">
+                      <div className="req-badge">
+                        <span className="req-icon">🪪</span>
+                        <span>Aadhaar: <b>{user.aadhar}</b></span>
+                      </div>
+                    </div>
+
+                    <div className="request-actions">
+                      <button
+                        onClick={() => approveUser(user._id)}
+                        disabled={requestLoading !== null}
+                        className={`btn-approve ${requestLoading?.id === user._id && requestLoading?.type === "approve" ? "loading" : ""}`}
+                      >
+                        {requestLoading?.id === user._id && requestLoading?.type === "approve"
+                          ? "Approving..."
+                          : "✓ Approve"}
+                      </button>
+
+                      <button
+                        onClick={() => rejectUser(user._id)}
+                        disabled={requestLoading !== null}
+                        className={`btn-reject ${requestLoading?.id === user._id && requestLoading?.type === "reject" ? "loading" : ""}`}
+                      >
+                        {requestLoading?.id === user._id && requestLoading?.type === "reject"
+                          ? "Rejecting..."
+                          : "✕ Reject"}
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+
+            </div>
+
+            {/* FOOTER */}
+            <div className="popup-footer">
+              <button onClick={() => setShowRequestPopup(false)}>Close</button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* DASHBOARD STATISTICS */}
+      <div className="stats-section">
+        <h2 className="main-heading">Dashboard Statistics</h2>
+        <div className="stats-cards">
+          {loadingData ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="stat-card"><SkeletonBox height={38} /></div>
+            ))
+          ) : (
+            <>
+              <div className="stat-card">Total<br />{stats.total}</div>
+              <div className="stat-card pending">Pending<br />{stats.pending}</div>
+              <div className="stat-card assigned">Assigned<br />{stats.assigned}</div>
+              <div className="stat-card progress">Progress<br />{stats.progress}</div>
+              <div className="stat-card resolved">Resolved<br />{stats.resolved}</div>
+              <div className="stat-card rejected">Rejected<br />{stats.rejected}</div>
+            </>
+          )}
+        </div>
+        <div className="charts">
+          <div className="chart-box">
+            <h3 className="sub-heading">Status Distribution</h3>
+            {loadingData ? (
+              <SkeletonBox height={250} />
+            ) : (
+              <div className="responsive-chart-container">
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie data={chartData} dataKey="value" outerRadius={80}>
+                      {chartData.map((entry, index) => (
+                        <Cell key={index} fill={COLORS[index]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+          <div className="chart-box">
+            <h3 className="sub-heading">Status Comparison</h3>
+            {loadingData ? (
+              <SkeletonBox height={250} />
+            ) : (
+              <div className="responsive-chart-container">
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={chartData}>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#2563eb" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {/* ...existing code... */}
+
+
+
+      {/* OVERDUE ISSUES */}
+      <div className="overdue-section animated-overdue">
+        <div className="section-header" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <h2 className="section-title" style={{ color: '#dc2626' }}>⚠ Overdue Tasks</h2>
+        </div>
+        {loadingData ? (
+          <>
+            <div className="skeleton-row" style={{ height: 32, marginBottom: 8 }}></div>
+            <div className="skeleton-row" style={{ height: 32, marginBottom: 8 }}></div>
+          </>
+        ) : overdueIssues.length === 0 ? (
+          <p className="no-issues">No overdue issues.</p>
+        ) : (
+          <div className="overdue-grid overdue-scroll">
+            {overdueIssues.map(i => (
+              <div key={i._id} className="overdue-card animated-overdue-card">
+                <p><b>Street:</b> {i.street}</p>
+                <p><b>Deadline:</b> <span style={{ color: '#dc2626' }}>{i.deadline}</span></p>
+                <p style={{ fontWeight: 600, color: '#64748b' }}>{label(i.category)}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+
+
+      {/* ASSIGNED WRAPPER */}
+      <div className="issue-group assigned-group">
+        <Carousel
+          title="Assigned Issues"
+          issues={assignedIssues}
+          loading={loadingData}
+          highlight
+        />
+      </div>
+
+      {/* IN PROGRESS WRAPPER */}
+      <div className="issue-group progress-group">
+        <Carousel
+          title="In Progress Issues"
+          issues={progressIssues}
+          loading={loadingData}
+          highlight
+        />
+      </div>
+
+      {/* CATEGORY CARDS */}
+      <div className="raise-wrapper">
+
+        <div className="category-section">
+
+          <div className="section-header" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <h2 className="section-title highlight">Reported Issues</h2>
+          </div>
+
+          <div className="category-cards">
+            {['electricity', 'water', 'garbage', 'drainage'].map(cat => (
+              <div
+                key={cat}
+                className={`category-card${activeCategory === cat ? ' active' : ''}`}
+                onClick={() => { setActiveCategory(cat); fetchIssues(cat) }}
+                style={{ position: 'relative' }}
+              >
+                {label(cat)}
+                {pendingCounts[cat] > 0 && <span className="notification-dot"></span>}
+              </div>
+            ))}
+          </div>
+
+        </div> {/* category-section */}
+
+      </div> {/* raise-wrapper */}
+
+
+      {/* CATEGORY ISSUES */}
+
+      <div className="issue-section">
+        {activeCategory && renderIssues()}
+      </div>
+
+
+      {/* EMAIL POPUP */}
+
+      {popupMessage && (
+        <div className="side-toast">
+          {popupMessage}
+        </div>
+      )}
+
+
     </div>
 
-  </div> {/* category-section */}
-
-</div> {/* raise-wrapper */}
-
-
-{/* CATEGORY ISSUES */}
-
-<div className="issue-section">
-{activeCategory && renderIssues()}
-</div>
-
-
-{/* EMAIL POPUP */}
-
-{popupMessage && (
-  <div className="side-toast">
-    {popupMessage}
-  </div>
-)}
-
-
-</div>
-
-);
+  );
 
 }

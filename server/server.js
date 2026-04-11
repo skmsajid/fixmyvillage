@@ -10,6 +10,7 @@ import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import issueRoutes from "./routes/issueRoutes.js";
 import fileRoutes from "./routes/fileRoutes.js";
+import feedbackRoutes from "./routes/feedbackRoutes.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/issues", issueRoutes);
 app.use("/api/files", fileRoutes);
+app.use("/api/feedbacks", feedbackRoutes);
 
 // ===============================
 // ✅ SERVE REACT BUILD (IMPORTANT)
