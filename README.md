@@ -153,7 +153,7 @@ ____________________________________________
 ## 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/fixmyvillage.git
+git clone https://github.com/skmsajid/fixmyvillage.git
 ```
 
 ---
@@ -237,26 +237,6 @@ FixMyVillage/
 │
 ├── README.md
 └── package.json
-```bash
-FixMyVillage/
-│
-├── client/
-│   ├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── assets/
-│
-├── server/
-│   ├── controllers/
-│   ├── routes/
-│   ├── models/
-│   ├── middleware/
-│   ├── config/
-│
-├── screenshots/
-├── README.md
-└── package.json
-````
 
 ---
 
