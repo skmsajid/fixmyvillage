@@ -26,11 +26,17 @@ The main goal of this project is to create a **transparent, fast, and efficient 
 ## 👨‍🌾 Villager Module
 
 ✅ User Registration & Login
+
 ✅ Raise complaints with image upload
+
 ✅ Track complaint status live
+
 ✅ View complaint history
+
 ✅ Receive email notifications
+
 ✅ Give feedback after issue resolution
+
 ✅ User-friendly dashboard
 
 ---
@@ -38,10 +44,15 @@ The main goal of this project is to create a **transparent, fast, and efficient 
 ## 👷 Worker Module
 
 ✅ Worker login system
+
 ✅ View assigned complaints
+
 ✅ Update work progress
+
 ✅ Mark issues as completed
+
 ✅ Deadline management
+
 ✅ Status updates for transparency
 
 ---
@@ -49,11 +60,17 @@ The main goal of this project is to create a **transparent, fast, and efficient 
 ## 🛠 Admin Module
 
 ✅ Admin dashboard
+
 ✅ Manage all users
+
 ✅ Assign workers to issues
+
 ✅ Monitor complaint statuses
+
 ✅ Analytics & reports
+
 ✅ Category management
+
 ✅ Feedback monitoring
 
 ---
