@@ -317,7 +317,7 @@ If you would like to improve this project:
 2. Create a new branch
 3. Commit changes
 4. Push the branch
-5. Create a Pull Request
+5. Create a Pull Request 
 
 ---
 
