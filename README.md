@@ -6,18 +6,9 @@
 
 # 🚀 Overview
 
-**FixMyVillage** is a modern smart village management platform developed to solve village-related problems digitally and efficiently. The system allows villagers to report issues such as:
+**FixMyVillage** is a modern smart village management platform designed to digitize the process of reporting, tracking, and resolving public issues. It enables villagers to report problems online, administrators to manage complaints efficiently, and workers to update progress in real time.
 
-* 🗑 Garbage Problems
-* 💧 Water Leakage
-* ⚡ Electricity Issues
-* 🚧 Road Damage
-* 🚰 Drainage Problems
-* 🏥 Public Facility Complaints
-
-The platform helps connect **Villagers**, **Workers**, and **Administrators** through a centralized issue management system.
-
-The main goal of this project is to create a **transparent, fast, and efficient complaint resolution system** for villages.
+The platform aims to improve transparency, reduce manual paperwork, and ensure faster issue resolution through a centralized complaint management system.
 
 ---
 
@@ -25,53 +16,38 @@ The main goal of this project is to create a **transparent, fast, and efficient 
 
 ## 👨‍🌾 Villager Module
 
-✅ User Registration & Login
-
-✅ Raise complaints with image upload
-
-✅ Track complaint status live
-
-✅ View complaint history
-
-✅ Receive email notifications
-
-✅ Give feedback after issue resolution
-
-✅ User-friendly dashboard
+* User Registration & Login
+* Raise complaints with image upload
+* Select complaint categories
+* Track complaint status
+* View complaint history
+* Receive email notifications
+* Submit feedback after resolution
+* User dashboard
 
 ---
 
 ## 👷 Worker Module
 
-✅ Worker login system
-
-✅ View assigned complaints
-
-✅ Update work progress
-
-✅ Mark issues as completed
-
-✅ Deadline management
-
-✅ Status updates for transparency
+* Worker login
+* View assigned complaints
+* Update work progress
+* Change complaint status
+* Mark issues as completed
+* Manage assigned tasks
 
 ---
 
 ## 🛠 Admin Module
 
-✅ Admin dashboard
-
-✅ Manage all users
-
-✅ Assign workers to issues
-
-✅ Monitor complaint statuses
-
-✅ Analytics & reports
-
-✅ Category management
-
-✅ Feedback monitoring
+* Admin dashboard
+* Manage users
+* Manage workers
+* Assign workers to complaints
+* Monitor complaint progress
+* Manage complaint categories
+* View reports and analytics
+* Review user feedback
 
 ---
 
@@ -95,26 +71,27 @@ Villager Gives Feedback
 
 # 🖥️ Tech Stack
 
-____________________________________________
-| Technology         | Usage               |
-| ------------------ | ------------------- |
-| React.js           | Frontend UI         |
-| Node.js            | Backend Runtime     |
-| Express.js         | Server Framework    |
-| MongoDB            | Database            |
-| Nodemailer         | Email Notifications |
-| Tailwind CSS / CSS | Styling             |
-____________________________________________
+| Technology   | Usage                  |
+| ------------ | ---------------------- |
+| React.js     | Frontend UI            |
+| Node.js      | Backend Runtime        |
+| Express.js   | REST API               |
+| MongoDB      | Database               |
+| Tailwind CSS | Styling                |
+| Nodemailer   | Email Notifications    |
+| Cloudinary   | Image Upload & Storage |
+| JWT          | Authentication         |
+
 ---
 
 # 🎯 Project Objectives
 
-* Improve village issue management
+* Digitize village complaint management
 * Reduce manual complaint handling
-* Increase transparency in public works
+* Improve transparency
 * Enable real-time complaint tracking
 * Provide faster issue resolution
-* Digitize village administration
+* Improve communication between villagers and authorities
 
 ---
 
@@ -122,9 +99,9 @@ ____________________________________________
 
 ## 📌 Complaint Management
 
-* Raise complaints easily
+* Raise complaints
 * Upload issue images
-* Select issue categories
+* Select complaint categories
 * Track complaint progress
 * View complaint history
 
@@ -132,25 +109,41 @@ ____________________________________________
 
 ## 📧 Notification System
 
-* Email alerts for status updates
+* Complaint submission notifications
 * Worker assignment notifications
-* Complaint completion updates
+* Status update notifications
+* Complaint completion notifications
 * Feedback request notifications
 
 ---
 
 ## 📊 Dashboard System
 
-* Admin monitoring dashboard
-* Worker task dashboard
-* Villager complaint dashboard
-* Real-time issue status display
+### Villager Dashboard
+
+* Complaint status
+* Complaint history
+* Feedback
+
+### Worker Dashboard
+
+* Assigned complaints
+* Progress updates
+* Completed tasks
+
+### Admin Dashboard
+
+* User management
+* Worker management
+* Complaint monitoring
+* Analytics
+* Feedback monitoring
 
 ---
 
 # ⚙️ Installation Guide
 
-## 1️⃣ Clone Repository
+## Clone Repository
 
 ```bash
 git clone https://github.com/skmsajid/fixmyvillage.git
@@ -158,7 +151,7 @@ git clone https://github.com/skmsajid/fixmyvillage.git
 
 ---
 
-## 2️⃣ Navigate to Project
+## Navigate to Project
 
 ```bash
 cd fixmyvillage
@@ -166,7 +159,7 @@ cd fixmyvillage
 
 ---
 
-## 3️⃣ Install Frontend Dependencies
+## Install Frontend Dependencies
 
 ```bash
 cd client
@@ -175,7 +168,7 @@ npm install
 
 ---
 
-## 4️⃣ Install Backend Dependencies
+## Install Backend Dependencies
 
 ```bash
 cd server
@@ -186,13 +179,17 @@ npm install
 
 # 🔑 Environment Variables
 
-Create a `.env` file inside the server folder.
+Create a `.env` file inside the **server** folder.
 
 ```env
 PORT=5000
 MONGO_URI=your_mongodb_url
+JWT_SECRET=your_jwt_secret
 EMAIL_USER=your_email
 EMAIL_PASS=your_password
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
 ---
@@ -219,25 +216,32 @@ npm run dev
 
 # 📂 Folder Structure
 
-````bash
+```text
 FixMyVillage/
 │
 ├── client/
+│   ├── public/
 │   ├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── assets/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── App.jsx
+│   └── package.json
 │
 ├── server/
-│   ├── controllers/
-│   ├── routes/
-│   ├── models/
-│   ├── middleware/
 │   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── uploads/
+│   └── server.js
 │
 ├── README.md
 └── package.json
-````
+```
+
 ---
 
 # 📧 Email Notification System
@@ -245,12 +249,10 @@ FixMyVillage/
 The platform automatically sends email notifications for:
 
 * Complaint submission
-* Issue assignment
+* Worker assignment
 * Status updates
 * Issue completion
 * Feedback requests
-
-This helps maintain transparency and communication.
 
 ---
 
@@ -262,42 +264,40 @@ Pending → Assigned → In Progress → Completed
 
 ---
 
-# 🌟 Advantages of FixMyVillage
+# 🌟 Advantages
 
-✅ Faster issue resolution
-✅ Transparent complaint tracking
-✅ Reduced paperwork
-✅ Better communication
-✅ Smart digital governance
-✅ Improved village development
+* Faster issue resolution
+* Transparent complaint tracking
+* Reduced paperwork
+* Better communication
+* Digital record management
+* Improved village governance
 
 ---
 
 # 🔮 Future Enhancements
 
-🚀 AI-based issue categorization
-🚀 Mobile Application
-🚀 GPS-based complaint location tracking
-🚀 Multi-language support
-🚀 Real-time chat support
-🚀 Government portal integration
-🚀 Data analytics dashboard
-🚀 Voice-based complaint registration
+* AI-based issue categorization
+* Mobile application
+* GPS-based complaint location
+* Multi-language support
+* Real-time chat
+* Government portal integration
+* Advanced analytics dashboard
+* Voice-based complaint registration
 
 ---
 
 # 🧠 Learning Outcomes
 
-Through this project, we learned:
-
-* Full Stack Web Development
-* MERN Stack Architecture
+* MERN Stack Development
 * Authentication & Authorization
 * REST API Development
-* Database Management
-* Cloud Image Uploading
-* Real-Time Workflow Handling
-* Team Collaboration
+* MongoDB Database Management
+* Cloud Image Upload
+* Email Integration
+* Responsive UI Design
+* Full Stack Project Development
 
 ---
 
@@ -309,20 +309,16 @@ This project is licensed under the **MIT License**.
 
 # 🤝 Contribution
 
-Contributions are welcome!
-
-If you would like to improve this project:
+Contributions are welcome.
 
 1. Fork the repository
 2. Create a new branch
-3. Commit changes
-4. Push the branch
-5. Create a Pull Request 
+3. Commit your changes
+4. Push your branch
+5. Create a Pull Request
 
 ---
 
 # 💡 Inspiration
 
-The inspiration behind **FixMyVillage** is to create a smarter and more connected rural community where villagers can report problems easily and authorities can solve them efficiently.
-
----
+FixMyVillage was created to simplify village issue reporting by providing a transparent, efficient, and digital complaint management system that improves communication between villagers, workers, and administrators.
