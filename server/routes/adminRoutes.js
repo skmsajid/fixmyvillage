@@ -9,4 +9,4 @@ router.put("/approve/:id", approveUser);
 
 router.put("/reject/:id", rejectUser);
 
-export default router;
+export default router; 
