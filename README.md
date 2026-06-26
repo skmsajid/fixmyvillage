@@ -12,6 +12,7 @@
 
 ## 🖼️ Preview
 <img width="1149" height="1369" alt="ChatGPT Image Jun 26, 2026, 07_36_53 PM" src="https://github.com/user-attachments/assets/25708b19-f2d8-4615-b1e0-b37c6a49520b" />
+<img width="1024" height="1536" alt="d7f06f24-812c-4785-8b0a-12467c80bb2f" src="https://github.com/user-attachments/assets/3d4f2cee-0394-4a2b-9912-53d7fe3e60fe" />
 
 ---
 
