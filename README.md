@@ -1,81 +1,100 @@
 # 🌍 FixMyVillage
 
-### Smart Village Issue Reporting & Management System
+> **Smart Village Issue Reporting & Management System**
 
 ---
 
 ## 🚀 Overview
 
-**FixMyVillage** is a MERN Stack web application that digitizes village issue reporting and management. It enables villagers to report public issues, administrators to manage complaints, and workers to resolve them efficiently through a transparent and real-time workflow.
+**FixMyVillage** is a MERN Stack web application that streamlines village issue reporting and resolution. It connects **Villagers**, **Workers**, and **Administrators** through a centralized platform for transparent complaint management and real-time tracking.
 
 ---
 
 ## 🖼️ Preview
 
-<img width="1149" height="1369" alt="ChatGPT Image Jun 26, 2026, 07_36_53 PM" src="https://github.com/user-attachments/assets/1714d911-a630-4b41-b4d6-7f3a2358ee58" />
-
-## ✨ Features
-
-| 👨‍🌾 Villager         | 👷 Worker                | 🛠️ Admin          |
-| ---------------------- | ------------------------ | ------------------ |
-| Register & Login       | Secure Login             | Admin Dashboard    |
-| Submit Complaints      | View Assigned Complaints | Manage Users       |
-| Upload Images          | Update Progress          | Manage Workers     |
-| Track Complaint Status | Mark as Completed        | Assign Workers     |
-| View Complaint History | View Assigned Tasks      | Manage Categories  |
-| Email Notifications    |                          | Monitor Complaints |
-| Submit Feedback        |                          | Reports & Feedback |
-
----
-
-## 🔄 System Workflow
-
-```text
-                     🚀 Start
-                        │
-                        ▼
-              👤 User Login / Registration
-                        │
-                        ▼
-                 📝 Submit Complaint
-        (Category + Description + Image)
-                        │
-                        ▼
-             📤 Complaint Submitted
-                        │
-                        ▼
-             🛠️ Admin Reviews Complaint
-                        │
-             ┌──────────┴──────────┐
-             │                     │
-             ▼                     ▼
-      ❌ Reject Complaint     ✅ Approve Complaint
-             │                     │
-             ▼                     ▼
-     Notify User           👷 Assign Worker
-                                   │
-                                   ▼
-                         👷 Worker Accepts Task
-                                   │
-                                   ▼
-                         🚧 Work In Progress
-                                   │
-                                   ▼
-                        ✅ Mark as Completed
-                                   │
-                                   ▼
-                    📧 Notify User via Email
-                                   │
-                                   ▼
-                        ⭐ Provide Feedback
-                                   │
-                                   ▼
-                              🎉 End
+```md
+![FixMyVillage Preview](./preview.png)
 ```
 
 ---
 
-## 📊 Complaint Status Flow
+# ⚙️ System Modules
+
+```
+👨‍🌾 Villager
+├── Register / Login
+├── Submit Complaint
+├── Upload Image
+├── Track Status
+├── View History
+├── Receive Email
+└── Provide Feedback
+
+👷 Worker
+├── Login
+├── View Assigned Complaints
+├── Update Progress
+└── Mark as Completed
+
+🛠️ Admin
+├── Dashboard
+├── Manage Users
+├── Manage Workers
+├── Assign Complaints
+├── Manage Categories
+├── Monitor Progress
+└── Reports & Feedback
+```
+
+---
+
+# 🔄 Complete Workflow
+
+```text
+                 👤 Villager
+                      │
+                      ▼
+         Register / Login Account
+                      │
+                      ▼
+        Submit Complaint + Image
+                      │
+                      ▼
+          Complaint Stored in DB
+                      │
+                      ▼
+            🛠️ Admin Dashboard
+                      │
+          ┌───────────┴───────────┐
+          │                       │
+          ▼                       ▼
+      Reject Issue          Assign Worker
+          │                       │
+          ▼                       ▼
+  Notify User by Email      👷 Worker Dashboard
+                                  │
+                                  ▼
+                         Accept Assigned Task
+                                  │
+                                  ▼
+                          Update Progress
+                                  │
+                                  ▼
+                           Complete Work
+                                  │
+                                  ▼
+                     Status → Completed
+                                  │
+                                  ▼
+                     Email Notification
+                                  │
+                                  ▼
+                      ⭐ User Feedback
+```
+
+---
+
+# 📊 Complaint Lifecycle
 
 ```text
 📝 Pending
@@ -88,59 +107,85 @@
       │
       ▼
 ✅ Completed
+      │
+      ▼
+⭐ Feedback
 ```
 
 ---
 
-## 📖 How to Use
+# 📖 User Journey
 
-### 👨‍🌾 Villager
+```text
+Villager
+─────────
+Register
+   │
+   ▼
+Submit Complaint
+   │
+   ▼
+Track Status
+   │
+   ▼
+Receive Updates
+   │
+   ▼
+Give Feedback
 
-1. Register or Login
-2. Submit a complaint with category, description, and image.
-3. Track complaint status.
-4. Receive email notifications.
-5. Submit feedback after completion.
 
-### 👷 Worker
+Worker
+──────
+Login
+   │
+   ▼
+View Tasks
+   │
+   ▼
+Update Progress
+   │
+   ▼
+Complete Task
 
-1. Login to the worker dashboard.
-2. View assigned complaints.
-3. Update work progress.
-4. Mark the complaint as completed.
 
-### 🛠️ Admin
-
-1. Login to the admin dashboard.
-2. Review submitted complaints.
-3. Assign workers.
-4. Monitor complaint progress.
-5. Manage users, workers, categories, reports, and feedback.
+Admin
+─────
+Review Complaint
+   │
+   ▼
+Assign Worker
+   │
+   ▼
+Monitor Progress
+   │
+   ▼
+Close Complaint
+```
 
 ---
 
-## 🛠️ Tech Stack
+# 💻 Tech Stack
 
-| Technology   | Purpose             |
-| ------------ | ------------------- |
-| React.js     | Frontend            |
-| Node.js      | Backend Runtime     |
-| Express.js   | REST API            |
-| MongoDB      | Database            |
-| Tailwind CSS | UI Styling          |
-| Nodemailer   | Email Notifications |
-| Cloudinary   | Image Storage       |
-| JWT          | Authentication      |
+| Frontend     | Backend            | Database | Services   |
+| ------------ | ------------------ | -------- | ---------- |
+| React.js     | Node.js            | MongoDB  | Nodemailer |
+| Tailwind CSS | Express.js         |          | Cloudinary |
+|              | JWT Authentication |          |            |
 
 ---
 
-## 🚀 Getting Started
+# 🚀 Setup
+
+### Clone Repository
 
 ```bash
 git clone https://github.com/skmsajid/fixmyvillage.git
-
 cd fixmyvillage
+```
 
+### Install Dependencies
+
+```bash
 cd client
 npm install
 
@@ -148,7 +193,7 @@ cd ../server
 npm install
 ```
 
-Create a `.env` file inside the **server** folder.
+### Environment Variables
 
 ```env
 PORT=5000
@@ -161,7 +206,7 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-Run the project.
+### Run Application
 
 ```bash
 # Backend
@@ -175,7 +220,7 @@ npm run dev
 
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
 ```text
 FixMyVillage/
@@ -201,42 +246,47 @@ FixMyVillage/
 
 ---
 
-## 🎯 Objectives
+# 🎯 Objectives
 
-* Digitize village complaint management
-* Improve transparency
-* Enable real-time complaint tracking
-* Reduce paperwork
-* Speed up issue resolution
-* Improve communication between users and authorities
-
----
-
-## 🌟 Advantages
-
-* Faster complaint resolution
-* Transparent complaint tracking
-* Real-time updates
-* Efficient worker assignment
-* Reduced manual paperwork
-* Better communication
-* Improved accountability
+```
+✔ Digital Complaint Management
+✔ Real-Time Tracking
+✔ Faster Issue Resolution
+✔ Better Transparency
+✔ Reduced Paperwork
+✔ Improved Communication
+```
 
 ---
 
-## 🚀 Future Enhancements
+# 🌟 Advantages
 
-* AI-based complaint categorization
-* GPS location tracking
-* Mobile application
-* Multi-language support
-* Real-time chat
-* Government portal integration
-* Voice-based complaint registration
-* Analytics dashboard
+```
+⚡ Faster Resolution
+📊 Transparent Workflow
+📧 Automated Notifications
+👷 Efficient Worker Assignment
+📱 Easy Complaint Tracking
+🏡 Smart Village Governance
+```
 
 ---
 
-## 📜 License
+# 🚀 Future Scope
+
+```
+🤖 AI Complaint Classification
+📍 GPS Location Tracking
+📱 Mobile Application
+🌍 Multi-language Support
+💬 Real-time Chat
+🏛 Government Integration
+📈 Analytics Dashboard
+🎙 Voice-based Complaints
+```
+
+---
+
+# 📜 License
 
 **MIT License**
