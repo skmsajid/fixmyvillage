@@ -1,135 +1,174 @@
 # 🌍 FixMyVillage
 
-> **Smart Village Issue Reporting & Management System**
+> **A Modern Platform for Smart Village Issue Management**
 
 ---
 
 ## 🚀 Overview
 
-**FixMyVillage** is a MERN Stack web application that enables villagers to report public issues digitally while allowing administrators and workers to manage and resolve complaints efficiently with real-time tracking.
+**FixMyVillage** is a full-stack MERN application designed to modernize how village issues are reported, tracked, and resolved. It creates a seamless connection between **Villagers**, **Workers**, and **Administrators**, ensuring transparency, accountability, and faster resolution through a centralized digital system.
 
 ---
 
 ## 🖼️ Preview
 
-<img width="1149" height="1369" alt="ChatGPT Image Jun 26, 2026, 07_36_53 PM" src="https://github.com/user-attachments/assets/72b24ad7-9b8b-48bc-809b-017f9a5460c9" />
+```md
+![FixMyVillage Preview](./preview.png)
+```
 
-## ✨ Features
+---
 
-| 👨‍🌾 Villager      | 👷 Worker                | 🛠️ Admin          |
-| :------------------ | :----------------------- | :----------------- |
-| Register & Login    | View Assigned Complaints | Manage Users       |
-| Submit Complaint    | Update Progress          | Assign Workers     |
-| Upload Images       | Complete Tasks           | Monitor Complaints |
-| Track Status        |                          | Manage Categories  |
-| Complaint History   |                          | Reports & Feedback |
-| Email Notifications |                          |                    |
+## ⚙️ System Modules
+
+```
+👨‍🌾 Villager
+├── Secure Login / Registration
+├── Submit Issues with Images
+├── Track Complaint Status
+├── View History
+├── Receive Notifications
+└── Submit Feedback
+
+👷 Worker
+├── Secure Login
+├── Access Assigned Tasks
+├── Update Work Progress
+└── Mark Tasks as Completed
+
+🛠️ Admin
+├── Central Dashboard
+├── Manage Users & Workers
+├── Assign Complaints
+├── Manage Categories
+├── Monitor Progress
+└── View Reports & Feedback
+```
 
 ---
 
 ## 🔄 Workflow
 
 ```text
-👨‍🌾 User
-    │
-    ▼
-📝 Submit Complaint
-    │
-    ▼
+👤 User Authentication
+        │
+        ▼
+📝 Submit Complaint (Details + Image)
+        │
+        ▼
+📦 Stored in Database
+        │
+        ▼
 🛠️ Admin Review
-    │
-    ▼
-👷 Assign Worker
-    │
-    ▼
-🚧 Work Progress
-    │
-    ▼
-✅ Completed
-    │
-    ▼
-📧 Notification
-    │
-    ▼
-⭐ Feedback
+   ┌───────────────┬───────────────┐
+   ▼               ▼
+❌ Reject       ✅ Assign Worker
+   │               │
+   ▼               ▼
+📧 Notify User   👷 Worker Action
+                     │
+                     ▼
+              🚧 Work in Progress
+                     │
+                     ▼
+              ✅ Mark Completed
+                     │
+                     ▼
+              📧 Notify User
+                     │
+                     ▼
+              ⭐ Feedback
 ```
 
 ---
 
-## 📊 Status Flow
+## 📊 Complaint Lifecycle
 
 ```text
-Pending
-   │
-   ▼
-Assigned
-   │
-   ▼
-In Progress
-   │
-   ▼
-Completed
+📝 Pending → 👷 Assigned → 🚧 In Progress → ✅ Completed → ⭐ Feedback
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## 📖 User Flow
 
 ```text
-React.js • Node.js • Express.js • MongoDB
-Tailwind CSS • JWT • Cloudinary • Nodemailer
+Villager → Submit → Track → Receive Updates → Feedback
+Worker   → View Tasks → Update → Complete
+Admin    → Review → Assign → Monitor → Close
 ```
+
+---
+
+## 💻 Tech Stack
+
+| Layer    | Technology             |
+| -------- | ---------------------- |
+| Frontend | React.js, Tailwind CSS |
+| Backend  | Node.js, Express.js    |
+| Database | MongoDB                |
+| Services | Nodemailer, Cloudinary |
+| Auth     | JWT Authentication     |
 
 ---
 
 ## 🚀 Setup
 
+### Clone Repository
+
 ```bash
 git clone https://github.com/skmsajid/fixmyvillage.git
-
 cd fixmyvillage
+```
 
-# Client
+### Install Dependencies
+
+```bash
 cd client && npm install
-
-# Server
 cd ../server && npm install
 ```
 
-Create `.env`
+### Environment Variables
 
 ```env
 PORT=5000
-MONGO_URI=
-JWT_SECRET=
-EMAIL_USER=
-EMAIL_PASS=
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
+MONGO_URI=your_mongodb_url
+JWT_SECRET=your_jwt_secret
+EMAIL_USER=your_email
+EMAIL_PASS=your_password
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-Run
+### Run Application
 
 ```bash
 # Backend
-cd server
-npm start
+cd server && npm start
 
 # Frontend
-cd client
-npm run dev
+cd client && npm run dev
 ```
 
 ---
 
-## 📂 Structure
+## 📂 Project Structure
 
 ```text
 FixMyVillage/
 ├── client/
+│   ├── src/
+│   ├── components/
+│   ├── pages/
+│   └── services/
+│
 ├── server/
-├── package.json
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   └── routes/
+│
 └── README.md
 ```
 
@@ -137,21 +176,41 @@ FixMyVillage/
 
 ## 🎯 Objectives
 
-* Digital complaint management
-* Real-time tracking
-* Faster resolution
-* Better transparency
-* Reduced paperwork
+```
+✔ Digitize Complaint Management
+✔ Enable Real-Time Tracking
+✔ Improve Transparency
+✔ Accelerate Issue Resolution
+✔ Reduce Manual Processes
+✔ Enhance Communication
+```
+
+---
+
+## 🌟 Advantages
+
+```
+⚡ Faster Resolution
+📊 Transparent System
+📧 Automated Notifications
+👷 Efficient Task Allocation
+📱 Easy Accessibility
+🏡 Smart Governance
+```
 
 ---
 
 ## 🚀 Future Scope
 
-* AI Categorization
-* GPS Tracking
-* Mobile App
-* Multi-language Support
-* Government Integration
+```
+🤖 AI-Based Issue Classification
+📍 GPS Integration
+📱 Mobile App
+🌍 Multi-language Support
+💬 Real-time Chat
+📈 Analytics Dashboard
+🎙 Voice-based Reporting
+```
 
 ---
 
