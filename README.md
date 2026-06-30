@@ -1,47 +1,41 @@
 # 🌍 FixMyVillage
 
-> **A Modern Platform for Smart Village Issue Management**
+> **A simple and smart way to manage village issues digitally**
 
 ---
 
 ## 🚀 Overview
 
-**FixMyVillage** is a full-stack MERN application designed to modernize how village issues are reported, tracked, and resolved. It creates a seamless connection between **Villagers**, **Workers**, and **Administrators**, ensuring transparency, accountability, and faster resolution through a centralized digital system.
+**FixMyVillage** is a MERN stack web application built to make village issue reporting easier and more organized. It connects **villagers**, **workers**, and **admins** on one platform so problems can be reported, tracked, and solved faster with better transparency.
 
 ---
 
 ## 🖼️ Preview
 
-```md
-![FixMyVillage Preview](./preview.png)
-```
-
----
+<img width="1149" height="1369" alt="ChatGPT Image Jun 26, 2026, 07_36_53 PM" src="https://github.com/user-attachments/assets/7aebe8eb-891c-4f77-9d21-df83492c0420" />
 
 ## ⚙️ System Modules
 
 ```
 👨‍🌾 Villager
-├── Secure Login / Registration
-├── Submit Issues with Images
-├── Track Complaint Status
-├── View History
-├── Receive Notifications
-└── Submit Feedback
+├── Register / Login
+├── Submit complaints with images
+├── Track complaint status
+├── View past complaints
+└── Give feedback
 
 👷 Worker
-├── Secure Login
-├── Access Assigned Tasks
-├── Update Work Progress
-└── Mark Tasks as Completed
+├── Login
+├── View assigned tasks
+├── Update progress
+└── Mark tasks as completed
 
 🛠️ Admin
-├── Central Dashboard
-├── Manage Users & Workers
-├── Assign Complaints
-├── Manage Categories
-├── Monitor Progress
-└── View Reports & Feedback
+├── Dashboard
+├── Manage users & workers
+├── Assign complaints
+├── Monitor progress
+└── View reports & feedback
 ```
 
 ---
@@ -49,34 +43,34 @@
 ## 🔄 Workflow
 
 ```text
-👤 User Authentication
-        │
-        ▼
-📝 Submit Complaint (Details + Image)
-        │
-        ▼
-📦 Stored in Database
-        │
-        ▼
-🛠️ Admin Review
+User logs in
+      │
+      ▼
+Submit complaint (with details & image)
+      │
+      ▼
+Stored in database
+      │
+      ▼
+Admin reviews complaint
    ┌───────────────┬───────────────┐
    ▼               ▼
-❌ Reject       ✅ Assign Worker
+Reject          Assign worker
    │               │
    ▼               ▼
-📧 Notify User   👷 Worker Action
+Notify user     Worker starts work
                      │
                      ▼
-              🚧 Work in Progress
+              Work in progress
                      │
                      ▼
-              ✅ Mark Completed
+              Mark as completed
                      │
                      ▼
-              📧 Notify User
+              Notify user
                      │
                      ▼
-              ⭐ Feedback
+              User gives feedback
 ```
 
 ---
@@ -84,7 +78,7 @@
 ## 📊 Complaint Lifecycle
 
 ```text
-📝 Pending → 👷 Assigned → 🚧 In Progress → ✅ Completed → ⭐ Feedback
+Pending → Assigned → In Progress → Completed → Feedback
 ```
 
 ---
@@ -92,9 +86,9 @@
 ## 📖 User Flow
 
 ```text
-Villager → Submit → Track → Receive Updates → Feedback
-Worker   → View Tasks → Update → Complete
-Admin    → Review → Assign → Monitor → Close
+Villager → Submit → Track → Feedback
+Worker   → View → Update → Complete
+Admin    → Review → Assign → Monitor
 ```
 
 ---
@@ -107,7 +101,7 @@ Admin    → Review → Assign → Monitor → Close
 | Backend  | Node.js, Express.js    |
 | Database | MongoDB                |
 | Services | Nodemailer, Cloudinary |
-| Auth     | JWT Authentication     |
+| Auth     | JWT                    |
 
 ---
 
@@ -177,12 +171,12 @@ FixMyVillage/
 ## 🎯 Objectives
 
 ```
-✔ Digitize Complaint Management
-✔ Enable Real-Time Tracking
-✔ Improve Transparency
-✔ Accelerate Issue Resolution
-✔ Reduce Manual Processes
-✔ Enhance Communication
+✔ Make complaint reporting digital
+✔ Track issues in real-time
+✔ Improve transparency
+✔ Solve problems faster
+✔ Reduce paperwork
+✔ Improve communication
 ```
 
 ---
@@ -190,12 +184,12 @@ FixMyVillage/
 ## 🌟 Advantages
 
 ```
-⚡ Faster Resolution
-📊 Transparent System
-📧 Automated Notifications
-👷 Efficient Task Allocation
-📱 Easy Accessibility
-🏡 Smart Governance
+⚡ Faster issue resolution
+📊 Clear and transparent system
+📧 Automatic notifications
+👷 Better task management
+📱 Easy to use
+🏡 Supports smart villages
 ```
 
 ---
@@ -203,13 +197,13 @@ FixMyVillage/
 ## 🚀 Future Scope
 
 ```
-🤖 AI-Based Issue Classification
-📍 GPS Integration
-📱 Mobile App
-🌍 Multi-language Support
-💬 Real-time Chat
-📈 Analytics Dashboard
-🎙 Voice-based Reporting
+🤖 AI-based issue detection
+📍 GPS tracking
+📱 Mobile app
+🌍 Multi-language support
+💬 Live chat
+📈 Analytics dashboard
+🎙 Voice-based complaints
 ```
 
 ---
