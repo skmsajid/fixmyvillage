@@ -1,76 +1,97 @@
 # 🌍 FixMyVillage
 
-> **A simple and smart way to manage village issues digitally**
+> **Building Smarter Villages Through Digital Complaint Management**
 
 ---
 
 ## 🚀 Overview
 
-**FixMyVillage** is a MERN stack web application built to make village issue reporting easier and more organized. It connects **villagers**, **workers**, and **admins** on one platform so problems can be reported, tracked, and solved faster with better transparency.
+**FixMyVillage** is a full-stack MERN application that modernizes village complaint management by connecting **Villagers**, **Workers**, and **Administrators** on a single platform. It replaces manual reporting with a transparent digital workflow, enabling faster issue resolution, real-time tracking, and improved communication.
 
 ---
 
 ## 🖼️ Preview
 
-<img width="1149" height="1369" alt="ChatGPT Image Jun 26, 2026, 07_36_53 PM" src="https://github.com/user-attachments/assets/7aebe8eb-891c-4f77-9d21-df83492c0420" />
+<img width="1149" height="1369" alt="ChatGPT Image Jun 26, 2026, 07_36_53 PM" src="https://github.com/user-attachments/assets/e04dc05d-45de-4a44-acaf-6a482603e4ea" />
 
-## ⚙️ System Modules
+## 🏗️ System Architecture
 
-```
-👨‍🌾 Villager
-├── Register / Login
-├── Submit complaints with images
-├── Track complaint status
-├── View past complaints
-└── Give feedback
+```text
+                 🌍 FixMyVillage
 
-👷 Worker
-├── Login
-├── View assigned tasks
-├── Update progress
-└── Mark tasks as completed
-
-🛠️ Admin
-├── Dashboard
-├── Manage users & workers
-├── Assign complaints
-├── Monitor progress
-└── View reports & feedback
+      👨‍🌾 Villager     🛠️ Admin      👷 Worker
+            │               │              │
+            └─────── Centralized Platform ───────┘
+                            │
+                            ▼
+          Complaint Management & Tracking System
 ```
 
 ---
 
-## 🔄 Workflow
+## ✨ Key Features
+
+### 👨‍🌾 Villager Portal
+
+* Secure Registration & Login
+* Submit Complaints with Images
+* Live Complaint Tracking
+* Complaint History
+* Email Notifications
+* Feedback Submission
+
+### 🛠️ Admin Portal
+
+* Centralized Dashboard
+* User & Worker Management
+* Complaint Assignment
+* Category Management
+* Progress Monitoring
+* Reports & Feedback
+
+### 👷 Worker Portal
+
+* Secure Login
+* Assigned Complaint Dashboard
+* Progress Updates
+* Task Completion
+
+---
+
+## 🔄 Complaint Workflow
 
 ```text
-User logs in
+👤 User Login
       │
       ▼
-Submit complaint (with details & image)
+📝 Submit Complaint
+(Category • Description • Image)
       │
       ▼
-Stored in database
+📥 Complaint Registered
       │
       ▼
-Admin reviews complaint
-   ┌───────────────┬───────────────┐
-   ▼               ▼
-Reject          Assign worker
-   │               │
-   ▼               ▼
-Notify user     Worker starts work
-                     │
-                     ▼
-              Work in progress
-                     │
-                     ▼
-              Mark as completed
-                     │
-                     ▼
-              Notify user
-                     │
-                     ▼
-              User gives feedback
+🛠️ Admin Verification
+      │
+      ├───────────────┐
+      │               │
+      ▼               ▼
+❌ Reject         ✅ Assign Worker
+                      │
+                      ▼
+              👷 Accept Task
+                      │
+                      ▼
+              🚧 Update Progress
+                      │
+                      ▼
+              ✅ Complete Issue
+                      │
+                      ▼
+             📧 Email Notification
+                      │
+                      ▼
+              ⭐ User Feedback
 ```
 
 ---
@@ -78,34 +99,73 @@ Notify user     Worker starts work
 ## 📊 Complaint Lifecycle
 
 ```text
-Pending → Assigned → In Progress → Completed → Feedback
+📝 Pending
+      │
+      ▼
+👷 Assigned
+      │
+      ▼
+🚧 In Progress
+      │
+      ▼
+✅ Completed
+      │
+      ▼
+⭐ Feedback
 ```
 
 ---
 
-## 📖 User Flow
+## 👥 User Journey
 
 ```text
-Villager → Submit → Track → Feedback
-Worker   → View → Update → Complete
-Admin    → Review → Assign → Monitor
+👨‍🌾 Villager
+Register
+   │
+Submit Complaint
+   │
+Track Progress
+   │
+Receive Updates
+   │
+Provide Feedback
+
+
+🛠️ Admin
+Review Complaint
+   │
+Assign Worker
+   │
+Monitor Progress
+   │
+Close Complaint
+
+
+👷 Worker
+View Assignment
+   │
+Start Work
+   │
+Update Progress
+   │
+Complete Task
 ```
 
 ---
 
 ## 💻 Tech Stack
 
-| Layer    | Technology             |
-| -------- | ---------------------- |
-| Frontend | React.js, Tailwind CSS |
-| Backend  | Node.js, Express.js    |
-| Database | MongoDB                |
-| Services | Nodemailer, Cloudinary |
-| Auth     | JWT                    |
+| Category           | Technologies           |
+| ------------------ | ---------------------- |
+| **Frontend**       | React.js, Tailwind CSS |
+| **Backend**        | Node.js, Express.js    |
+| **Database**       | MongoDB                |
+| **Authentication** | JWT                    |
+| **Services**       | Nodemailer, Cloudinary |
 
 ---
 
-## 🚀 Setup
+## 🚀 Getting Started
 
 ### Clone Repository
 
@@ -117,18 +177,23 @@ cd fixmyvillage
 ### Install Dependencies
 
 ```bash
-cd client && npm install
-cd ../server && npm install
+cd client
+npm install
+
+cd ../server
+npm install
 ```
 
-### Environment Variables
+### Configure Environment
 
 ```env
 PORT=5000
 MONGO_URI=your_mongodb_url
 JWT_SECRET=your_jwt_secret
+
 EMAIL_USER=your_email
 EMAIL_PASS=your_password
+
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
@@ -138,15 +203,17 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 ```bash
 # Backend
-cd server && npm start
+cd server
+npm start
 
 # Frontend
-cd client && npm run dev
+cd client
+npm run dev
 ```
 
 ---
 
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```text
 FixMyVillage/
@@ -154,6 +221,7 @@ FixMyVillage/
 │   ├── src/
 │   ├── components/
 │   ├── pages/
+│   ├── assets/
 │   └── services/
 │
 ├── server/
@@ -161,50 +229,36 @@ FixMyVillage/
 │   ├── controllers/
 │   ├── middleware/
 │   ├── models/
-│   └── routes/
+│   ├── routes/
+│   └── uploads/
 │
+├── package.json
 └── README.md
 ```
 
 ---
 
-## 🎯 Objectives
+## 🎯 Project Goals
 
-```
-✔ Make complaint reporting digital
-✔ Track issues in real-time
-✔ Improve transparency
-✔ Solve problems faster
-✔ Reduce paperwork
-✔ Improve communication
-```
+* Digitalize village complaint management
+* Improve transparency and accountability
+* Enable real-time complaint tracking
+* Reduce manual paperwork
+* Accelerate issue resolution
+* Strengthen communication between citizens and authorities
 
 ---
 
-## 🌟 Advantages
+## 🚀 Future Enhancements
 
-```
-⚡ Faster issue resolution
-📊 Clear and transparent system
-📧 Automatic notifications
-👷 Better task management
-📱 Easy to use
-🏡 Supports smart villages
-```
-
----
-
-## 🚀 Future Scope
-
-```
-🤖 AI-based issue detection
-📍 GPS tracking
-📱 Mobile app
-🌍 Multi-language support
-💬 Live chat
-📈 Analytics dashboard
-🎙 Voice-based complaints
-```
+* 🤖 AI-based Complaint Classification
+* 📍 GPS-enabled Complaint Location
+* 📱 Mobile Application
+* 🌍 Multi-language Support
+* 💬 Real-time Chat
+* 📊 Analytics Dashboard
+* 🏛️ Government Portal Integration
+* 🎙️ Voice-based Complaint Registration
 
 ---
 
