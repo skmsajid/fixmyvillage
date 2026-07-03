@@ -6,13 +6,9 @@
 
 ## 🚀 Overview
 
-**FixMyVillage** is a full-stack MERN application that modernizes village complaint management by connecting **Villagers**, **Workers**, and **Administrators** on a single platform. It replaces manual reporting with a transparent digital workflow, enabling faster issue resolution, real-time tracking, and improved communication.
+**FixMyVillage** is a full-stack MERN application designed to modernize village complaint management by connecting **Villagers**, **Workers**, and **Administrators** on a unified platform. It replaces traditional manual processes with a transparent digital workflow, enabling faster issue resolution, real-time tracking, and improved communication.
 
 ---
-
-## 🖼️ Preview
-
-<img width="1149" height="1369" alt="ChatGPT Image Jun 26, 2026, 07_36_53 PM" src="https://github.com/user-attachments/assets/e04dc05d-45de-4a44-acaf-6a482603e4ea" />
 
 ## 🏗️ System Architecture
 
@@ -35,7 +31,7 @@
 
 * Secure Registration & Login
 * Submit Complaints with Images
-* Live Complaint Tracking
+* Real-time Complaint Tracking
 * Complaint History
 * Email Notifications
 * Feedback Submission
