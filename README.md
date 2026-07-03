@@ -1,12 +1,12 @@
 # 🌍 FixMyVillage
 
-> **A Professional Digital Platform for Efficient Village Complaint Management**
+> **A Digital Platform for Efficient Village Complaint Management**
 
 ---
 
 ## 🚀 Overview
 
-**FixMyVillage** is a comprehensive full-stack MERN application designed to modernize village complaint management systems. It seamlessly integrates **Villagers**, **Workers**, and **Administrators** into a unified digital ecosystem, replacing traditional manual processes with a transparent, efficient, and scalable workflow. The platform enhances communication, ensures accountability, and accelerates issue resolution through real-time tracking and automated notifications.
+**FixMyVillage** is a MERN stack application that modernizes village complaint management by connecting **Villagers**, **Workers**, and **Admins** on a single platform. It replaces manual processes with a transparent system for faster issue resolution and real-time tracking.
 
 ---
 
@@ -27,66 +27,56 @@
 
 ## ✨ Key Features
 
-### 👨‍🌾 Villager Portal
+### 👨‍🌾 Villager
 
-* Secure user registration and authentication
-* Submission of complaints with image attachments
-* Real-time tracking of complaint status
-* Access to complaint history
-* Automated email notifications
-* Feedback submission upon resolution
+* Register & login
+* Submit complaints with images
+* Track complaint status
+* View history & give feedback
 
-### 🛠️ Admin Portal
+### 🛠️ Admin
 
-* Comprehensive administrative dashboard
-* User and worker management
-* Complaint categorization and assignment
-* Monitoring of complaint progress
-* Reporting and feedback analysis
+* Dashboard & user management
+* Assign complaints to workers
+* Monitor progress & reports
 
-### 👷 Worker Portal
+### 👷 Worker
 
-* Secure login and authentication
-* Access to assigned complaints
-* Ability to update task progress
-* Marking tasks as completed
+* View assigned tasks
+* Update progress
+* Mark tasks as completed
 
 ---
 
 ## 🔄 Complaint Workflow
 
 ```text
-👤 User Login
-      │
-      ▼
+👤 Login
+   │
+   ▼
 📝 Submit Complaint
-(Category • Description • Image)
-      │
-      ▼
-📥 Complaint Registered
-      │
-      ▼
-🛠️ Admin Verification
-      │
-      ├───────────────┐
-      │               │
-      ▼               ▼
-❌ Reject         ✅ Assign Worker
-                      │
-                      ▼
-              👷 Accept Task
-                      │
-                      ▼
-              🚧 Update Progress
-                      │
-                      ▼
-              ✅ Complete Issue
-                      │
-                      ▼
-             📧 Email Notification
-                      │
-                      ▼
-              ⭐ User Feedback
+   │
+   ▼
+📥 Registered
+   │
+   ▼
+🛠️ Admin Review
+   │
+   ├── ❌ Reject
+   │
+   └── ✅ Assign Worker
+            │
+            ▼
+      🚧 Work Progress
+            │
+            ▼
+      ✅ Completed
+            │
+            ▼
+      📧 Notification
+            │
+            ▼
+      ⭐ Feedback
 ```
 
 ---
@@ -94,92 +84,34 @@
 ## 📊 Complaint Lifecycle
 
 ```text
-📝 Pending
-      │
-      ▼
-👷 Assigned
-      │
-      ▼
-🚧 In Progress
-      │
-      ▼
-✅ Completed
-      │
-      ▼
-⭐ Feedback
+📝 Pending → 👷 Assigned → 🚧 In Progress → ✅ Completed → ⭐ Feedback
 ```
 
 ---
 
-## 👥 User Journey
+## 💻 Tech Stack
 
-```text
-👨‍🌾 Villager
-Register
-   │
-Submit Complaint
-   │
-Track Progress
-   │
-Receive Updates
-   │
-Provide Feedback
-
-
-🛠️ Admin
-Review Complaint
-   │
-Assign Worker
-   │
-Monitor Progress
-   │
-Close Complaint
-
-
-👷 Worker
-View Assignment
-   │
-Start Work
-   │
-Update Progress
-   │
-Complete Task
-```
-
----
-
-## 💻 Technology Stack
-
-| Category           | Technologies           |
-| ------------------ | ---------------------- |
-| **Frontend**       | React.js, Tailwind CSS |
-| **Backend**        | Node.js, Express.js    |
-| **Database**       | MongoDB                |
-| **Authentication** | JSON Web Tokens (JWT)  |
-| **Services**       | Nodemailer, Cloudinary |
+| Category | Technologies           |
+| -------- | ---------------------- |
+| Frontend | React.js, Tailwind CSS |
+| Backend  | Node.js, Express.js    |
+| Database | MongoDB                |
+| Auth     | JWT                    |
+| Services | Nodemailer, Cloudinary |
 
 ---
 
 ## 🚀 Getting Started
 
-### Clone the Repository
-
 ```bash
 git clone https://github.com/skmsajid/fixmyvillage.git
 cd fixmyvillage
+
+cd client && npm install
+cd ../server && npm install
 ```
 
-### Install Dependencies
-
-```bash
-cd client
-npm install
-
-cd ../server
-npm install
-```
-
-### Configure Environment Variables
+### Environment Variables
 
 ```env
 PORT=5000
@@ -194,16 +126,11 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-### Run the Application
+### Run App
 
 ```bash
-# Start Backend Server
-cd server
-npm start
-
-# Start Frontend Application
-cd client
-npm run dev
+cd server && npm start
+cd client && npm run dev
 ```
 
 ---
@@ -213,47 +140,29 @@ npm run dev
 ```text
 FixMyVillage/
 ├── client/
-│   ├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── assets/
-│   └── services/
-│
 ├── server/
-│   ├── config/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   └── uploads/
-│
 ├── package.json
 └── README.md
 ```
 
 ---
 
-## 🎯 Project Objectives
+## 🎯 Objectives
 
-* Digitize village complaint management processes
-* Enhance transparency and accountability
-* Enable real-time monitoring of issues
-* Reduce dependency on manual systems
-* Improve efficiency in issue resolution
-* Strengthen communication between citizens and authorities
+* Digitize complaint management
+* Improve transparency
+* Enable real-time tracking
+* Speed up issue resolution
 
 ---
 
 ## 🚀 Future Enhancements
 
-* 🤖 AI-driven complaint classification
-* 📍 GPS-based complaint location tracking
-* 📱 Dedicated mobile application
-* 🌍 Multi-language support
-* 💬 Real-time communication/chat system
-* 📊 Advanced analytics and reporting dashboard
-* 🏛️ Integration with government systems
-* 🎙️ Voice-enabled complaint submission
+* AI-based classification
+* GPS tracking
+* Mobile app
+* Multi-language support
+* Analytics dashboard
 
 ---
 
