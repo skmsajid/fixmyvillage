@@ -29,22 +29,36 @@
 
 ### 👨‍🌾 Villager
 
-* Register & login
+* Secure registration & login
 * Submit complaints with images
-* Track complaint status
-* View history & give feedback
+* Add detailed descriptions & categories
+* Track complaint status in real-time
+* View complaint history
+* Receive email notifications
+* Provide feedback & ratings
+* Easy-to-use responsive interface
 
 ### 🛠️ Admin
 
-* Dashboard & user management
+* Centralized dashboard overview
+* Manage users and workers
 * Assign complaints to workers
-* Monitor progress & reports
+* Approve or reject complaints
+* Monitor complaint progress
+* Manage complaint categories
+* View reports and analytics
+* Track feedback and performance
+* Ensure system transparency
 
 ### 👷 Worker
 
-* View assigned tasks
-* Update progress
+* Secure login access
+* View assigned complaints
+* Accept or reject tasks
+* Update work progress
+* Upload completion proof (images)
 * Mark tasks as completed
+* Efficient task management dashboard
 
 ---
 
