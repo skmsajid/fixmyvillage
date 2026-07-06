@@ -6,7 +6,43 @@
 
 ## 🚀 Overview
 
-**FixMyVillage** is a MERN stack application that modernizes village complaint management by connecting **Villagers**, **Workers**, and **Admins** on a single platform. It replaces manual processes with a transparent system for faster issue resolution and real-time tracking.
+**FixMyVillage** is a MERN stack application designed to modernize village complaint management. It connects **Villagers**, **Workers**, and **Admins** through a centralized system, replacing manual processes with a transparent, efficient, and real-time solution.
+
+---
+
+## ✨ Core Features
+
+### 👨‍🌾 Villager Portal
+
+* Secure registration & login
+* Submit complaints with images and descriptions
+* Categorize issues for better handling
+* Track complaint status in real-time
+* View complaint history
+* Receive email notifications
+* Provide feedback and ratings
+* Responsive and user-friendly interface
+
+### 🛠️ Admin Portal
+
+* Centralized dashboard overview
+* Manage users and workers
+* Approve or reject complaints
+* Assign complaints to workers
+* Monitor complaint progress
+* Manage categories
+* Access reports and analytics
+* Track feedback and performance
+
+### 👷 Worker Portal
+
+* Secure login access
+* View assigned complaints
+* Accept or reject tasks
+* Update progress status
+* Upload completion proof (images)
+* Mark tasks as completed
+* Efficient task management dashboard
 
 ---
 
@@ -22,43 +58,6 @@
                             ▼
           Complaint Management & Tracking System
 ```
-
----
-
-## ✨ Key Features
-
-### 👨‍🌾 Villager
-
-* Secure registration & login
-* Submit complaints with images
-* Add detailed descriptions & categories
-* Track complaint status in real-time
-* View complaint history
-* Receive email notifications
-* Provide feedback & ratings
-* Easy-to-use responsive interface
-
-### 🛠️ Admin
-
-* Centralized dashboard overview
-* Manage users and workers
-* Assign complaints to workers
-* Approve or reject complaints
-* Monitor complaint progress
-* Manage complaint categories
-* View reports and analytics
-* Track feedback and performance
-* Ensure system transparency
-
-### 👷 Worker
-
-* Secure login access
-* View assigned complaints
-* Accept or reject tasks
-* Update work progress
-* Upload completion proof (images)
-* Mark tasks as completed
-* Efficient task management dashboard
 
 ---
 
@@ -117,6 +116,8 @@
 
 ## 🚀 Getting Started
 
+### Clone & Install
+
 ```bash
 git clone https://github.com/skmsajid/fixmyvillage.git
 cd fixmyvillage
@@ -140,7 +141,7 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-### Run App
+### Run Application
 
 ```bash
 cd server && npm start
@@ -164,19 +165,19 @@ FixMyVillage/
 ## 🎯 Objectives
 
 * Digitize complaint management
-* Improve transparency
+* Improve transparency and accountability
 * Enable real-time tracking
-* Speed up issue resolution
+* Accelerate issue resolution
 
 ---
 
 ## 🚀 Future Enhancements
 
-* AI-based classification
-* GPS tracking
-* Mobile app
+* AI-based complaint classification
+* GPS-enabled tracking
+* Mobile application
 * Multi-language support
-* Analytics dashboard
+* Advanced analytics dashboard
 
 ---
 
