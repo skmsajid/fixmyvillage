@@ -6,43 +6,7 @@
 
 ## 🚀 Overview
 
-**FixMyVillage** is a MERN stack application designed to modernize village complaint management. It connects **Villagers**, **Workers**, and **Admins** through a centralized system, replacing manual processes with a transparent, efficient, and real-time solution.
-
----
-
-## ✨ Core Features
-
-### 👨‍🌾 Villager Portal
-
-* Secure registration & login
-* Submit complaints with images and descriptions
-* Categorize issues for better handling
-* Track complaint status in real-time
-* View complaint history
-* Receive email notifications
-* Provide feedback and ratings
-* Responsive and user-friendly interface
-
-### 🛠️ Admin Portal
-
-* Centralized dashboard overview
-* Manage users and workers
-* Approve or reject complaints
-* Assign complaints to workers
-* Monitor complaint progress
-* Manage categories
-* Access reports and analytics
-* Track feedback and performance
-
-### 👷 Worker Portal
-
-* Secure login access
-* View assigned complaints
-* Accept or reject tasks
-* Update progress status
-* Upload completion proof (images)
-* Mark tasks as completed
-* Efficient task management dashboard
+**FixMyVillage** is a MERN stack application that transforms traditional village complaint handling into a streamlined digital system. It connects **Villagers**, **Workers**, and **Admins** through a centralized platform, ensuring transparency, faster resolution, and real-time tracking.
 
 ---
 
@@ -61,7 +25,40 @@
 
 ---
 
-## 🔄 Complaint Workflow
+## ✨ Features
+
+### 👨‍🌾 Villager Portal
+
+* Secure registration and login
+* Submit complaints with images and descriptions
+* Categorize issues for efficient handling
+* Track complaint status in real-time
+* View complaint history
+* Receive email notifications
+* Provide feedback and ratings
+
+### 🛠️ Admin Portal
+
+* Centralized dashboard overview
+* Manage users and workers
+* Approve or reject complaints
+* Assign complaints to workers
+* Monitor complaint progress
+* Manage categories
+* Access reports and analytics
+
+### 👷 Worker Portal
+
+* Secure login access
+* View assigned complaints
+* Accept or reject tasks
+* Update progress status
+* Upload completion proof (images)
+* Mark tasks as completed
+
+---
+
+## 🔄 Workflow
 
 ```text
 👤 Login
