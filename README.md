@@ -1,12 +1,12 @@
 # 🌍 FixMyVillage
 
-> **An Intelligent Digital Platform for Streamlined Village Complaint Management**
+> **A Smart Digital Platform for Efficient Village Complaint Management**
 
 ---
 
 ## 🚀 Overview
 
-**FixMyVillage** is a robust MERN stack application engineered to transform traditional village complaint systems into a modern, efficient, and transparent digital solution. By seamlessly integrating **Villagers**, **Workers**, and **Administrators** within a unified ecosystem, the platform enhances accountability, accelerates issue resolution, and enables real-time monitoring through a structured workflow.
+**FixMyVillage** is a scalable MERN stack application designed to modernize traditional village complaint systems into a streamlined, transparent, and efficient digital solution. By connecting **Villagers**, **Workers**, and **Administrators** within a unified platform, it enhances accountability, accelerates issue resolution, and enables real-time monitoring through a structured and automated workflow.
 
 ---
 
@@ -31,17 +31,17 @@
 
 * Secure registration and authentication
 * Submit complaints with images and detailed descriptions
-* Categorize issues for efficient processing
+* Categorize issues for efficient handling
 * Track complaint status in real-time
 * Access complete complaint history
 * Receive automated email notifications
-* Provide feedback and ratings upon resolution
+* Provide feedback and ratings after resolution
 
 ### 🛠️ Admin
 
-* Comprehensive dashboard for centralized control
-* Efficient management of users and workers
-* Review, approve, or reject submitted complaints
+* Centralized dashboard for complete system control
+* Manage users and workers efficiently
+* Review, approve, or reject complaints
 * Assign tasks to appropriate workers
 * Monitor complaint progress in real-time
 * Manage complaint categories
@@ -51,7 +51,7 @@
 
 * Secure login access
 * View and manage assigned complaints
-* Accept or decline assigned tasks
+* Accept or decline tasks
 * Update progress with status changes
 * Upload proof of completion
 * Mark tasks as completed
@@ -162,7 +162,7 @@ FixMyVillage/
 ## 🎯 Objectives
 
 * Digitize and modernize village complaint management processes
-* Enhance transparency and accountability across all stakeholders
+* Improve transparency and accountability among stakeholders
 * Enable real-time tracking and monitoring of complaints
 * Accelerate issue resolution through structured workflows
 * Strengthen communication between citizens and authorities
@@ -174,7 +174,7 @@ FixMyVillage/
 * 🤖 AI-powered complaint classification
 * 📍 GPS-enabled complaint tracking
 * 📱 Dedicated mobile application
-* 🌍 Multi-language support for wider accessibility
+* 🌍 Multi-language support for broader accessibility
 * 📊 Advanced analytics and reporting dashboard
 
 ---
