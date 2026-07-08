@@ -6,7 +6,7 @@
 
 ## 🚀 Overview
 
-**FixMyVillage** is a scalable MERN stack application designed to modernize traditional village complaint systems into a streamlined, transparent, and efficient digital solution. By connecting **Villagers**, **Workers**, and **Administrators** within a unified platform, it enhances accountability, accelerates issue resolution, and enables real-time monitoring through a structured and automated workflow.
+**FixMyVillage** is a scalable MERN stack application designed to transform traditional village complaint systems into a streamlined, transparent, and efficient digital solution. By connecting **Villagers**, **Workers**, and **Administrators** on a unified platform, it enhances accountability, accelerates issue resolution, and enables real-time monitoring through a structured workflow.
 
 ---
 
@@ -39,13 +39,13 @@
 
 ### 🛠️ Admin
 
-* Centralized dashboard for complete system control
+* Centralized dashboard for full system control
 * Manage users and workers efficiently
 * Review, approve, or reject complaints
 * Assign tasks to appropriate workers
 * Monitor complaint progress in real-time
 * Manage complaint categories
-* Generate reports and analytics for insights
+* Generate reports and analytics
 
 ### 👷 Worker
 
@@ -161,9 +161,9 @@ FixMyVillage/
 
 ## 🎯 Objectives
 
-* Digitize and modernize village complaint management processes
-* Improve transparency and accountability among stakeholders
-* Enable real-time tracking and monitoring of complaints
+* Digitize and modernize village complaint management
+* Improve transparency and accountability
+* Enable real-time tracking and monitoring
 * Accelerate issue resolution through structured workflows
 * Strengthen communication between citizens and authorities
 
@@ -174,8 +174,8 @@ FixMyVillage/
 * 🤖 AI-powered complaint classification
 * 📍 GPS-enabled complaint tracking
 * 📱 Dedicated mobile application
-* 🌍 Multi-language support for broader accessibility
-* 📊 Advanced analytics and reporting dashboard
+* 🌍 Multi-language support
+* 📊 Advanced analytics and reporting
 
 ---
 
