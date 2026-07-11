@@ -1,12 +1,12 @@
 # 🌍 FixMyVillage
 
-> **A Smart, Scalable Platform for Modern Village Complaint Management**
+> **A Smart Digital Platform for Efficient Village Complaint Management**
 
 ---
 
 ## 🚀 Overview
 
-**FixMyVillage** is a robust MERN stack application built to transform traditional complaint handling into a streamlined digital experience. By connecting **Villagers**, **Workers**, and **Administrators** on a unified platform, it ensures transparency, accountability, and efficient issue resolution through a structured and real-time workflow.
+**FixMyVillage** is a scalable MERN stack application designed to transform traditional village complaint systems into a streamlined digital experience. It connects **Villagers**, **Workers**, and **Administrators** on a unified platform, ensuring transparency, accountability, and faster issue resolution through a structured and real-time workflow.
 
 ---
 
@@ -31,21 +31,21 @@
 
 * Secure registration and authentication
 * Submit complaints with images and detailed descriptions
-* Categorize issues for faster processing
+* Categorize issues for efficient handling
 * Track complaint status in real-time
-* View complete complaint history
+* Access complete complaint history
 * Receive automated email notifications
 * Provide feedback and ratings after resolution
 
 ### 🛠️ Admin
 
-* Centralized dashboard for full system control
+* Centralized dashboard for system management
 * Manage users and workers efficiently
 * Review, approve, or reject complaints
 * Assign tasks to appropriate workers
 * Monitor complaint progress in real-time
 * Manage complaint categories
-* Generate reports and actionable insights
+* Generate reports and insights
 
 ### 👷 Worker
 
@@ -162,7 +162,7 @@ FixMyVillage/
 ## 🎯 Objectives
 
 * Digitize and modernize village complaint management
-* Improve transparency and accountability
+* Enhance transparency and accountability
 * Enable real-time tracking and monitoring
 * Accelerate issue resolution through structured workflows
 * Strengthen communication between citizens and authorities
