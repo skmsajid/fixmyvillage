@@ -6,7 +6,7 @@
 
 ## 🚀 Overview
 
-**FixMyVillage** is a scalable MERN stack application designed to transform traditional village complaint systems into a streamlined digital experience. It connects **Villagers**, **Workers**, and **Administrators** on a unified platform, enabling transparent communication, structured workflows, and faster issue resolution with real-time tracking.
+**FixMyVillage** is a scalable MERN stack application designed to modernize traditional village complaint systems. It seamlessly connects **Villagers**, **Workers**, and **Administrators** on a unified platform, enabling transparent communication, structured workflows, and faster issue resolution with real-time tracking.
 
 ---
 
@@ -39,7 +39,7 @@
 
 ### 🛠️ Admin
 
-* Centralized dashboard for full system control
+* Centralized dashboard for complete system control
 * Manage users and workers efficiently
 * Review, approve, or reject complaints
 * Assign tasks to appropriate workers
