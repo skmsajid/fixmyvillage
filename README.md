@@ -1,12 +1,12 @@
 # 🌍 FixMyVillage
 
-> **A Smart Digital Platform for Village Issue Reporting & Management**
+> **A Smart Digital Platform for Efficient Village Issue Reporting & Management**
 
 ---
 
 ## 🚀 Overview
 
-**FixMyVillage** is a MERN Stack web application that simplifies village complaint management by connecting **Villagers**, **Workers**, and **Administrators** on a single platform. It enables transparent issue reporting, efficient task assignment, real-time tracking, and faster resolution through a structured digital workflow.
+**FixMyVillage** is a MERN Stack web application designed to streamline village complaint management by connecting **Villagers**, **Workers**, and **Administrators** on a unified platform. It promotes transparency, ensures efficient task allocation, enables real-time tracking, and accelerates issue resolution through a well-structured digital workflow.
 
 ---
 
@@ -14,25 +14,25 @@
 
 ```text
 👨‍🌾 Villager
-• Register & Login
+• Register and Login
 • Submit Complaints with Images
-• Track Complaint Status
+• Track Complaint Status in Real-Time
 • View Complaint History
 • Receive Email Notifications
-• Submit Feedback
+• Provide Feedback
 
 🛠️ Admin
-• Manage Users & Workers
-• Review Complaints
-• Assign Workers
-• Monitor Progress
-• Manage Categories
-• View Reports & Feedback
+• Manage Users and Workers
+• Review and Validate Complaints
+• Assign Tasks to Workers
+• Monitor Progress and Status
+• Manage Complaint Categories
+• Access Reports and Feedback
 
 👷 Worker
 • View Assigned Complaints
-• Update Progress
-• Complete Assigned Tasks
+• Update Work Progress
+• Mark Tasks as Completed
 ```
 
 ---
@@ -116,7 +116,7 @@ cd ../server
 npm install
 ```
 
-Create a **.env** file inside the `server` directory.
+Create a **.env** file inside the `server` directory:
 
 ```env
 PORT=5000
@@ -129,14 +129,14 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-Run the application.
+Run the application:
 
 ```bash
-# Backend
+# Start Backend
 cd server
 npm start
 
-# Frontend
+# Start Frontend
 cd client
 npm run dev
 ```
@@ -171,10 +171,10 @@ FixMyVillage/
 ```text
 🤖 AI-based Complaint Classification
 📍 GPS Location Tracking
-📱 Mobile Application
-🌍 Multi-language Support
-💬 Real-time Chat
-📊 Analytics Dashboard
+📱 Mobile Application Support
+🌍 Multi-language Accessibility
+💬 Real-time Chat Integration
+📊 Advanced Analytics Dashboard
 ```
 
 ---
