@@ -6,7 +6,7 @@
 
 ## 🚀 Overview
 
-**FixMyVillage** is a MERN Stack web application designed to streamline village complaint management by connecting **Villagers**, **Workers**, and **Administrators** on a unified platform. It promotes transparency, ensures efficient task allocation, enables real-time tracking, and accelerates issue resolution through a well-structured digital workflow.
+**FixMyVillage** is a MERN Stack web application built to simplify and modernize village complaint management. It seamlessly connects **Villagers**, **Workers**, and **Administrators** on a unified platform, promoting transparency, improving task allocation, enabling real-time tracking, and ensuring faster issue resolution through a structured digital workflow.
 
 ---
 
@@ -14,25 +14,25 @@
 
 ```text
 👨‍🌾 Villager
-• Register and Login
-• Submit Complaints with Images
-• Track Complaint Status in Real-Time
-• View Complaint History
-• Receive Email Notifications
-• Provide Feedback
+• Register and log in securely
+• Submit complaints with images
+• Track complaint status in real time
+• View complaint history
+• Receive email notifications
+• Provide feedback after resolution
 
 🛠️ Admin
-• Manage Users and Workers
-• Review and Validate Complaints
-• Assign Tasks to Workers
-• Monitor Progress and Status
-• Manage Complaint Categories
-• Access Reports and Feedback
+• Manage users and workers
+• Review and validate complaints
+• Assign tasks to workers
+• Monitor progress and status updates
+• Manage complaint categories
+• Access reports and user feedback
 
 👷 Worker
-• View Assigned Complaints
-• Update Work Progress
-• Mark Tasks as Completed
+• View assigned complaints
+• Update work progress
+• Mark tasks as completed
 ```
 
 ---
@@ -169,12 +169,12 @@ FixMyVillage/
 ## 🚀 Future Enhancements
 
 ```text
-🤖 AI-based Complaint Classification
-📍 GPS Location Tracking
-📱 Mobile Application Support
-🌍 Multi-language Accessibility
-💬 Real-time Chat Integration
-📊 Advanced Analytics Dashboard
+🤖 AI-based complaint classification
+📍 GPS-based location tracking
+📱 Mobile application support
+🌍 Multi-language accessibility
+💬 Real-time chat integration
+📊 Advanced analytics dashboard
 ```
 
 ---
