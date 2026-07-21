@@ -6,7 +6,7 @@
 
 ## 🚀 Overview
 
-**FixMyVillage** is a MERN Stack web application designed to streamline and modernize village complaint management. It connects **Villagers**, **Workers**, and **Administrators** on a unified platform, fostering transparency, improving task coordination, enabling real-time tracking, and ensuring faster issue resolution through a structured digital workflow.
+**FixMyVillage** is a MERN Stack web application built to modernize and simplify village complaint management. It seamlessly connects **Villagers**, **Workers**, and **Administrators** on a unified platform, promoting transparency, improving coordination, enabling real-time tracking, and ensuring faster resolution through a structured and efficient digital workflow.
 
 ---
 
@@ -14,24 +14,24 @@
 
 ```text
 👨‍🌾 Villager
-• Secure registration and login
-• Submit complaints with images
+• Secure registration and authentication
+• Submit complaints with image attachments
 • Track complaint status in real time
-• View complaint history
-• Receive email notifications
-• Provide feedback after resolution
+• Access complete complaint history
+• Receive automated email notifications
+• Provide feedback after issue resolution
 
 🛠️ Admin
-• Manage users and workers
-• Review and validate complaints
-• Assign tasks to workers
+• Manage users and workers efficiently
+• Review and validate submitted complaints
+• Assign tasks to appropriate workers
 • Monitor progress and status updates
 • Manage complaint categories
-• Access reports and user feedback
+• Access reports and user feedback insights
 
 👷 Worker
 • View assigned complaints
-• Update work progress
+• Update task progress
 • Mark tasks as completed
 ```
 
@@ -169,10 +169,10 @@ FixMyVillage/
 ## 🚀 Future Enhancements
 
 ```text
-🤖 AI-based complaint classification
+🤖 AI-powered complaint classification
 📍 GPS-based location tracking
-📱 Mobile application support
-🌍 Multi-language accessibility
+📱 Dedicated mobile application
+🌍 Multi-language support
 💬 Real-time chat integration
 📊 Advanced analytics dashboard
 ```
