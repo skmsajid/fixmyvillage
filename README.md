@@ -6,38 +6,38 @@
 
 ## 🚀 Overview
 
-**FixMyVillage** is a MERN Stack web application designed to modernize and streamline village complaint management. It connects **Villagers**, **Workers**, and **Administrators** on a unified platform, fostering transparency, enhancing coordination, enabling real-time tracking, and ensuring faster issue resolution through a structured digital workflow.
+**FixMyVillage** is a full-stack **MERN application** designed to modernize village complaint management. It brings together **Villagers**, **Workers**, and **Administrators** on a single platform to ensure transparency, faster communication, and efficient issue resolution through a structured digital workflow.
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
 ```text
 👨‍🌾 Villager
-• Secure registration and authentication
-• Submit complaints with image attachments
-• Track complaint status in real time
-• View complete complaint history
-• Receive automated email notifications
-• Provide feedback after resolution
+• Secure registration & login
+• Submit complaints with images
+• Track real-time complaint status
+• View complaint history
+• Receive email notifications
+• Submit feedback after resolution
 
 🛠️ Admin
-• Manage users and workers efficiently
-• Review and validate submitted complaints
-• Assign tasks to appropriate workers
-• Monitor progress and updates in real time
+• Manage users and workers
+• Review and verify complaints
+• Assign complaints to workers
+• Monitor progress in real time
 • Manage complaint categories
 • Access reports and feedback insights
 
 👷 Worker
 • View assigned complaints
-• Update task progress
+• Update work progress
 • Mark tasks as completed
 ```
 
 ---
 
-## 🔄 Workflow
+## 🔄 System Workflow
 
 ```text
               👤 User Login
@@ -53,13 +53,13 @@
            🛠️ Admin Review
           ┌─────────┴─────────┐
           ▼                   ▼
-      ❌ Reject         ✅ Assign Worker
+      ❌ Rejected       ✅ Assigned to Worker
                               │
                               ▼
-                    👷 Work In Progress
+                    👷 Work in Progress
                               │
                               ▼
-                     ✅ Mark Completed
+                     ✅ Mark as Completed
                               │
                               ▼
                   📧 Email Notification
@@ -90,7 +90,7 @@
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Tech Stack
 
 | Layer              | Technologies           |
 | ------------------ | ---------------------- |
@@ -104,11 +104,16 @@
 
 ## 🚀 Getting Started
 
+### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/skmsajid/fixmyvillage.git
-
 cd fixmyvillage
+```
 
+### 2. Install Dependencies
+
+```bash
 cd client
 npm install
 
@@ -116,7 +121,9 @@ cd ../server
 npm install
 ```
 
-Create a **.env** file inside the `server` directory:
+### 3. Configure Environment Variables
+
+Create a `.env` file inside the `server` directory:
 
 ```env
 PORT=5000
@@ -129,7 +136,7 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-Run the application:
+### 4. Run the Application
 
 ```bash
 # Start Backend
@@ -169,11 +176,11 @@ FixMyVillage/
 ## 🚀 Future Enhancements
 
 ```text
-🤖 AI-powered complaint classification
-📍 GPS-based location tracking
-📱 Dedicated mobile application
+🤖 AI-based complaint classification
+📍 GPS location tracking for issues
+📱 Mobile application (Android/iOS)
 🌍 Multi-language support
-💬 Real-time chat integration
+💬 Real-time chat between users & workers
 📊 Advanced analytics dashboard
 ```
 
