@@ -1,12 +1,12 @@
 # 🌍 FixMyVillage
 
-> **A Smart Digital Platform for Efficient Village Issue Reporting & Management**
+> **A Smart Digital Platform for Transparent & Efficient Village Issue Reporting and Management**
 
 ---
 
 ## 🚀 Overview
 
-**FixMyVillage** is a full-stack **MERN application** built to modernize village complaint management. It connects **Villagers**, **Workers**, and **Administrators** on a unified platform, ensuring transparency, faster communication, and efficient issue resolution through a structured digital workflow.
+**FixMyVillage** is a full-stack **MERN application** designed to digitize and streamline village complaint management. It connects **Villagers**, **Workers**, and **Administrators** on a single platform, enabling transparent communication, faster response times, and structured issue resolution through a well-defined workflow.
 
 ---
 
@@ -14,11 +14,11 @@
 
 ```text
 👨‍🌾 Villager
-• Secure registration & login
-• Submit complaints with images
+• Secure registration and login
+• Submit complaints with images and details
 • Track real-time complaint status
 • View complaint history
-• Receive email notifications
+• Receive email updates
 • Provide feedback after resolution
 
 🛠️ Admin
@@ -130,7 +130,7 @@ PORT=5000
 MONGO_URI=your_mongodb_url
 JWT_SECRET=your_jwt_secret
 EMAIL_USER=your_email
-EMAIL_PASS=your_password
+EMAIL_PASS=your_email_password
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
@@ -177,10 +177,10 @@ FixMyVillage/
 
 ```text
 🤖 AI-based complaint classification
-📍 GPS location tracking for issues
+📍 GPS-based issue location tracking
 📱 Mobile application (Android/iOS)
 🌍 Multi-language support
-💬 Real-time chat between users & workers
+💬 Real-time chat between users and workers
 📊 Advanced analytics dashboard
 ```
 
