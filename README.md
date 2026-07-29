@@ -6,7 +6,7 @@
 
 ## 🚀 Overview
 
-**FixMyVillage** is a full-stack **MERN application** designed to modernize and streamline village complaint management. It connects **Villagers**, **Workers**, and **Administrators** on a single unified platform, enabling transparent communication, faster response times, and a well-organized workflow for resolving local issues effectively.
+**FixMyVillage** is a full-stack **MERN application** built to modernize village complaint management. It brings together **Villagers**, **Workers**, and **Administrators** on a single platform to ensure transparent communication, faster response times, and a structured workflow for resolving local issues efficiently.
 
 ---
 
@@ -19,11 +19,11 @@
 • Track real-time complaint status
 • View complete complaint history
 • Receive email notifications for updates
-• Provide feedback after issue resolution
+• Provide feedback after resolution
 
 🛠️ Admin
-• Manage users and workers efficiently
-• Review and verify incoming complaints
+• Manage users and workers
+• Review and verify complaints
 • Assign complaints to appropriate workers
 • Monitor progress in real time
 • Manage complaint categories
