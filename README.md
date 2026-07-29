@@ -1,12 +1,12 @@
 # 🌍 FixMyVillage
 
-> **A Smart Digital Platform for Transparent and Efficient Village Issue Reporting & Management**
+> **A Smart Digital Platform for Transparent, Efficient, and Structured Village Issue Reporting & Management**
 
 ---
 
 ## 🚀 Overview
 
-**FixMyVillage** is a full-stack **MERN application** built to digitize and simplify village complaint management. It brings together **Villagers**, **Workers**, and **Administrators** on a unified platform, ensuring transparent communication, faster response times, and a structured workflow for resolving local issues efficiently.
+**FixMyVillage** is a full-stack **MERN application** designed to modernize and streamline village complaint management. It connects **Villagers**, **Workers**, and **Administrators** on a single unified platform, enabling transparent communication, faster response times, and a well-organized workflow for resolving local issues effectively.
 
 ---
 
@@ -18,11 +18,11 @@
 • Submit complaints with images and detailed descriptions
 • Track real-time complaint status
 • View complete complaint history
-• Receive email notifications on updates
-• Provide feedback after resolution
+• Receive email notifications for updates
+• Provide feedback after issue resolution
 
 🛠️ Admin
-• Manage users and workers
+• Manage users and workers efficiently
 • Review and verify incoming complaints
 • Assign complaints to appropriate workers
 • Monitor progress in real time
