@@ -1,12 +1,14 @@
 # 🌍 FixMyVillage
 
-> **A Smart, Transparent, and Efficient Platform for Village Issue Reporting & Management**
+> **A Smart, Transparent & Efficient Platform for Village Issue Reporting and Management**
 
 ---
 
 ## 🚀 Overview
 
-**FixMyVillage** is a full-stack **MERN application** built to modernize village-level complaint management. It connects **Villagers**, **Workers**, and **Administrators** on a single platform to ensure transparent communication, faster response times, and a structured workflow for resolving local issues efficiently.
+**FixMyVillage** is a full-stack **MERN application** designed to modernize village-level complaint management. It bridges the gap between **Villagers**, **Workers**, and **Administrators**, enabling seamless communication, faster issue resolution, and a fully transparent workflow.
+
+The platform ensures that every complaint is tracked from submission to resolution with accountability at every stage.
 
 ---
 
@@ -19,7 +21,7 @@
 • Track real-time complaint status
 • View complete complaint history
 • Receive email notifications on updates
-• Submit feedback after resolution
+• Provide feedback after resolution
 
 🛠️ Admin
 • Manage users and workers
@@ -111,6 +113,8 @@ git clone https://github.com/skmsajid/fixmyvillage.git
 cd fixmyvillage
 ```
 
+---
+
 ### 2. Install Dependencies
 
 ```bash
@@ -120,6 +124,8 @@ npm install
 cd ../server
 npm install
 ```
+
+---
 
 ### 3. Configure Environment Variables
 
@@ -136,13 +142,17 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
+---
+
 ### 4. Run the Application
 
 ```bash
 # Start Backend
 cd server
 npm start
+```
 
+```bash
 # Start Frontend
 cd client
 npm run dev
