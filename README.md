@@ -1,14 +1,14 @@
 # 🌍 FixMyVillage
 
-> **A Smart, Transparent, and Efficient Platform for Village Issue Reporting and Resolution**
+> **A Smart, Transparent, and Efficient Platform for Reporting and Resolving Village Issues**
 
 ---
 
 ## 🚀 Overview
 
-**FixMyVillage** is a full-stack **MERN-based web application** built to digitize and simplify village-level complaint reporting and resolution. It brings together **Villagers**, **Workers**, and **Administrators** on a single unified platform to ensure transparent communication, faster response times, and structured task management.
+**FixMyVillage** is a full-stack **MERN application** designed to digitize and streamline village-level issue reporting and resolution. The platform connects **Villagers**, **Workers**, and **Administrators** in one centralized system, enabling transparent communication, efficient task management, and faster issue resolution.
 
-Each complaint follows a well-defined, trackable lifecycle—from submission to final resolution—ensuring accountability, transparency, and smooth end-to-end workflow execution.
+Every complaint follows a structured, trackable lifecycle—from submission and review to assignment, completion, and feedback—promoting accountability throughout the process.
 
 ---
 
@@ -17,24 +17,24 @@ Each complaint follows a well-defined, trackable lifecycle—from submission to 
 ```text
 👨‍🌾 Villager
 • Secure registration and login
-• Submit complaints with images and detailed descriptions
-• Track real-time complaint status
+• Submit complaints with detailed descriptions and images
+• Track complaint status in real time
 • View complete complaint history
-• Receive email notifications on updates
-• Submit feedback after resolution
+• Receive email notifications about status updates
+• Submit feedback after issue resolution
 
-🛠️ Admin
-• Manage users and workers
-• Review and verify complaints
-• Assign complaints to appropriate workers
-• Monitor progress in real time
+🛠️ Administrator
+• Manage villagers and workers
+• Review and verify submitted complaints
+• Assign complaints to suitable workers
+• Monitor complaint progress
 • Manage complaint categories
-• Access reports and feedback insights
+• Review reports and feedback
 
 👷 Worker
 • View assigned complaints
-• Update work progress status
-• Mark tasks as completed
+• Update task progress
+• Mark assigned tasks as completed
 ```
 
 ---
@@ -52,7 +52,7 @@ Each complaint follows a well-defined, trackable lifecycle—from submission to 
           📥 Complaint Registered
                     │
                     ▼
-           🛠️ Admin Review
+           🛠️ Administrator Review
           ┌─────────┴─────────┐
           ▼                   ▼
       ❌ Rejected       ✅ Assigned to Worker
@@ -99,7 +99,7 @@ Each complaint follows a well-defined, trackable lifecycle—from submission to 
 | **Frontend**       | React.js, Tailwind CSS |
 | **Backend**        | Node.js, Express.js    |
 | **Database**       | MongoDB                |
-| **Authentication** | JWT                    |
+| **Authentication** | JSON Web Tokens (JWT)  |
 | **Services**       | Nodemailer, Cloudinary |
 
 ---
@@ -129,7 +129,7 @@ npm install
 
 ### 3. Configure Environment Variables
 
-Create a `.env` file inside the `server` directory:
+Create a `.env` file in the `server` directory:
 
 ```env
 PORT=5000
@@ -146,14 +146,16 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 ### 4. Run the Application
 
+Start the backend:
+
 ```bash
-# Start Backend
 cd server
 npm start
 ```
 
+In a separate terminal, start the frontend:
+
 ```bash
-# Start Frontend
 cd client
 npm run dev
 ```
@@ -186,12 +188,12 @@ FixMyVillage/
 ## 🚀 Future Enhancements
 
 ```text
-🤖 AI-based complaint classification
+🤖 AI-powered complaint classification
 📍 GPS-based issue location tracking
-📱 Mobile application (Android/iOS)
+📱 Dedicated Android and iOS applications
 🌍 Multi-language support
-💬 Real-time chat between users and workers
-📊 Advanced analytics dashboard
+💬 Real-time communication between villagers and workers
+📊 Advanced analytics and reporting dashboard
 ```
 
 ---
